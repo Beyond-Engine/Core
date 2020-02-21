@@ -38,6 +38,7 @@ matrix:
       addons:
         apt:
           packages:
+            - g++-9
             - clang-9
       before_script:
         - sudo ln -s /usr/bin/clang-9 /usr/local/bin/clang
@@ -71,6 +72,7 @@ matrix:
       addons:
         apt:
           packages:
+            - g++-9
             - clang-9
       before_script:
         - sudo ln -s /usr/bin/clang-9 /usr/local/bin/clang
@@ -83,6 +85,7 @@ matrix:
       addons:
         apt:
           packages:
+            - g++-9
             - clang-9
       before_script:
         - sudo ln -s /usr/bin/clang-9 /usr/local/bin/clang
