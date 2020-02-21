@@ -1,0 +1,3 @@
+[submodule "third-party/functions"]
+	path = third-party/functions
+	url = git@github.com:Beyond-Engine/functions.git

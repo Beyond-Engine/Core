@@ -1,15 +1,15 @@
 ## Clang format
 find_program(
-    CLANG_FORMAT_EXE
-    NAMES "clang-format"
-    DOC "Path to clang-format executable"
-    )
+        CLANG_FORMAT_EXE
+        NAMES "clang-format"
+        DOC "Path to clang-format executable"
+)
 
-if(NOT CLANG_FORMAT_EXE)
+if (NOT CLANG_FORMAT_EXE)
     message(WARNING "Cannot find clang-format")
-else()
+else ()
     message(STATUS "clang-format found: ${CLANG_FORMAT_EXE}")
-endif()
+endif ()
 
 function(add_clangformat _targetname)
     if (CLANG_FORMAT_EXE)

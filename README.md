@@ -17,14 +17,14 @@ CMake is the build tool used for this project.
 This boilerplate uses [Conan](https://conan.io/) to manage packages.
 
 ## Usage
-Before starting your project, modify all the `BP_*` settings in the CMake files into your own name.
+Before starting your project, modify all the `BEYOND_CORE_*` settings in the CMake files into your own name.
 You need to modify those names in both the CMake files and the CI scripts.
 
 ### Unit test
 This boilerplate uses [Catch2](https://github.com/catchorg/Catch2) as the Unit Test Framework.
-The CMake option `BP_BUILD_TESTS` (`ON` by default) enables the building of unit test.
+The CMake option `BEYOND_CORE_BUILD_TESTS` (`ON` by default) enables the building of unit test.
 
-The CMake option `BP_BUILD_TESTS_COVERAGE` (`OFF` by default) enables the test coverage with `gcov` and `lcov`.
+The CMake option `BEYOND_CORE_BUILD_TESTS_COVERAGE` (`OFF` by default) enables the test coverage with `gcov` and `lcov`.
 To make the coverage web report working, you need a [codecov](https://codecov.io/) account. And you also need to substitute the `CODECOV_TOKEN` in `.travis.yml` to your own.
 
 ### Compiler warning and sanitizers
@@ -36,26 +36,26 @@ target_link_libraries(${TEST_TARGET_NAME} PRIVATE compiler_options)
 ```
 
 This project enables a reasonable amount of warnings across compilers GCC, Clang, and MSVC.
-The option `BP_WARNING_AS_ERROR` treats warnings as errors.
+The option `BEYOND_CORE_WARNING_AS_ERROR` treats warnings as errors.
 You can modify `cmake/compiler.cmake` to customize warning settings.
 
 We can optionally enable compiler [sanitizers](https://github.com/google/sanitizers) for the project.
 Sanitizers are run-time checks that catch common bugs.
 Not all compilers support all the sanitizers,
 and enabling non-supported sanitizer triggers either a compile-time error or warning.
-The option `BP_USE_ASAN` enables the address sanitizer;
-`BP_USE_TSAN` enables the thread sanitizer;
-`BP_USE_MSAN` enables the memory sanitizer;
-`BP_USE_UBSAN` enables the undefined behavior sanitizer.
+The option `BEYOND_CORE_USE_ASAN` enables the address sanitizer;
+`BEYOND_CORE_USE_TSAN` enables the thread sanitizer;
+`BEYOND_CORE_USE_MSAN` enables the memory sanitizer;
+`BEYOND_CORE_USE_UBSAN` enables the undefined behavior sanitizer.
 
 ## All the CMake Options
-- `BP_BUILD_TESTS` (`ON` by default) enables the building of unit test
-- `BP_BUILD_TESTS_COVERAGE` (`OFF` by default) enables the test coverage with `gcov` and `lcov`
-- `BP_WARNING_AS_ERROR` (`ON` by default) treats warnings as errors
-- `BP_USE_ASAN` (`OFF` by default) enables the address sanitizer
-- `BP_USE_TSAN` (`OFF` by default) enables the thread sanitizer
-- `BP_USE_MSAN` (`OFF` by default) enables the memory sanitizer
-- `BP_USE_UBSAN` (`OFF` by default) enables the undefined behavior sanitizer
+- `BEYOND_CORE_BUILD_TESTS` (`ON` by default) enables the building of unit test
+- `BEYOND_CORE_BUILD_TESTS_COVERAGE` (`OFF` by default) enables the test coverage with `gcov` and `lcov`
+- `BEYOND_CORE_WARNING_AS_ERROR` (`ON` by default) treats warnings as errors
+- `BEYOND_CORE_USE_ASAN` (`OFF` by default) enables the address sanitizer
+- `BEYOND_CORE_USE_TSAN` (`OFF` by default) enables the thread sanitizer
+- `BEYOND_CORE_USE_MSAN` (`OFF` by default) enables the memory sanitizer
+- `BEYOND_CORE_USE_UBSAN` (`OFF` by default) enables the undefined behavior sanitizer
 
 ## License
 This repository is released under Public Domain, use it in whatever way you want. See [License](file:License) for more information.

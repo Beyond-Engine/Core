@@ -19,7 +19,7 @@ matrix:
     - <<: *linux
       compiler: gcc
       name: GCC 9 with Unit Test
-      env: CC="/usr/bin/gcc-9" CXX="/usr/bin/g++-9" CMAKE_OPTIONS="-DBP_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release"
+      env: CC="/usr/bin/gcc-9" CXX="/usr/bin/g++-9" CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release"
       addons:
         apt:
           sources:
@@ -34,7 +34,7 @@ matrix:
     - <<: *linux
       compiler: clang
       name: Clang 9 with Unit Test
-      env: CC="/usr/bin/clang-9" CXX="/usr/bin/clang++-9" CMAKE_OPTIONS="-DBP_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release"
+      env: CC="/usr/bin/clang-9" CXX="/usr/bin/clang++-9" CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release"
       addons:
         apt:
           packages:
@@ -48,7 +48,7 @@ matrix:
     - <<: *linux
       compiler: gcc
       name: Coverage
-      env: BUILD_ONLY=1 CC="/usr/bin/gcc-9" CXX="/usr/bin/g++-9" GCOV="/usr/bin/gcov-9" CMAKE_OPTIONS=" -DCMAKE_BUILD_TYPE=Debug -DBP_BUILD_TESTS=ON -DBP_BUILD_TESTS_COVERAGE=ON" CODECOV_TOKEN="bfb807d5-6b2e-4d8d-8dae-0dcabf3c5c68"
+      env: BUILD_ONLY=1 CC="/usr/bin/gcc-9" CXX="/usr/bin/g++-9" GCOV="/usr/bin/gcov-9" CMAKE_OPTIONS=" -DCMAKE_BUILD_TYPE=Debug -DBEYOND_CORE_BUILD_TESTS=ON -DBEYOND_CORE_BUILD_TESTS_COVERAGE=ON" CODECOV_TOKEN="bfb807d5-6b2e-4d8d-8dae-0dcabf3c5c68"
       addons:
         apt:
           sources:
@@ -67,7 +67,7 @@ matrix:
     - <<: *linux
       compiler: clang
       name: Clang 9 with ASAN and UBSAN
-      env: CC="/usr/bin/clang-9" CXX="/usr/bin/clang++-9" CMAKE_OPTIONS="-DBP_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=DEBUG -DBP_USE_ASAN=ON -DBP_USE_UBSAN=ON"
+      env: CC="/usr/bin/clang-9" CXX="/usr/bin/clang++-9" CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=DEBUG -DBEYOND_CORE_USE_ASAN=ON -DBEYOND_CORE_USE_UBSAN=ON"
       addons:
         apt:
           packages:
@@ -79,7 +79,7 @@ matrix:
     - <<: *linux
       compiler: clang
       name: Clang 9 with TSAN
-      env: CC="/usr/bin/clang-9" CXX="/usr/bin/clang++-9" CMAKE_OPTIONS="-DBP_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=DEBUG -DBP_USE_TSAN=ON"
+      env: CC="/usr/bin/clang-9" CXX="/usr/bin/clang++-9" CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=DEBUG -DBEYOND_CORE_USE_TSAN=ON"
       addons:
         apt:
           packages:
@@ -92,7 +92,7 @@ matrix:
     # - <<: *linux
     #   compiler: clang
     #   name: Clang 9 with MSAN
-    #   env: CC="/usr/bin/clang-9" CXX="/usr/bin/clang++-9" CMAKE_OPTIONS="-DBP_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=DEBUG -DBP_USE_MSAN=ON"
+    #   env: CC="/usr/bin/clang-9" CXX="/usr/bin/clang++-9" CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=DEBUG -DBEYOND_CORE_USE_MSAN=ON"
     #   addons:
     #     apt:
     #       packages:
