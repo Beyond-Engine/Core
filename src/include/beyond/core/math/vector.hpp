@@ -388,8 +388,10 @@ operator+(const Subvector<Trait, dimensions, indices1...>& v1,
   return typename Trait::VectorType{(v1.elem[indices1] + v2.elem[indices2])...};
 }
 
+#if defined(__GNUC__) || defined(__GNUG__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsequence-point"
+#endif
 
 template <typename Trait, std::size_t dimensions, std::size_t... indices1>
 [[nodiscard]] constexpr auto
@@ -470,7 +472,10 @@ dot(const Subvector<Trait, dimensions, indices1...>& v1,
 {
   return (... + (v1.elem[indices1] * v2.elem[indices2]));
 }
+
+#if defined(__GNUC__) || defined(__GNUG__)
 #pragma GCC diagnostic pop
+#endif
 
 template <typename Trait, std::size_t idx1, std::size_t idy1, std::size_t idz1,
           std::size_t idx2, std::size_t idy2, std::size_t idz2>

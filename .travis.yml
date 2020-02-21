@@ -10,8 +10,8 @@ linux: &linux
     - pip install conan cmake
   script:
     - mkdir build && cd build
-    - cmake .. $CMAKE_OPTIONS
-    - make
+    - cmake  -G Ninja .. $CMAKE_OPTIONS
+    - cmake --build .
     - if [ "${BUILD_ONLY}" != "1" ]; then ctest --verbose; fi
 
 matrix:
@@ -19,13 +19,17 @@ matrix:
     - <<: *linux
       compiler: gcc
       name: GCC 9 with Unit Test
-      env: CC="/usr/bin/gcc-9" CXX="/usr/bin/g++-9" CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release"
+      env:
+        - CC="/usr/bin/gcc-9"
+        - CXX="/usr/bin/g++-9"
+        - CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release"
       addons:
         apt:
           sources:
             - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - g++-9
+            - ninja-build
       before_script:
         - sudo ln -s /usr/bin/gcc-9 /usr/local/bin/gcc
         - sudo ln -s /usr/bin/g++-9 /usr/local/bin/g++
@@ -34,22 +38,33 @@ matrix:
     - <<: *linux
       compiler: clang
       name: Clang 9 with Unit Test
-      env: CC="/usr/bin/clang-9" CXX="/usr/bin/clang++-9" CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release"
+      env:
+        - CC="clang-9"
+        - CXX="clang++-9"
+        - CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release"
       addons:
         apt:
+          sources:
+              - sourceline: 'ppa:ubuntu-toolchain-r/test'
+              - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-9 main'
+                key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
             - g++-9
             - clang-9
-      before_script:
-        - sudo ln -s /usr/bin/clang-9 /usr/local/bin/clang
-        - sudo ln -s /usr/bin/clang++-9 /usr/local/bin/clang++
+            - ninja-build
 
 
     # Coverage
     - <<: *linux
       compiler: gcc
       name: Coverage
-      env: BUILD_ONLY=1 CC="/usr/bin/gcc-9" CXX="/usr/bin/g++-9" GCOV="/usr/bin/gcov-9" CMAKE_OPTIONS=" -DCMAKE_BUILD_TYPE=Debug -DBEYOND_CORE_BUILD_TESTS=ON -DBEYOND_CORE_BUILD_TESTS_COVERAGE=ON" CODECOV_TOKEN="e80759bf-77cf-4ea9-a0b7-19aff9167d4d"
+      env:
+        - BUILD_ONLY=1
+        - CC="/usr/bin/gcc-9"
+        - CXX="/usr/bin/g++-9"
+        - GCOV="/usr/bin/gcov-9"
+        - CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DBEYOND_CORE_BUILD_TESTS=ON -DBEYOND_CORE_BUILD_TESTS_COVERAGE=ON"
+        - CODECOV_TOKEN="e80759bf-77cf-4ea9-a0b7-19aff9167d4d"
       addons:
         apt:
           sources:
@@ -57,52 +72,50 @@ matrix:
           packages:
             - g++-9
             - lcov
+            - ninja-build
       before_script:
         - sudo ln -s /usr/bin/gcc-9 /usr/local/bin/gcc
         - sudo ln -s /usr/bin/g++-9 /usr/local/bin/g++
         - sudo ln -s /usr/bin/gcov-9 /usr/local/bin/gcov
       after_success:
-        - make coverage
+        - cmake --build . --target coverage
         - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports";
 
     - <<: *linux
       compiler: clang
       name: Clang 9 with ASAN and UBSAN
-      env: CC="/usr/bin/clang-9" CXX="/usr/bin/clang++-9" CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=DEBUG -DBEYOND_CORE_USE_ASAN=ON -DBEYOND_CORE_USE_UBSAN=ON"
+      env:
+        - CC="clang-9"
+        - CXX="clang++-9"
+        - CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=DEBUG -DBEYOND_CORE_USE_ASAN=ON -DBEYOND_CORE_USE_UBSAN=ON"
       addons:
         apt:
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-9 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
             - g++-9
             - clang-9
-      before_script:
-        - sudo ln -s /usr/bin/clang-9 /usr/local/bin/clang
-        - sudo ln -s /usr/bin/clang++-9 /usr/local/bin/clang++
+            - ninja-build
 
     - <<: *linux
       compiler: clang
       name: Clang 9 with TSAN
-      env: CC="/usr/bin/clang-9" CXX="/usr/bin/clang++-9" CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=DEBUG -DBEYOND_CORE_USE_TSAN=ON"
+      env:
+        - CC="clang-9"
+        - CXX="clang++-9"
+        - CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=DEBUG -DBEYOND_CORE_USE_TSAN=ON"
       addons:
         apt:
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-9 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
             - g++-9
             - clang-9
-      before_script:
-        - sudo ln -s /usr/bin/clang-9 /usr/local/bin/clang
-        - sudo ln -s /usr/bin/clang++-9 /usr/local/bin/clang++
-
-    # MSAN seems to have false positive on libstdc++ :-(
-    # - <<: *linux
-    #   compiler: clang
-    #   name: Clang 9 with MSAN
-    #   env: CC="/usr/bin/clang-9" CXX="/usr/bin/clang++-9" CMAKE_OPTIONS="-DBEYOND_CORE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=DEBUG -DBEYOND_CORE_USE_MSAN=ON"
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - clang-9
-    #   before_script:
-    #     - sudo ln -s /usr/bin/clang-9 /usr/local/bin/clang
-    #     - sudo ln -s /usr/bin/clang++-9 /usr/local/bin/clang++
+            - ninja-build
 
     #
     # Git Check

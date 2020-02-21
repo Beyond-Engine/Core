@@ -22,15 +22,15 @@ add_executable(${TEST_TARGET_NAME}
 target_link_libraries(${TEST_TARGET_NAME} PRIVATE beyond::core compiler_options
         CONAN_PKG::Catch2)
 
-if (${BEYOND_BUILD_TESTS_COVERAGE})
+if (${BEYOND_CORE_BUILD_TESTS_COVERAGE})
     set(CMAKE_STATIC_LINKER_FLAGS "--whole-archive")
     set(CMAKE_SHARED_LINKER_FLAGS "--whole-archive")
 
     include("CodeCoverage")
-    target_link_libraries(${TEST_TARGET_NAME} PRIVATE coverage)
+    APPEND_COVERAGE_COMPILER_FLAGS("-g -O0 -fprofile-arcs -ftest-coverage")
     set(COVERAGE_LCOV_EXCLUDES '/usr/*' '*/.conan/*' '*/test/*' 'test/*' '*/src/utils/panic.cpp')
     SETUP_TARGET_FOR_COVERAGE_LCOV(
-            NAME ${PROJECT_NAME}CoreTestCoverage# New target name
+            NAME coverage# New target name
             EXECUTABLE ${TEST_TARGET_NAME}
             DEPENDENCIES ${TEST_TARGET_NAME}  # Dependencies to build first
     )

@@ -308,24 +308,24 @@ public:
       return data_;
     }
 
-    [[nodiscard]] constexpr auto operator++() noexcept -> Itr&
+    constexpr auto operator++() noexcept -> Itr&
     {
       ++data_;
       return *this;
     }
 
-    [[nodiscard]] constexpr auto operator--() noexcept -> Itr&
+    constexpr auto operator--() noexcept -> Itr&
     {
       --data_;
       return *this;
     }
 
-    [[nodiscard]] constexpr auto operator++(int) noexcept -> Itr
+    constexpr auto operator++(int) noexcept -> Itr
     {
       return Itr{data_++};
     }
 
-    [[nodiscard]] constexpr auto operator--(int) noexcept -> Itr
+    constexpr auto operator--(int) noexcept -> Itr
     {
       return Itr{data_--};
     }

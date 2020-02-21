@@ -5,7 +5,7 @@ environment:
   MSVC_DEFAULT_OPTIONS: ON
 
 os:
-  - Visual Studio 2017
+  - Visual Studio 2019
 
 init:
   - git config --global core.autocrlf input
@@ -23,13 +23,14 @@ configuration:
 
 #Cmake will autodetect the compiler, but we set the arch
 before_build:
+  - git submodule update --init --recursive
   - set PATH=%PATH%;%PYTHON%/Scripts/
   - pip.exe install conan
   - cmake -H. -BBuild -A%PLATFORM% -DBEYOND_CORE_BUILD_TESTS=ON
 
 # build with MSBuild
 build:
-  project: Build\CPPBoilerplate.sln   # path to Visual Studio solution or project
+  project: Build\beyond_core.sln       # path to Visual Studio solution or project
   parallel: true                        # enable MSBuild parallel builds
   verbosity: normal                     # MSBuild verbosity level {quiet|minimal|normal|detailed}
 

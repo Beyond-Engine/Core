@@ -101,7 +101,7 @@ public:
   {
     {
       std::unique_lock lock{mutex_, std::try_to_lock};
-      if (!lock) {
+      if (lock.owns_lock()) {
         return false;
       }
       queue_.emplace(std::forward<F>(f));
