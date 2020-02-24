@@ -13,11 +13,11 @@ add_executable(${TEST_TARGET_NAME}
         "math/angle_test.cpp"
         "math/functions_test.cpp"
         "math/vector_test.cpp"
+        "math/matrix_test.cpp"
         "utils/functional_test.cpp"
         "utils/function_ref_test.cpp"
         "utils/handle_test.cpp"
-        "utils/named_type_test.cpp"
-        )
+        "utils/named_type_test.cpp")
 
 target_link_libraries(${TEST_TARGET_NAME} PRIVATE beyond::core compiler_options
         CONAN_PKG::Catch2)
