@@ -1,3 +1,6 @@
+#include <cstdlib>
+#include <ostream>
+
 #include "beyond/core/utils/assert.hpp"
 
 namespace beyond {
@@ -10,11 +13,16 @@ namespace beyond {
 
 template <typename T> struct Mat4 {
 private:
-  static constexpr int row_count = 4;
-  static constexpr int col_count = 4;
+  static constexpr int n_ = 4;
+  static constexpr int size_ = 16;
+
+  static constexpr auto flattern(int i, int j) -> int
+  {
+    return j * n_ + i;
+  }
 
 public:
-  T data[16];
+  T data[size_];
 
   constexpr Mat4() noexcept
       : data{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
@@ -32,11 +40,68 @@ public:
 
   /**
    * @brief Gets the element of the matrix at i-th row and j-th column
+   *
+   * @warning If the i and j are out-of-index, the result is undefined
    */
   [[nodiscard]] constexpr auto operator()(int i, int j) const -> T
   {
-    BEYOND_ASSERT(i >= 0 && j >= 0 && i <= row_count && j < col_count);
-    return data[j * row_count + i];
+    BEYOND_ASSERT(i >= 0 && j >= 0 && i <= n_ && j < n_);
+    return data[flattern(i, j)];
+  }
+
+  /// @overload
+  [[nodiscard]] constexpr auto operator()(int i, int j) -> T&
+  {
+    BEYOND_ASSERT(i >= 0 && j >= 0 && i <= n_ && j < n_);
+    return data[flattern(i, j)];
+  }
+
+  [[nodiscard]] constexpr auto size() const -> int
+  {
+    return size_;
+  }
+
+  friend constexpr auto operator==(const Mat4& lhs, const Mat4& rhs) -> bool
+  {
+    for (int i = 0; i < size_; ++i) {
+      if (lhs.data[i] != rhs.data[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  friend constexpr auto operator!=(const Mat4& lhs, const Mat4& rhs) -> bool
+  {
+    return !(lhs == rhs);
+  }
+
+  friend constexpr auto operator*(const Mat4& lhs, const Mat4& rhs) -> Mat4
+  {
+    Mat4 result;
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) {
+        T n{};
+        for (int k = 0; k < 4; k++) {
+          n += lhs(i, k) * rhs(k, j);
+        }
+        result(i, j) = n;
+      }
+    }
+    return result;
+  }
+
+  friend auto operator<<(std::ostream& os, const Mat4& m) -> std::ostream&
+  {
+    os << "mat4(\n";
+    for (int i = 0; i < n_; i++) {
+      for (int j = 0; j < n_; j++) {
+        os << m.data[flattern(i, j)] << ", ";
+      }
+      os << '\n';
+    }
+    os << "\n)";
+    return os;
   }
 };
 
@@ -81,6 +146,79 @@ SCENARIO("Constructing and inspecting a 4x4 matrix", "[beyond.core.math.mat]")
       REQUIRE(M(1, 2) == Approx(7.5));
       REQUIRE(M(2, 2) == Approx(11));
       REQUIRE(M(3, 2) == Approx(15.5));
+    }
+  }
+
+  GIVEN("The following 4x4 matrix")
+  {
+    const beyond::Mat4f M1{
+        // clang-format off
+        1,  2,  3,  4,
+        5,  6,  7,  8,
+        9,  10, 11, 12,
+        13, 14, 15, 16
+        // clang-format on
+    };
+    AND_GIVEN("A copied matrix")
+    {
+      const auto M2 = M1;
+      THEN("They should be equal to each other")
+      {
+        REQUIRE(M1 == M2);
+      }
+    }
+    AND_GIVEN("A different matrix")
+    {
+      auto M2 = M1;
+      M2(0, 0) = 5;
+      THEN("They should be equal to each other")
+      {
+        REQUIRE(M1 != M2);
+      }
+    }
+  }
+
+  GIVEN("Two matrices A and B")
+  {
+    const beyond::Mat4f A{
+        // clang-format off
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 8, 7, 6,
+        5, 4, 3, 2
+        // clang-format on
+    };
+    const beyond::Mat4f B{
+        // clang-format off
+        -2,  1,  2,  3,
+        3,  2,  1,  -1,
+        4,  3, 6, 5,
+        1, 2, 7, 8
+        // clang-format on
+    };
+
+    THEN("AxB generates another matrix")
+    {
+      const beyond::Mat4f AB{
+          // clang-format off
+          20, 22, 50,  48,
+          44, 54, 114, 108,
+          40, 58, 110, 102,
+          16, 26, 46,  42
+          // clang-format on
+      };
+
+      const beyond::Mat4f BA{
+          // clang-format off
+          36, 30, 24, 18,
+          17, 22, 27, 32,
+          98, 94, 90, 86,
+          114, 102, 90, 78,
+          // clang-format on
+      };
+
+      REQUIRE(A * B == AB);
+      REQUIRE(B * A == BA);
     }
   }
 }
