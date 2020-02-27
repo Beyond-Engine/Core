@@ -298,41 +298,6 @@
   }
 }
 
- TEST_CASE("Vector Algebra between different types", "[beyond.core.math.vec]")
-{
-  SECTION("Multiplication should give the common type")
-  {
-    constexpr double d1 = 3.14;
-    constexpr double d2 = 2.37;
-    constexpr double d3 = 5.12;
-    constexpr double d4 = 6.12;
-    constexpr int i1 = 2;
-    constexpr int i2 = 4;
-    constexpr int i3 = 6;
-    constexpr int i4 = 7;
-
-    const beyond::Vector4<double> v1{d1, d2, d3, d4};
-    const auto result1 = v1 * i2;
-    const auto result11 = i2 * v1;
-    static_assert(std::is_same_v<decltype(result1)::ValueType, double>);
-    REQUIRE(result1.x == Approx(d1 * i2));
-    REQUIRE(result1.y == Approx(d2 * i2));
-    REQUIRE(result1.z == Approx(d3 * i2));
-    REQUIRE(result1.w == Approx(d4 * i2));
-    REQUIRE(result1 == result11);
-
-    const beyond::Vector4i v2{i1, i2, i3, i4};
-    const auto result2 = v2 * d1;
-    const auto result21 = d1 * v2;
-    static_assert(std::is_same_v<decltype(result2)::ValueType, double>);
-    REQUIRE(result2.x == Approx(d1 * i1));
-    REQUIRE(result2.y == Approx(d1 * i2));
-    REQUIRE(result2.z == Approx(d1 * i3));
-    REQUIRE(result2.w == Approx(d1 * i4));
-    REQUIRE(result2 == result21);
-  }
-}
-
  TEST_CASE("Vector Swizzling", "[beyond.core.math.vec]")
 {
   constexpr float a = 2.1f;
@@ -383,13 +348,13 @@
   {
     SECTION("Scalar multiplication")
     {
-      const beyond::Vector2f result1 = v1.xy * 2;
-      const beyond::Vector2f result2 = 2 * v1.xy;
-      CHECK(result1.x == Approx(v1.x * 2));
-      CHECK(result1.y == Approx(v1.y * 2));
+      const beyond::Vector2f result1 = v1.xy * 2.f;
+      const beyond::Vector2f result2 = 2.f * v1.xy;
+      CHECK(result1.x == Approx(v1.x * 2.f));
+      CHECK(result1.y == Approx(v1.y * 2.f));
       CHECK(result1 == result2);
 
-      v1.xy *= 2;
+      v1.xy *= 2.f;
       CHECK(result1 == v1);
     }
 
