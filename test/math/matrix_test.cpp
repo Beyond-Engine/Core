@@ -16,7 +16,7 @@ private:
   static constexpr int n_ = 4;
   static constexpr int size_ = 16;
 
-  static constexpr auto flattern(int i, int j) -> int
+  static constexpr auto flattern(int i, int j) noexcept -> int
   {
     return j * n_ + i;
   }
@@ -43,25 +43,31 @@ public:
    *
    * @warning If the i and j are out-of-index, the result is undefined
    */
-  [[nodiscard]] constexpr auto operator()(int i, int j) const -> T
+  [[nodiscard]] constexpr auto operator()(int i, int j) const noexcept -> T
   {
     BEYOND_ASSERT(i >= 0 && j >= 0 && i <= n_ && j < n_);
     return data[flattern(i, j)];
   }
 
   /// @overload
-  [[nodiscard]] constexpr auto operator()(int i, int j) -> T&
+  [[nodiscard]] constexpr auto operator()(int i, int j) noexcept -> T&
   {
     BEYOND_ASSERT(i >= 0 && j >= 0 && i <= n_ && j < n_);
     return data[flattern(i, j)];
   }
 
-  [[nodiscard]] constexpr auto size() const -> int
+  [[nodiscard]] constexpr auto dimension() const noexcept -> int
+  {
+    return n_;
+  }
+
+  [[nodiscard]] constexpr auto size() const noexcept -> int
   {
     return size_;
   }
 
-  friend constexpr auto operator==(const Mat4& lhs, const Mat4& rhs) -> bool
+  friend constexpr auto operator==(const Mat4& lhs, const Mat4& rhs) noexcept
+      -> bool
   {
     for (int i = 0; i < size_; ++i) {
       if (lhs.data[i] != rhs.data[i]) {
@@ -71,12 +77,14 @@ public:
     return true;
   }
 
-  friend constexpr auto operator!=(const Mat4& lhs, const Mat4& rhs) -> bool
+  friend constexpr auto operator!=(const Mat4& lhs, const Mat4& rhs) noexcept
+      -> bool
   {
     return !(lhs == rhs);
   }
 
-  friend constexpr auto operator*(const Mat4& lhs, const Mat4& rhs) -> Mat4
+  friend constexpr auto operator*(const Mat4& lhs, const Mat4& rhs) noexcept
+      -> Mat4
   {
     Mat4 result;
     for (int i = 0; i < 4; i++) {
@@ -104,6 +112,18 @@ public:
     return os;
   }
 };
+
+template <typename T>
+constexpr auto transpose(const Mat4<T>& m) noexcept -> Mat4<T>
+{
+  Mat4<T> r;
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      r(i, j) = m(j, i);
+    }
+  }
+  return r;
+}
 
 using Mat4f = Mat4<float>;
 
@@ -190,14 +210,14 @@ SCENARIO("Constructing and inspecting a 4x4 matrix", "[beyond.core.math.mat]")
     };
     const beyond::Mat4f B{
         // clang-format off
-        -2,  1,  2,  3,
+        -2, 1,  2,  3,
         3,  2,  1,  -1,
-        4,  3, 6, 5,
-        1, 2, 7, 8
+        4,  3,  6,   5,
+        1,  2,  7,   8
         // clang-format on
     };
 
-    THEN("AxB generates another matrix")
+    THEN("A*B generates correct result")
     {
       const beyond::Mat4f AB{
           // clang-format off
@@ -207,7 +227,11 @@ SCENARIO("Constructing and inspecting a 4x4 matrix", "[beyond.core.math.mat]")
           16, 26, 46,  42
           // clang-format on
       };
+      REQUIRE(A * B == AB);
+    }
 
+    THEN("B*A generates correct result")
+    {
       const beyond::Mat4f BA{
           // clang-format off
           36, 30, 24, 18,
@@ -217,8 +241,38 @@ SCENARIO("Constructing and inspecting a 4x4 matrix", "[beyond.core.math.mat]")
           // clang-format on
       };
 
-      REQUIRE(A * B == AB);
       REQUIRE(B * A == BA);
+    }
+  }
+
+  GIVEN("Two matrices A")
+  {
+    const beyond::Mat4f A{
+        // clang-format off
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 8, 7, 6,
+        5, 4, 3, 2
+        // clang-format on
+    };
+
+    const beyond::Mat4f AT{
+        // clang-format off
+        1, 5, 9, 5,
+        2, 6, 8, 4,
+        3, 7, 7, 3,
+        4, 8, 6, 2,
+        // clang-format on
+    };
+
+    THEN("Get its transpose")
+    {
+      REQUIRE(AT == transpose(A));
+    }
+
+    THEN("The transpose of its transpose is the original matrix")
+    {
+      REQUIRE(A == transpose(AT));
     }
   }
 }
