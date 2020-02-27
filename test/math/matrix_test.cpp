@@ -11,18 +11,122 @@ namespace beyond {
  * @{
  */
 
-template <typename T> struct Mat4 {
-private:
-  static constexpr int n_ = 4;
-  static constexpr int size_ = 16;
+template <typename T, int dim, typename Derived> struct MatrixBase {
+  constexpr auto underlying() noexcept -> Derived&
+  {
+    return static_cast<Derived&>(*this);
+  }
+
+  constexpr auto underlying() const noexcept -> Derived const&
+  {
+    return static_cast<const Derived&>(*this);
+  }
+
+  [[nodiscard]] static constexpr auto dimension() noexcept -> int
+  {
+    return dim;
+  }
+
+  [[nodiscard]] static constexpr auto size() noexcept -> int
+  {
+    return size_;
+  }
+
+  /**
+   * @brief Gets the element of the matrix at i-th row and j-th column
+   *
+   * @warning If the i and j are out-of-index, the result is undefined
+   */
+  [[nodiscard]] constexpr auto operator()(int i, int j) const noexcept -> T
+  {
+    BEYOND_ASSERT(i >= 0 && j >= 0 && i <= dimension() && j < dimension());
+    return underlying().data[flattern(i, j)];
+  }
+
+  /// @overload
+  [[nodiscard]] constexpr auto operator()(int i, int j) noexcept -> T&
+  {
+    BEYOND_ASSERT(i >= 0 && j >= 0 && i <= dimension() && j < dimension());
+    return underlying().data[this->flattern(i, j)];
+  }
+
+  friend constexpr auto operator==(const MatrixBase& lhs,
+                                   const MatrixBase& rhs) noexcept -> bool
+  {
+    for (int i = 0; i < MatrixBase::size(); ++i) {
+      if (lhs.underlying().data[i] != rhs.underlying().data[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  friend constexpr auto operator!=(const MatrixBase& lhs,
+                                   const MatrixBase& rhs) noexcept -> bool
+  {
+    return !(lhs == rhs);
+  }
+
+  friend constexpr auto operator*(const MatrixBase& lhs,
+                                  const MatrixBase& rhs) noexcept -> Derived
+  {
+    Derived result;
+    for (int i = 0; i < dimension(); i++) {
+      for (int j = 0; j < dimension(); j++) {
+        T n{};
+        for (int k = 0; k < dimension(); k++) {
+          n += lhs(i, k) * rhs(k, j);
+        }
+        result(i, j) = n;
+      }
+    }
+    return result;
+  }
+
+protected:
+  constexpr MatrixBase() noexcept = default;
 
   static constexpr auto flattern(int i, int j) noexcept -> int
   {
-    return j * n_ + i;
+    return j * dim + i;
   }
 
-public:
-  T data[size_];
+private:
+  static constexpr int size_ = dim * dim;
+};
+
+template <typename T, int dim, typename Derived>
+auto operator<<(std::ostream& os, const MatrixBase<T, dim, Derived>& m)
+    -> std::ostream&
+{
+  os << "mat" << m.dimension() << "(\n";
+  for (int i = 0; i < m.dimension(); i++) {
+    for (int j = 0; j < m.dimension(); j++) {
+      os << m.underlying().data[i * m.dimension() + j] << ", ";
+    }
+    os << '\n';
+  }
+  os << "\n)";
+  return os;
+}
+
+template <typename T, int dim, typename Derived>
+constexpr auto transpose(const MatrixBase<T, dim, Derived>& m) noexcept
+    -> Derived
+{
+  Derived r;
+  for (int i = 0; i < m.dimension(); ++i) {
+    for (int j = 0; j < m.dimension(); ++j) {
+      r(i, j) = m(j, i);
+    }
+  }
+  return r;
+}
+
+template <typename T> struct Mat4 : MatrixBase<T, 4, Mat4<T>> {
+  using BaseType = MatrixBase<T, 4, float>;
+
+  T data[BaseType::size()];
 
   constexpr Mat4() noexcept
       : data{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
@@ -37,93 +141,7 @@ public:
              v02, v12, v22, v32, v03, v13, v23, v33}
   {
   }
-
-  /**
-   * @brief Gets the element of the matrix at i-th row and j-th column
-   *
-   * @warning If the i and j are out-of-index, the result is undefined
-   */
-  [[nodiscard]] constexpr auto operator()(int i, int j) const noexcept -> T
-  {
-    BEYOND_ASSERT(i >= 0 && j >= 0 && i <= n_ && j < n_);
-    return data[flattern(i, j)];
-  }
-
-  /// @overload
-  [[nodiscard]] constexpr auto operator()(int i, int j) noexcept -> T&
-  {
-    BEYOND_ASSERT(i >= 0 && j >= 0 && i <= n_ && j < n_);
-    return data[flattern(i, j)];
-  }
-
-  [[nodiscard]] constexpr auto dimension() const noexcept -> int
-  {
-    return n_;
-  }
-
-  [[nodiscard]] constexpr auto size() const noexcept -> int
-  {
-    return size_;
-  }
-
-  friend constexpr auto operator==(const Mat4& lhs, const Mat4& rhs) noexcept
-      -> bool
-  {
-    for (int i = 0; i < size_; ++i) {
-      if (lhs.data[i] != rhs.data[i]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  friend constexpr auto operator!=(const Mat4& lhs, const Mat4& rhs) noexcept
-      -> bool
-  {
-    return !(lhs == rhs);
-  }
-
-  friend constexpr auto operator*(const Mat4& lhs, const Mat4& rhs) noexcept
-      -> Mat4
-  {
-    Mat4 result;
-    for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < 4; j++) {
-        T n{};
-        for (int k = 0; k < 4; k++) {
-          n += lhs(i, k) * rhs(k, j);
-        }
-        result(i, j) = n;
-      }
-    }
-    return result;
-  }
-
-  friend auto operator<<(std::ostream& os, const Mat4& m) -> std::ostream&
-  {
-    os << "mat4(\n";
-    for (int i = 0; i < n_; i++) {
-      for (int j = 0; j < n_; j++) {
-        os << m.data[flattern(i, j)] << ", ";
-      }
-      os << '\n';
-    }
-    os << "\n)";
-    return os;
-  }
 };
-
-template <typename T>
-constexpr auto transpose(const Mat4<T>& m) noexcept -> Mat4<T>
-{
-  Mat4<T> r;
-  for (int i = 0; i < 4; ++i) {
-    for (int j = 0; j < 4; ++j) {
-      r(i, j) = m(j, i);
-    }
-  }
-  return r;
-}
 
 using Mat4f = Mat4<float>;
 
