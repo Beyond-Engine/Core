@@ -50,25 +50,55 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
     return underlying().data[this->flattern(i, j)];
   }
 
-  friend constexpr auto operator==(const MatrixBase& lhs,
-                                   const MatrixBase& rhs) noexcept -> bool
+  constexpr auto operator+=(const MatrixBase& other) -> Derived&
   {
     for (int i = 0; i < MatrixBase::size(); ++i) {
-      if (lhs.underlying().data[i] != rhs.underlying().data[i]) {
-        return false;
-      }
+      underlying().data[i] += other.underlying().data[i];
     }
-    return true;
+
+    return underlying();
   }
 
-  friend constexpr auto operator!=(const MatrixBase& lhs,
-                                   const MatrixBase& rhs) noexcept -> bool
+  constexpr auto operator-=(const MatrixBase& other) -> Derived&
   {
-    return !(lhs == rhs);
+    for (int i = 0; i < MatrixBase::size(); ++i) {
+      underlying().data[i] -= other.underlying().data[i];
+    }
+
+    return underlying();
   }
 
-  friend constexpr auto operator*(const MatrixBase& lhs,
-                                  const MatrixBase& rhs) noexcept -> Derived
+  constexpr auto operator*=(const MatrixBase& other) noexcept -> Derived
+  {
+    this->underlying() = this->underlying() * other;
+    return this->underlying();
+  }
+
+  [[nodiscard]] friend constexpr auto operator+(const MatrixBase& lhs,
+                                                const MatrixBase& rhs) noexcept
+      -> Derived
+  {
+    Derived result;
+    for (int i = 0; i < MatrixBase::size(); ++i) {
+      result.data[i] = lhs.underlying().data[i] + rhs.underlying().data[i];
+    }
+    return result;
+  };
+
+  [[nodiscard]] friend constexpr auto operator-(const MatrixBase& lhs,
+                                                const MatrixBase& rhs) noexcept
+      -> Derived
+  {
+    Derived result;
+    for (int i = 0; i < MatrixBase::size(); ++i) {
+      result.data[i] = lhs.underlying().data[i] - rhs.underlying().data[i];
+    }
+    return result;
+  };
+
+  [[nodiscard]] friend constexpr auto operator*(const MatrixBase& lhs,
+                                                const MatrixBase& rhs) noexcept
+      -> Derived
   {
     Derived result;
     for (int i = 0; i < dimension(); i++) {
@@ -81,6 +111,25 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
       }
     }
     return result;
+  }
+
+  [[nodiscard]] friend constexpr auto operator==(const MatrixBase& lhs,
+                                                 const MatrixBase& rhs) noexcept
+      -> bool
+  {
+    for (int i = 0; i < MatrixBase::size(); ++i) {
+      if (lhs.underlying().data[i] != rhs.underlying().data[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  [[nodiscard]] friend constexpr auto operator!=(const MatrixBase& lhs,
+                                                 const MatrixBase& rhs) noexcept
+      -> bool
+  {
+    return !(lhs == rhs);
   }
 
 protected:
@@ -102,7 +151,7 @@ auto operator<<(std::ostream& os, const MatrixBase<T, dim, Derived>& m)
   os << "mat" << m.dimension() << "(\n";
   for (int i = 0; i < m.dimension(); i++) {
     for (int j = 0; j < m.dimension(); j++) {
-      os << m.underlying().data[i * m.dimension() + j] << ", ";
+      os << m.underlying().data[j * m.dimension() + i] << ", ";
     }
     os << '\n';
   }
@@ -218,7 +267,7 @@ SCENARIO("Constructing and inspecting a 4x4 matrix", "[beyond.core.math.mat]")
 
   GIVEN("Two matrices A and B")
   {
-    const beyond::Mat4f A{
+    beyond::Mat4f A{
         // clang-format off
         1, 2, 3, 4,
         5, 6, 7, 8,
@@ -226,7 +275,7 @@ SCENARIO("Constructing and inspecting a 4x4 matrix", "[beyond.core.math.mat]")
         5, 4, 3, 2
         // clang-format on
     };
-    const beyond::Mat4f B{
+    beyond::Mat4f B{
         // clang-format off
         -2, 1,  2,  3,
         3,  2,  1,  -1,
@@ -235,35 +284,101 @@ SCENARIO("Constructing and inspecting a 4x4 matrix", "[beyond.core.math.mat]")
         // clang-format on
     };
 
+    constexpr beyond::Mat4f Sum{
+        // clang-format off
+        -1, 3, 5, 7,
+        8, 8, 8, 7,
+        13, 11, 13, 11,
+        6, 6, 10, 10,
+        // clang-format on
+    };
+
+    constexpr beyond::Mat4f Diff{
+        // clang-format off
+        3, 1, 1, 1,
+        2, 4, 6, 9,
+        5, 5, 1, 1,
+        4, 2, -4, -6,
+        // clang-format on
+    };
+
+    constexpr beyond::Mat4f AB{
+        // clang-format off
+        20, 22, 50,  48,
+        44, 54, 114, 108,
+        40, 58, 110, 102,
+        16, 26, 46,  42
+        // clang-format on
+    };
+
+    constexpr beyond::Mat4f BA{
+        // clang-format off
+        36, 30, 24, 18,
+        17, 22, 27, 32,
+        98, 94, 90, 86,
+        114, 102, 90, 78,
+        // clang-format on
+    };
+
+    WHEN("A += B")
+    {
+      A += B;
+      THEN("A equal to the component-wise sum")
+      {
+        REQUIRE(A == Sum);
+      }
+    }
+
+    WHEN("A -= B")
+    {
+      A -= B;
+      THEN("A equal to the component-wise subtraction")
+      {
+        REQUIRE(A == Diff);
+      }
+    }
+
+    THEN("A + B equal to the component-wise sum")
+    {
+      REQUIRE(A + B == Sum);
+      REQUIRE(B + A == Sum);
+    }
+
+    THEN("A - B equal to the component-wise sum")
+    {
+      REQUIRE(A - B == Diff);
+    }
+
+    WHEN("A *= B")
+    {
+      A *= B;
+      THEN("A' = A * B")
+      {
+        REQUIRE(A == AB);
+      }
+    }
+
     THEN("A*B generates correct result")
     {
-      const beyond::Mat4f AB{
-          // clang-format off
-          20, 22, 50,  48,
-          44, 54, 114, 108,
-          40, 58, 110, 102,
-          16, 26, 46,  42
-          // clang-format on
-      };
       REQUIRE(A * B == AB);
+    }
+
+    WHEN("B *= A")
+    {
+      B *= A;
+      THEN("B' = B * A")
+      {
+        REQUIRE(B == BA);
+      }
     }
 
     THEN("B*A generates correct result")
     {
-      const beyond::Mat4f BA{
-          // clang-format off
-          36, 30, 24, 18,
-          17, 22, 27, 32,
-          98, 94, 90, 86,
-          114, 102, 90, 78,
-          // clang-format on
-      };
-
       REQUIRE(B * A == BA);
     }
   }
 
-  GIVEN("Two matrices A")
+  GIVEN("Matrices A")
   {
     const beyond::Mat4f A{
         // clang-format off
