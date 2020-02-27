@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <ostream>
 
+#include "beyond/core/math/vector.hpp"
 #include "beyond/core/utils/assert.hpp"
 
 namespace beyond {
@@ -192,6 +193,16 @@ template <typename T> struct Mat4 : MatrixBase<T, 4, Mat4<T>> {
   }
 };
 
+template <typename T>
+constexpr auto operator*(const Mat4<T>& m, const Vector4<T> v) -> Vector4<T>
+{
+  return Vector4<T>(
+      m.data[0] * v.x + m.data[4] * v.y + m.data[8] * v.z + m.data[12] * v.w,
+      m.data[1] * v.x + m.data[5] * v.y + m.data[9] * v.z + m.data[13] * v.w,
+      m.data[2] * v.x + m.data[6] * v.y + m.data[10] * v.z + m.data[14] * v.w,
+      m.data[3] * v.x + m.data[7] * v.y + m.data[11] * v.z + m.data[15] * v.w);
+}
+
 using Mat4f = Mat4<float>;
 
 /** @}
@@ -200,7 +211,7 @@ using Mat4f = Mat4<float>;
 
 #include <catch2/catch.hpp>
 
-SCENARIO("Constructing and inspecting a 4x4 matrix", "[beyond.core.math.mat]")
+SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 {
   GIVEN("A default constructed 4x4 matrix I")
   {
@@ -378,7 +389,7 @@ SCENARIO("Constructing and inspecting a 4x4 matrix", "[beyond.core.math.mat]")
     }
   }
 
-  GIVEN("Matrices A")
+  GIVEN("Matrix A")
   {
     const beyond::Mat4f A{
         // clang-format off
@@ -406,6 +417,24 @@ SCENARIO("Constructing and inspecting a 4x4 matrix", "[beyond.core.math.mat]")
     THEN("The transpose of its transpose is the original matrix")
     {
       REQUIRE(A == transpose(AT));
+    }
+  }
+
+  GIVEN("Matrix A and a vector v")
+  {
+    const beyond::Mat4f A{
+        // clang-format off
+                1, 2, 3, 4,
+                5, 6, 7, 8,
+                9, 8, 7, 6,
+                5, 4, 3, 2
+        // clang-format on
+    };
+    const beyond::Vector4f v{1, 2, 3, 4};
+
+    THEN("A*v gives the correct result")
+    {
+      REQUIRE(A * v == beyond::Vector4f{30, 70, 70, 30});
     }
   }
 }
