@@ -20,8 +20,6 @@ add_library(core
         include/beyond/core/math/vector.hpp
         )
 
-#add_subdirectory(unique_function)
-
 set(BEYOND_CORE_ASSERT_POLICY AUTO CACHE STRING "The policy of enabling
     assertion or not in beyond game engine core.
     AUTO means follow the debug or release build setting.")

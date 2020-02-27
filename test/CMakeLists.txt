@@ -36,4 +36,4 @@ if (${BEYOND_CORE_BUILD_TESTS_COVERAGE})
     )
 endif ()
 
-add_test(${PROJECT_NAME}_test "${CMAKE_BINARY_DIR}/bin/${TEST_TARGET_NAME}")
+add_test(${TEST_TARGET_NAME} "${CMAKE_BINARY_DIR}/bin/${TEST_TARGET_NAME}")
