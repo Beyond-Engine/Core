@@ -75,6 +75,22 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
     return this->underlying();
   }
 
+  constexpr auto operator*=(T scalar) noexcept -> Derived
+  {
+    for (int i = 0; i < MatrixBase::size(); ++i) {
+      underlying().data[i] *= scalar;
+    }
+    return this->underlying();
+  }
+
+  constexpr auto operator/=(T scalar) noexcept -> Derived
+  {
+    for (int i = 0; i < MatrixBase::size(); ++i) {
+      underlying().data[i] /= scalar;
+    }
+    return this->underlying();
+  }
+
   [[nodiscard]] friend constexpr auto operator+(const MatrixBase& lhs,
                                                 const MatrixBase& rhs) noexcept
       -> Derived
@@ -113,6 +129,33 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
     }
     return result;
   }
+
+  [[nodiscard]] friend constexpr auto operator*(const MatrixBase& mat,
+                                                T s) noexcept -> Derived
+  {
+    Derived result;
+    for (int i = 0; i < MatrixBase::size(); ++i) {
+      result.data[i] = mat.underlying().data[i] * s;
+    }
+    return result;
+  };
+
+  [[nodiscard]] friend constexpr auto operator*(T s,
+                                                const MatrixBase& mat) noexcept
+      -> Derived
+  {
+    return mat * s;
+  };
+
+  [[nodiscard]] friend constexpr auto operator/(const MatrixBase& mat,
+                                                T s) noexcept -> Derived
+  {
+    Derived result;
+    for (int i = 0; i < MatrixBase::size(); ++i) {
+      result.data[i] = mat.underlying().data[i] / s;
+    }
+    return result;
+  };
 
   [[nodiscard]] friend constexpr auto operator==(const MatrixBase& lhs,
                                                  const MatrixBase& rhs) noexcept
@@ -191,17 +234,19 @@ template <typename T> struct Mat4 : MatrixBase<T, 4, Mat4<T>> {
              v02, v12, v22, v32, v03, v13, v23, v33}
   {
   }
-};
 
-template <typename T>
-constexpr auto operator*(const Mat4<T>& m, const Vector4<T> v) -> Vector4<T>
-{
-  return Vector4<T>(
-      m.data[0] * v.x + m.data[4] * v.y + m.data[8] * v.z + m.data[12] * v.w,
-      m.data[1] * v.x + m.data[5] * v.y + m.data[9] * v.z + m.data[13] * v.w,
-      m.data[2] * v.x + m.data[6] * v.y + m.data[10] * v.z + m.data[14] * v.w,
-      m.data[3] * v.x + m.data[7] * v.y + m.data[11] * v.z + m.data[15] * v.w);
-}
+  template <typename T>
+  friend constexpr auto operator*(const Mat4<T>& m, const Vector4<T> v)
+      -> Vector4<T>
+  {
+    return Vector4<T>(
+        m.data[0] * v.x + m.data[4] * v.y + m.data[8] * v.z + m.data[12] * v.w,
+        m.data[1] * v.x + m.data[5] * v.y + m.data[9] * v.z + m.data[13] * v.w,
+        m.data[2] * v.x + m.data[6] * v.y + m.data[10] * v.z + m.data[14] * v.w,
+        m.data[3] * v.x + m.data[7] * v.y + m.data[11] * v.z +
+            m.data[15] * v.w);
+  }
+};
 
 using Mat4f = Mat4<float>;
 
@@ -273,6 +318,67 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
       {
         REQUIRE(M1 != M2);
       }
+    }
+  }
+
+  GIVEN("A matrix and a scalar s")
+  {
+    beyond::Mat4f A{
+        // clang-format off
+        1,  2,  3,  4,
+        5,  6,  7,  8,
+        9,  10, 11, 12,
+        13, 14, 15, 16
+        // clang-format on
+    };
+
+    constexpr float s = 2;
+
+    constexpr beyond::Mat4f A_times_s{
+        // clang-format off
+        2,  4,  6,  8,
+        10, 12, 14, 16,
+        18, 20, 22, 24,
+        26, 28, 30, 32
+        // clang-format on
+    };
+
+    constexpr beyond::Mat4f A_div_s{
+        // clang-format off
+        0.5,  1,  1.5,  2,
+        2.5, 3, 3.5, 4,
+        4.5, 5, 5.5, 6,
+        6.5, 7, 7.5, 8
+        // clang-format on
+    };
+
+    WHEN("A *= s")
+    {
+      A *= s;
+      THEN("A' is the component-wise multiplication")
+      {
+        REQUIRE(A == A_times_s);
+      }
+    }
+
+    WHEN("A /= s")
+    {
+      A /= s;
+      THEN("A' is the component-wise division")
+      {
+        REQUIRE(A == A_div_s);
+      }
+    }
+
+    THEN("A * s = s * A = the component-wise multiplication")
+    {
+      REQUIRE(A * s == A_times_s);
+      REQUIRE(s * A == A_times_s);
+    }
+
+    THEN("A / s the component-wise division")
+    {
+      REQUIRE(A / s == A_div_s);
     }
   }
 
@@ -389,7 +495,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
     }
   }
 
-  GIVEN("Matrix A")
+  GIVEN("Matrix A and its transpose AT")
   {
     const beyond::Mat4f A{
         // clang-format off
@@ -409,12 +515,12 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    THEN("Get its transpose")
+    THEN("AT = transpose(A)")
     {
       REQUIRE(AT == transpose(A));
     }
 
-    THEN("The transpose of its transpose is the original matrix")
+    THEN("A = transpose(AT)")
     {
       REQUIRE(A == transpose(AT));
     }
@@ -424,10 +530,10 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
   {
     const beyond::Mat4f A{
         // clang-format off
-                1, 2, 3, 4,
-                5, 6, 7, 8,
-                9, 8, 7, 6,
-                5, 4, 3, 2
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 8, 7, 6,
+        5, 4, 3, 2
         // clang-format on
     };
     const beyond::Vector4f v{1, 2, 3, 4};
