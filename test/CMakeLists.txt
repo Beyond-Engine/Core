@@ -26,14 +26,16 @@ if (${BEYOND_CORE_BUILD_TESTS_COVERAGE})
     set(CMAKE_STATIC_LINKER_FLAGS "--whole-archive")
     set(CMAKE_SHARED_LINKER_FLAGS "--whole-archive")
 
-    include("CodeCoverage")
+    include("../cmake/CodeCoverage.cmake")
     APPEND_COVERAGE_COMPILER_FLAGS("-g -O0 -fprofile-arcs -ftest-coverage")
     set(COVERAGE_LCOV_EXCLUDES '/usr/*' '*/.conan/*' '*/test/*' 'test/*' '*/src/utils/panic.cpp')
     SETUP_TARGET_FOR_COVERAGE_LCOV(
-            NAME coverage# New target name
+            NAME coverage
             EXECUTABLE ${TEST_TARGET_NAME}
-            DEPENDENCIES ${TEST_TARGET_NAME}  # Dependencies to build first
+            DEPENDENCIES ${TEST_TARGET_NAME}
     )
 endif ()
+
+enable_testing()
 
 add_test(${TEST_TARGET_NAME} "${CMAKE_BINARY_DIR}/bin/${TEST_TARGET_NAME}")

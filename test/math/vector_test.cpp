@@ -2,7 +2,7 @@
 
 #include "beyond/core/math/vector.hpp"
 
- TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
+TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
 {
   using Catch::literals::operator""_a;
 
@@ -185,7 +185,7 @@
   }
 }
 
- TEST_CASE("Floating point Vector only test", "[beyond.core.math.vec]")
+TEST_CASE("Floating point Vector only test", "[beyond.core.math.vec]")
 {
   using Catch::literals::operator""_a;
 
@@ -227,7 +227,7 @@
   }
 }
 
- TEST_CASE("Points", "[beyond.core.math.vec]")
+TEST_CASE("Points", "[beyond.core.math.vec]")
 {
   SECTION("Create 3d Point from 2d Point and a scalar")
   {
@@ -298,7 +298,7 @@
   }
 }
 
- TEST_CASE("Vector Swizzling", "[beyond.core.math.vec]")
+TEST_CASE("Vector Swizzling", "[beyond.core.math.vec]")
 {
   constexpr float a = 2.1f;
   constexpr float b = 4.2f;
@@ -316,10 +316,10 @@
     CHECK(v1 == v1.xy);
     CHECK(v1.xy == v1.xy);
 
-//    const beyond::Vector2f v5{v1.yx};
-//    CHECK(v1 != v5);
-//    CHECK(v1 != v5.xy);
-//    CHECK(v1.xy != v1.yx);
+    const beyond::Vector2f v5 = v1.yx;
+    CHECK(v1 != v5);
+    CHECK(v1 != v5.xy);
+    CHECK(v1.xy != v1.yx);
   }
 
   SECTION("Swizzle assignment")
@@ -360,11 +360,11 @@
 
     SECTION("Scalar division")
     {
-      const beyond::Vector2f result1 = v1.xy / 2;
-      CHECK(result1.x == Approx(v1.x / 2));
-      CHECK(result1.y == Approx(v1.y / 2));
+      const beyond::Vector2f result1 = v1.xy / 2.f;
+      CHECK(result1.x == Approx(v1.x / 2.f));
+      CHECK(result1.y == Approx(v1.y / 2.f));
 
-      v1.xy /= 2;
+      v1.xy /= 2.f;
       CHECK(result1 == v1);
     }
 
@@ -377,8 +377,8 @@
         CHECK(result1.y == Approx(v1.x + v1.y));
 
         const auto result2 = v1.xy + v1;
-        CHECK(result2.x == Approx(v1.x * 2));
-        CHECK(result2.y == Approx(v1.y * 2));
+        CHECK(result2.x == Approx(v1.x * 2.f));
+        CHECK(result2.y == Approx(v1.y * 2.f));
 
         const auto result3 = v1 + v1.xy;
         CHECK(result3 == result2);
@@ -441,7 +441,7 @@
   }
 }
 
- TEST_CASE("Cross product", "[beyond.core.math.vec]")
+TEST_CASE("Cross product", "[beyond.core.math.vec]")
 {
   GIVEN("Two vectors")
   {

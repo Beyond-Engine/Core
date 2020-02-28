@@ -20,6 +20,7 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
             -Wshadow
             -Wnon-virtual-dtor
             -Wold-style-cast
+            -Wconversion
             -Wcast-align
             -Wunused
             -Woverloaded-virtual

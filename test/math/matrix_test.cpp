@@ -12,7 +12,7 @@ namespace beyond {
  * @{
  */
 
-template <typename T, int dim, typename Derived> struct MatrixBase {
+template <typename T, std::size_t dim, typename Derived> struct MatrixBase {
   constexpr auto underlying() noexcept -> Derived&
   {
     return static_cast<Derived&>(*this);
@@ -23,12 +23,12 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
     return static_cast<const Derived&>(*this);
   }
 
-  [[nodiscard]] static constexpr auto dimension() noexcept -> int
+  [[nodiscard]] static constexpr auto dimension() noexcept -> std::size_t
   {
     return dim;
   }
 
-  [[nodiscard]] static constexpr auto size() noexcept -> int
+  [[nodiscard]] static constexpr auto size() noexcept -> std::size_t
   {
     return size_;
   }
@@ -38,22 +38,24 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
    *
    * @warning If the i and j are out-of-index, the result is undefined
    */
-  [[nodiscard]] constexpr auto operator()(int i, int j) const noexcept -> T
+  [[nodiscard]] constexpr auto operator()(std::size_t i, std::size_t j) const
+      noexcept -> T
   {
-    BEYOND_ASSERT(i >= 0 && j >= 0 && i <= dimension() && j < dimension());
+    BEYOND_ASSERT(i <= dimension() && j < dimension());
     return underlying().data[flattern(i, j)];
   }
 
   /// @overload
-  [[nodiscard]] constexpr auto operator()(int i, int j) noexcept -> T&
+  [[nodiscard]] constexpr auto operator()(std::size_t i, std::size_t j) noexcept
+      -> T&
   {
-    BEYOND_ASSERT(i >= 0 && j >= 0 && i <= dimension() && j < dimension());
+    BEYOND_ASSERT(i <= dimension() && j < dimension());
     return underlying().data[this->flattern(i, j)];
   }
 
   constexpr auto operator+=(const MatrixBase& other) -> Derived&
   {
-    for (int i = 0; i < MatrixBase::size(); ++i) {
+    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
       underlying().data[i] += other.underlying().data[i];
     }
 
@@ -62,7 +64,7 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
 
   constexpr auto operator-=(const MatrixBase& other) -> Derived&
   {
-    for (int i = 0; i < MatrixBase::size(); ++i) {
+    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
       underlying().data[i] -= other.underlying().data[i];
     }
 
@@ -77,7 +79,7 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
 
   constexpr auto operator*=(T scalar) noexcept -> Derived
   {
-    for (int i = 0; i < MatrixBase::size(); ++i) {
+    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
       underlying().data[i] *= scalar;
     }
     return this->underlying();
@@ -85,7 +87,7 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
 
   constexpr auto operator/=(T scalar) noexcept -> Derived
   {
-    for (int i = 0; i < MatrixBase::size(); ++i) {
+    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
       underlying().data[i] /= scalar;
     }
     return this->underlying();
@@ -96,7 +98,7 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
       -> Derived
   {
     Derived result;
-    for (int i = 0; i < MatrixBase::size(); ++i) {
+    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
       result.data[i] = lhs.underlying().data[i] + rhs.underlying().data[i];
     }
     return result;
@@ -107,7 +109,7 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
       -> Derived
   {
     Derived result;
-    for (int i = 0; i < MatrixBase::size(); ++i) {
+    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
       result.data[i] = lhs.underlying().data[i] - rhs.underlying().data[i];
     }
     return result;
@@ -118,10 +120,10 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
       -> Derived
   {
     Derived result;
-    for (int i = 0; i < dimension(); i++) {
-      for (int j = 0; j < dimension(); j++) {
+    for (std::size_t i = 0; i < dimension(); i++) {
+      for (std::size_t j = 0; j < dimension(); j++) {
         T n{};
-        for (int k = 0; k < dimension(); k++) {
+        for (std::size_t k = 0; k < dimension(); k++) {
           n += lhs(i, k) * rhs(k, j);
         }
         result(i, j) = n;
@@ -134,7 +136,7 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
                                                 T s) noexcept -> Derived
   {
     Derived result;
-    for (int i = 0; i < MatrixBase::size(); ++i) {
+    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
       result.data[i] = mat.underlying().data[i] * s;
     }
     return result;
@@ -151,7 +153,7 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
                                                 T s) noexcept -> Derived
   {
     Derived result;
-    for (int i = 0; i < MatrixBase::size(); ++i) {
+    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
       result.data[i] = mat.underlying().data[i] / s;
     }
     return result;
@@ -161,7 +163,7 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
                                                  const MatrixBase& rhs) noexcept
       -> bool
   {
-    for (int i = 0; i < MatrixBase::size(); ++i) {
+    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
       if (lhs.underlying().data[i] != rhs.underlying().data[i]) {
         return false;
       }
@@ -179,22 +181,23 @@ template <typename T, int dim, typename Derived> struct MatrixBase {
 protected:
   constexpr MatrixBase() noexcept = default;
 
-  static constexpr auto flattern(int i, int j) noexcept -> int
+  static constexpr auto flattern(std::size_t i, std::size_t j) noexcept
+      -> std::size_t
   {
     return j * dim + i;
   }
 
 private:
-  static constexpr int size_ = dim * dim;
+  static constexpr std::size_t size_ = dim * dim;
 };
 
-template <typename T, int dim, typename Derived>
+template <typename T, std::size_t dim, typename Derived>
 auto operator<<(std::ostream& os, const MatrixBase<T, dim, Derived>& m)
     -> std::ostream&
 {
   os << "mat" << m.dimension() << "(\n";
-  for (int i = 0; i < m.dimension(); i++) {
-    for (int j = 0; j < m.dimension(); j++) {
+  for (std::size_t i = 0; i < m.dimension(); i++) {
+    for (std::size_t j = 0; j < m.dimension(); j++) {
       os << m.underlying().data[j * m.dimension() + i] << ", ";
     }
     os << '\n';
@@ -203,13 +206,13 @@ auto operator<<(std::ostream& os, const MatrixBase<T, dim, Derived>& m)
   return os;
 }
 
-template <typename T, int dim, typename Derived>
+template <typename T, std::size_t dim, typename Derived>
 constexpr auto transpose(const MatrixBase<T, dim, Derived>& m) noexcept
     -> Derived
 {
   Derived r;
-  for (int i = 0; i < m.dimension(); ++i) {
-    for (int j = 0; j < m.dimension(); ++j) {
+  for (std::size_t i = 0; i < m.dimension(); ++i) {
+    for (std::size_t j = 0; j < m.dimension(); ++j) {
       r(i, j) = m(j, i);
     }
   }
@@ -235,7 +238,6 @@ template <typename T> struct Mat4 : MatrixBase<T, 4, Mat4<T>> {
   {
   }
 
-  template <typename T>
   friend constexpr auto operator*(const Mat4<T>& m, const Vector4<T> v)
       -> Vector4<T>
   {
@@ -263,8 +265,8 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
     const beyond::Mat4f I;
     THEN("It is an identity matrix")
     {
-      for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
+      for (std::size_t i = 0; i < 4; ++i) {
+        for (std::size_t j = 0; j < 4; ++j) {
           REQUIRE(I(i, j) == Approx(i == j ? 1 : 0));
         }
       }
