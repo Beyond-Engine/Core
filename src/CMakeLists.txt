@@ -1,23 +1,23 @@
 add_library(core
-        include/beyond/core/concurrency/task_queue.hpp
-        include/beyond/core/container/static_vector.hpp
-        include/beyond/core/ecs/sparse_map.hpp
-        include/beyond/core/ecs/sparse_set.hpp
-        include/beyond/core/utils/assert.hpp
-        include/beyond/core/utils/arrow_proxy.hpp
-        include/beyond/core/utils/bit_cast.hpp
-        include/beyond/core/utils/crtp.hpp
-        include/beyond/core/utils/functional.hpp
-        include/beyond/core/utils/function_ref.hpp
-        include/beyond/core/utils/handle.hpp
-        include/beyond/core/utils/named_type.hpp
-        include/beyond/core/utils/panic.hpp
-        src/utils/panic.cpp
-        include/beyond/core/utils/type_traits.hpp
-        include/beyond/core/math/angle.hpp
-        include/beyond/core/math/constants.hpp
-        include/beyond/core/math/math.hpp
-        include/beyond/core/math/vector.hpp
+        ../include/beyond/core/concurrency/task_queue.hpp
+        ../include/beyond/core/container/static_vector.hpp
+        ../include/beyond/core/ecs/sparse_map.hpp
+        ../include/beyond/core/ecs/sparse_set.hpp
+        ../include/beyond/core/utils/assert.hpp
+        ../include/beyond/core/utils/arrow_proxy.hpp
+        ../include/beyond/core/utils/bit_cast.hpp
+        ../include/beyond/core/utils/crtp.hpp
+        ../include/beyond/core/utils/functional.hpp
+        ../include/beyond/core/utils/function_ref.hpp
+        ../include/beyond/core/utils/handle.hpp
+        ../include/beyond/core/utils/named_type.hpp
+        ../include/beyond/core/utils/panic.hpp
+        utils/panic.cpp
+        ../include/beyond/core/utils/type_traits.hpp
+        ../include/beyond/core/math/angle.hpp
+        ../include/beyond/core/math/constants.hpp
+        ../include/beyond/core/math/math.hpp
+        ../include/beyond/core/math/vector.hpp
         )
 
 set(BEYOND_CORE_ASSERT_POLICY AUTO CACHE STRING "The policy of enabling
@@ -36,7 +36,7 @@ endif ()
 target_include_directories(core
         PUBLIC
         $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
         )
