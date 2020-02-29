@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.15)
 
 project(beyond_core VERSION 0.0.2 LANGUAGES CXX)
 
@@ -12,11 +12,6 @@ CMAKE_DEPENDENT_OPTION(BEYOND_CORE_BUILD_TESTS_COVERAGE
         "BEYOND_CORE_BUILD_TESTS" OFF)
 option(BEYOND_CORE_BUILD_DOCUMENTATION
         "Build the documentation for the Beyond game engine core" OFF)
-option(BEYOND_CORE_WARNING_AS_ERROR "Treats compiler warnings as errors" ON)
-option(BEYOND_CORE_USE_ASAN "Enable the Address Sanitizers" OFF)
-option(BEYOND_CORE_USE_TSAN "Enable the Thread Sanitizers" OFF)
-option(BEYOND_CORE_USE_MSAN "Enable the Memory Sanitizers" OFF)
-option(BEYOND_CORE_USE_UBSAN "Enable the Undefined Behavior Sanitizers" OFF)
 
 if (BEYOND_CORE_BUILD_DOCUMENTATION)
     include("doxygen")

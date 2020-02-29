@@ -34,7 +34,7 @@ TEST_CASE("Radian", "[beyond.core.math.angle]")
       WHEN("r1 += r2")
       {
         r1 += r2;
-        THEN("r1 = pi * 3 /2")
+        THEN("r1 = pi * 3 / 2")
         {
           REQUIRE(r1.value() == Approx(pi * 3 / 2));
         }
@@ -42,7 +42,7 @@ TEST_CASE("Radian", "[beyond.core.math.angle]")
       WHEN("r1 -= r2")
       {
         r1 -= r2;
-        THEN("r1 = pi * 1 /2")
+        THEN("r1 = pi * 1 / 2")
         {
           REQUIRE(r1.value() == Approx(pi * 1 / 2));
         }

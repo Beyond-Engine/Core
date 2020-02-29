@@ -2,8 +2,10 @@ set(TEST_TARGET_NAME ${PROJECT_NAME}_test)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+add_library(catch_main STATIC main.cpp)
+target_link_libraries(catch_main PUBLIC CONAN_PKG::Catch2)
+
 add_executable(${TEST_TARGET_NAME}
-        "main.cpp"
         "concurrency/task_queue_test.cpp"
         "concurrency/task_system_test.cpp"
         "container/slot_map_test.cpp"
@@ -19,8 +21,7 @@ add_executable(${TEST_TARGET_NAME}
         "utils/handle_test.cpp"
         "utils/named_type_test.cpp")
 
-target_link_libraries(${TEST_TARGET_NAME} PRIVATE beyond::core compiler_options
-        CONAN_PKG::Catch2)
+target_link_libraries(${TEST_TARGET_NAME} PRIVATE beyond::core compiler_options catch_main)
 
 if (${BEYOND_CORE_BUILD_TESTS_COVERAGE})
     set(CMAKE_STATIC_LINKER_FLAGS "--whole-archive")
@@ -36,6 +37,10 @@ if (${BEYOND_CORE_BUILD_TESTS_COVERAGE})
     )
 endif ()
 
-enable_testing()
+if (BEYOND_CORE_ENABLE_PCH)
+    target_precompile_headers(${TEST_TARGET_NAME} PRIVATE
+            <catch2/catch.hpp>
+            )
+endif ()
 
 add_test(${TEST_TARGET_NAME} "${CMAKE_BINARY_DIR}/bin/${TEST_TARGET_NAME}")
