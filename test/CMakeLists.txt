@@ -24,9 +24,6 @@ add_executable(${TEST_TARGET_NAME}
 target_link_libraries(${TEST_TARGET_NAME} PRIVATE beyond::core compiler_options catch_main)
 
 if (${BEYOND_CORE_BUILD_TESTS_COVERAGE})
-    set(CMAKE_STATIC_LINKER_FLAGS "--whole-archive")
-    set(CMAKE_SHARED_LINKER_FLAGS "--whole-archive")
-
     include("../cmake/CodeCoverage.cmake")
     APPEND_COVERAGE_COMPILER_FLAGS("-g -O0 -fprofile-arcs -ftest-coverage")
     set(COVERAGE_LCOV_EXCLUDES '/usr/*' '*/.conan/*' '*/test/*' 'test/*' '*/src/utils/panic.cpp')
