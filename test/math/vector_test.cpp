@@ -1,5 +1,8 @@
 #include <catch2/catch.hpp>
 
+#include <sstream>
+
+#include "beyond/core/math/serial.hpp"
 #include "beyond/core/math/vector.hpp"
 
 TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
@@ -477,5 +480,65 @@ TEST_CASE("Cross product", "[beyond.core.math.vec]")
       REQUIRE(result2.y == Approx(-2));
       REQUIRE(result2.z == Approx(1));
     }
+  }
+}
+
+TEST_CASE("Vector serialization test", "[beyond.core.math.vec]")
+{
+  std::stringstream ss;
+
+  SECTION("Output Vector2 to a stream")
+  {
+    const beyond::Vector2f v{1, 2};
+    const auto expected = "vec(1, 2)";
+
+    REQUIRE(to_string(v) == expected);
+    ss << v;
+    REQUIRE(ss.str() == expected);
+  }
+
+  SECTION("Output Vector3 to a stream")
+  {
+    const beyond::Vector3f v{1, 2, 3};
+    const auto expected = "vec(1, 2, 3)";
+
+    REQUIRE(to_string(v) == expected);
+    ss << v;
+    REQUIRE(ss.str() == expected);
+  }
+
+  SECTION("Output Vector4 to a stream")
+  {
+    const beyond::Vector4f v{1, 2, 3, 4};
+    const auto expected = "vec(1, 2, 3, 4)";
+
+    REQUIRE(to_string(v) == expected);
+    ss << v;
+    REQUIRE(ss.str() == expected);
+  }
+}
+
+TEST_CASE("Point serialization test", "[beyond.core.math.vec]")
+{
+  std::stringstream ss;
+
+  SECTION("Output Point2 to a stream")
+  {
+    const beyond::Point2f p{1, 2};
+    const auto expected = "point(1, 2)";
+
+    REQUIRE(to_string(p) == expected);
+    ss << p;
+    REQUIRE(ss.str() == expected);
+  }
+
+  SECTION("Output Point3 to a stream")
+  {
+    const beyond::Point3f p{1, 2, 3};
+    const auto expected = "point(1, 2, 3)";
+
+    REQUIRE(to_string(p) == expected);
+    ss << p;
+    REQUIRE(ss.str() == expected);
   }
 }

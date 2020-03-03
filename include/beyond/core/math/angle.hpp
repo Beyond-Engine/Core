@@ -1,7 +1,6 @@
 #ifndef BEYOND_CORE_MATH_ANGLE_HPP
 #define BEYOND_CORE_MATH_ANGLE_HPP
 
-#include <iostream>
 #include <type_traits>
 
 #include "constants.hpp"
@@ -290,15 +289,6 @@ template <typename T>
   return Radian<float>(static_cast<float>(v));
 }
 
-/// @brief Prints the Radian
-/// @related Degree
-template <typename T>
-auto operator<<(std::ostream& os, Radian<T> r) -> std::ostream&
-{
-  os << r.value() << "_radian";
-  return os;
-}
-
 /// @brief Negates the Degree
 /// @related Degree
 template <typename T>
@@ -429,6 +419,8 @@ template <typename T>
   return lhs.value() >= rhs.value();
 }
 
+namespace literals {
+
 /// @brief Construct a Degree<float> by a literial
 /// @related Degree
 [[nodiscard]] constexpr auto operator""_deg(long double v) noexcept
@@ -437,14 +429,12 @@ template <typename T>
   return Degree<float>(static_cast<float>(v));
 }
 
-/// @brief Prints the Degree
-/// @related Degree
-template <typename T>
-auto operator<<(std::ostream& os, Degree<T> r) -> std::ostream&
-{
-  os << r.value() << "_degree";
-  return os;
-}
+} // namespace literals
+
+using Radianf = Radian<float>;
+using Radiand = Radian<double>;
+using Degreef = Degree<float>;
+using Degreed = Degree<double>;
 
 /** @}
  *  @} */

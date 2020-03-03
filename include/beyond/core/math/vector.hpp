@@ -9,7 +9,6 @@
 
 #include <array>
 #include <cmath>
-#include <iosfwd>
 #include <type_traits>
 #include <utility>
 
@@ -846,7 +845,7 @@ template <typename T, std::size_t... Ns>
 /// @note Only available for floating point vectors
 template <typename T, std::size_t... Ns>
 [[nodiscard]] constexpr auto normalize(const VectorBase<T, Ns...>& v) noexcept
-    -> std::enable_if_t<std::is_floating_point_v<T>, VectorBase<T, Ns...>>
+    -> std::enable_if_t<std::is_floating_point_v<T>, Vector<T, sizeof...(Ns)>>
 {
   return v / v.length();
 }
@@ -924,27 +923,6 @@ template <typename T, std::size_t... Ns>
                                        const VectorBase<T, Ns...>& v) noexcept
 {
   return VectorBase<T, Ns...>{(scalar * v.elem[Ns])...};
-}
-
-template <typename T>
-inline auto operator<<(std::ostream& os, const Vector<T, 2>& v) -> std::ostream&
-{
-  os << "vec(" << v.x << ", " << v.y << ')';
-  return os;
-}
-
-template <typename T>
-inline auto operator<<(std::ostream& os, const Vector<T, 3>& v) -> std::ostream&
-{
-  os << "vec(" << v.x << ", " << v.y << ", " << v.z << ')';
-  return os;
-}
-
-template <typename T>
-inline auto operator<<(std::ostream& os, const Vector<T, 4>& v) -> std::ostream&
-{
-  os << "vec(" << v.x << ", " << v.y << ", " << v.z << ", " << v.w << ')';
-  return os;
 }
 
 /**

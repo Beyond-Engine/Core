@@ -5,7 +5,7 @@
 
 TEST_CASE("Trig functions", "[beyond.core.math]")
 {
-  using beyond::operator""_deg;
+  using namespace beyond::literals;
   const beyond::Degree<float> d = 60._deg;
   const beyond::Radian<float> r = d;
 

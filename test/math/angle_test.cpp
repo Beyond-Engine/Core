@@ -4,10 +4,12 @@
 
 #include "beyond/core/math/angle.hpp"
 #include "beyond/core/math/constants.hpp"
+#include "beyond/core/math/serial.hpp"
 
 using namespace beyond;
 
 using beyond::float_constants::pi;
+using namespace beyond::literals;
 
 TEST_CASE("Radian", "[beyond.core.math.angle]")
 {
@@ -295,20 +297,26 @@ TEST_CASE("Conversion between Radian and Degree", "[beyond.core.math.angle]")
   }
 }
 
-TEST_CASE("Streaming test", "[beyond.core.math.angle]")
+TEST_CASE("Angle serialization test", "[beyond.core.math.angle]")
 {
   std::stringstream ss;
   SECTION("Output Radian to a stream")
   {
     const Radian<float> r{1};
+    const auto expected = "1_radian";
+
+    REQUIRE(to_string(r) == expected);
     ss << r;
-    REQUIRE(ss.str() == "1_radian");
+    REQUIRE(ss.str() == expected);
   }
 
   SECTION("Output Degree to a stream")
   {
-    const Degree<float> r{90};
-    ss << r;
-    REQUIRE(ss.str() == "90_degree");
+    const Degree<float> d{90};
+    const auto expected = "90_degree";
+
+    REQUIRE(to_string(d) == expected);
+    ss << d;
+    REQUIRE(ss.str() == expected);
   }
 }
