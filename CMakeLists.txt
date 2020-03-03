@@ -6,7 +6,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include("StandardProjectSettings")
 include("CMakeDependentOption")
 
-option(BEYOND_CORE_BUILD_TESTS "Builds the tests" ON)
+option(BEYOND_CORE_BUILD_TESTS "Builds the tests" OFF)
 CMAKE_DEPENDENT_OPTION(BEYOND_CORE_BUILD_TESTS_COVERAGE
         "Build the project with code coverage support for tests" OFF
         "BEYOND_CORE_BUILD_TESTS" OFF)

@@ -22,7 +22,7 @@ matrix:
       env:
         - CC="/usr/bin/gcc-9"
         - CXX="/usr/bin/g++-9"
-        - CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release"
+        - CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release -DBEYOND_CORE_BUILD_TESTS=ON"
       addons:
         apt:
           sources:
@@ -41,7 +41,7 @@ matrix:
       env:
         - CC="clang-9"
         - CXX="clang++-9"
-        - CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release"
+        - CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release -DBEYOND_CORE_BUILD_TESTS=ON"
       addons:
         apt:
           sources:
@@ -63,7 +63,7 @@ matrix:
         - CC="/usr/bin/gcc-9"
         - CXX="/usr/bin/g++-9"
         - GCOV="/usr/bin/gcov-9"
-        - CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DBEYOND_CORE_BUILD_TESTS_COVERAGE=ON"
+        - CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DBEYOND_CORE_BUILD_TESTS=ON -DBEYOND_CORE_BUILD_TESTS_COVERAGE=ON"
         - CODECOV_TOKEN="e80759bf-77cf-4ea9-a0b7-19aff9167d4d"
       addons:
         apt:
@@ -87,7 +87,7 @@ matrix:
       env:
         - CC="clang-9"
         - CXX="clang++-9"
-        - CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=DEBUG -DBEYOND_CORE_USE_ASAN=ON -DBEYOND_CORE_USE_UBSAN=ON"
+        - CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=DEBUG -DBEYOND_CORE_BUILD_TESTS=ON -DBEYOND_CORE_USE_ASAN=ON -DBEYOND_CORE_USE_UBSAN=ON"
       addons:
         apt:
           sources:
@@ -105,7 +105,7 @@ matrix:
       env:
         - CC="clang-9"
         - CXX="clang++-9"
-        - CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=DEBUG -DBEYOND_CORE_USE_TSAN=ON"
+        - CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=DEBUG -DBEYOND_CORE_BUILD_TESTS=ON -DBEYOND_CORE_USE_TSAN=ON"
       addons:
         apt:
           sources:
