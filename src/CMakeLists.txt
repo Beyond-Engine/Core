@@ -35,7 +35,7 @@ elseif (BEYOND_CORE_ASSERT_POLICY STREQUAL "ON")
 endif ()
 
 target_include_directories(core
-        PUBLIC
+        PUBLIC SYSTEM
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
         )
