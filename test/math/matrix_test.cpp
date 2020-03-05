@@ -12,11 +12,31 @@ namespace beyond {
  * @{
  */
 
-struct Mat2;
-struct Mat3;
-struct Mat4;
+struct Matrix2;
+struct Matrix3;
+struct Matrix4;
 
-template <std::size_t dim, typename Derived> struct MatrixBase {
+template <typename Matrix>
+struct MatrixTrait;
+
+template <>
+struct MatrixTrait<Matrix2> {
+  static constexpr std::size_t dimension = 2;
+};
+
+template <>
+struct MatrixTrait<Matrix3> {
+  static constexpr std::size_t dimension = 3;
+};
+
+template <>
+struct MatrixTrait<Matrix4> {
+  static constexpr std::size_t dimension = 4;
+};
+
+template <typename Derived> struct MatrixBase {
+  using Trait = MatrixTrait<typename Derived>;
+
   [[nodiscard]] constexpr auto underlying() noexcept -> Derived&
   {
     return static_cast<Derived&>(*this);
@@ -29,12 +49,12 @@ template <std::size_t dim, typename Derived> struct MatrixBase {
 
   [[nodiscard]] static constexpr auto dimension() noexcept -> std::size_t
   {
-    return dim;
+    return Trait::dimension;
   }
 
   [[nodiscard]] static constexpr auto size() noexcept -> std::size_t
   {
-    return size_;
+    return Trait::dimension * Trait::dimension;
   }
 
   /**
@@ -188,15 +208,12 @@ protected:
   static constexpr auto flattern(std::size_t i, std::size_t j) noexcept
       -> std::size_t
   {
-    return j * dim + i;
+    return j * Trait::dimension + i;
   }
-
-private:
-  static constexpr std::size_t size_ = dim * dim;
 };
 
-template <std::size_t dim, typename Derived>
-auto operator<<(std::ostream& os, const MatrixBase<dim, Derived>& m)
+template <typename Derived>
+auto operator<<(std::ostream& os, const MatrixBase<Derived>& m)
     -> std::ostream&
 {
   os << "mat" << m.dimension() << "(\n";
@@ -210,8 +227,8 @@ auto operator<<(std::ostream& os, const MatrixBase<dim, Derived>& m)
   return os;
 }
 
-template <std::size_t dim, typename Derived>
-constexpr auto transpose(const MatrixBase<dim, Derived>& m) noexcept
+template <typename Derived>
+constexpr auto transpose(const MatrixBase<Derived>& m) noexcept
     -> Derived
 {
   Derived r;
@@ -223,17 +240,17 @@ constexpr auto transpose(const MatrixBase<dim, Derived>& m) noexcept
   return r;
 }
 
-struct Mat4 : MatrixBase<4, Mat4> {
-  using BaseType = MatrixBase<4, float>;
+struct Matrix4 : MatrixBase<Matrix4> {
+  using BaseType = MatrixBase<Matrix4>;
 
   float data[BaseType::size()];
 
-  constexpr Mat4() noexcept
+  constexpr Matrix4() noexcept
       : data{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
   {
   }
 
-  constexpr Mat4(const float v00, const float v01, const float v02, const float v03,
+  constexpr Matrix4(const float v00, const float v01, const float v02, const float v03,
                  const float v10, const float v11, const float v12, const float v13,
                  const float v20, const float v21, const float v22, const float v23,
                  const float v30, const float v31, const float v32, const float v33) noexcept
@@ -242,7 +259,7 @@ struct Mat4 : MatrixBase<4, Mat4> {
   {
   }
 
-  friend constexpr auto operator*(const Mat4& m, const Vector4<float> v)
+  friend constexpr auto operator*(const Matrix4& m, const Vector4<float> v)
       -> Vector4<float>
   {
     return Vector4<float>(
@@ -264,7 +281,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 {
   GIVEN("A default constructed 4x4 matrix I")
   {
-    const beyond::Mat4 I;
+    const beyond::Matrix4 I;
     THEN("It is an identity matrix")
     {
       for (std::size_t i = 0; i < 4; ++i) {
@@ -277,7 +294,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 
   GIVEN("the following 4x4 matrix M")
   {
-    const beyond::Mat4 M{
+    const beyond::Matrix4 M{
         // clang-format off
         1,    2,    3,    4,
         5.5,  6.5,  7.5,  8.5,
@@ -298,7 +315,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 
   GIVEN("The following 4x4 matrix")
   {
-    const beyond::Mat4 M1{
+    const beyond::Matrix4 M1{
         // clang-format off
         1,  2,  3,  4,
         5,  6,  7,  8,
@@ -327,7 +344,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 
   GIVEN("A matrix and a scalar s")
   {
-    beyond::Mat4 A{
+    beyond::Matrix4 A{
         // clang-format off
         1,  2,  3,  4,
         5,  6,  7,  8,
@@ -338,7 +355,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 
     constexpr float s = 2;
 
-    constexpr beyond::Mat4 A_times_s{
+    constexpr beyond::Matrix4 A_times_s{
         // clang-format off
         2,  4,  6,  8,
         10, 12, 14, 16,
@@ -347,7 +364,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    constexpr beyond::Mat4 A_div_s{
+    constexpr beyond::Matrix4 A_div_s{
         // clang-format off
         0.5,  1,  1.5,  2,
         2.5, 3, 3.5, 4,
@@ -388,7 +405,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 
   GIVEN("Two matrices A and B")
   {
-    beyond::Mat4 A{
+    beyond::Matrix4 A{
         // clang-format off
         1, 2, 3, 4,
         5, 6, 7, 8,
@@ -396,7 +413,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         5, 4, 3, 2
         // clang-format on
     };
-    beyond::Mat4 B{
+    beyond::Matrix4 B{
         // clang-format off
         -2, 1,  2,  3,
         3,  2,  1,  -1,
@@ -405,7 +422,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    constexpr beyond::Mat4 Sum{
+    constexpr beyond::Matrix4 Sum{
         // clang-format off
         -1, 3, 5, 7,
         8, 8, 8, 7,
@@ -414,7 +431,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    constexpr beyond::Mat4 Diff{
+    constexpr beyond::Matrix4 Diff{
         // clang-format off
         3, 1, 1, 1,
         2, 4, 6, 9,
@@ -423,7 +440,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    constexpr beyond::Mat4 AB{
+    constexpr beyond::Matrix4 AB{
         // clang-format off
         20, 22, 50,  48,
         44, 54, 114, 108,
@@ -432,7 +449,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    constexpr beyond::Mat4 BA{
+    constexpr beyond::Matrix4 BA{
         // clang-format off
         36, 30, 24, 18,
         17, 22, 27, 32,
@@ -501,7 +518,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 
   GIVEN("Matrix A and its transpose AT")
   {
-    const beyond::Mat4 A{
+    const beyond::Matrix4 A{
         // clang-format off
         1, 2, 3, 4,
         5, 6, 7, 8,
@@ -510,7 +527,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    const beyond::Mat4 AT{
+    const beyond::Matrix4 AT{
         // clang-format off
         1, 5, 9, 5,
         2, 6, 8, 4,
@@ -532,7 +549,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 
   GIVEN("Matrix A and a vector v")
   {
-    const beyond::Mat4 A{
+    const beyond::Matrix4 A{
         // clang-format off
         1, 2, 3, 4,
         5, 6, 7, 8,
