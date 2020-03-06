@@ -355,23 +355,74 @@ struct Matrix4 : MatrixBase<Matrix4> {
 
 #include <catch2/catch.hpp>
 
-TEMPLATE_TEST_CASE("Creating identity matrices", "[beyond.core.math.mat]",
-                   beyond::Matrix2, beyond::Matrix3, beyond::Matrix4)
+// TEMPLATE_TEST_CASE("Creating identity matrices", "[beyond.core.math.mat]",
+//                   beyond::Matrix2, beyond::Matrix3, beyond::Matrix4)
+//{
+//  const auto I = TestType::identity();
+//  const auto dim = I.dimension();
+//  for (std::size_t i = 0; i < dim; ++i) {
+//    for (std::size_t j = 0; j < dim; ++j) {
+//      REQUIRE(I(i, j) == Approx(i == j ? 1 : 0));
+//    }
+//  }
+//}
+
+TEST_CASE("Matrices accessor", "[beyond.core.math.mat]")
 {
-  const auto I = TestType::identity();
-  const auto dim = I.dimension();
-  for (std::size_t i = 0; i < dim; ++i) {
-    for (std::size_t j = 0; j < dim; ++j) {
-      REQUIRE(I(i, j) == Approx(i == j ? 1 : 0));
+  GIVEN("the following 2x2 matrix M")
+  {
+    beyond::Matrix2 M{
+        // clang-format off
+        1,    2,
+        5.5,  6.5,
+        // clang-format on
+    };
+    THEN("the matrix can be accessed by the operator ()")
+    {
+      REQUIRE(M(0, 0) == Approx(1));
+      REQUIRE(M(1, 1) == Approx(6.5));
+    }
+
+    WHEN("Modify M(0, 0) into 5")
+    {
+      M(0, 0) = 5;
+      THEN("M(0, 0) == 5")
+      {
+        REQUIRE(M(0, 0) == 5);
+      }
     }
   }
-}
 
-SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
-{
+  GIVEN("the following 3x3 matrix M")
+  {
+    beyond::Matrix3 M{
+        // clang-format off
+        1,    2,    3,
+        5.5,  6.5,  7.5,
+        9,    10,   11,
+        // clang-format on
+    };
+    THEN("the matrix can be accessed by the operator ()")
+    {
+      REQUIRE(M(0, 0) == Approx(1));
+      REQUIRE(M(1, 0) == Approx(5.5));
+      REQUIRE(M(1, 2) == Approx(7.5));
+      REQUIRE(M(2, 2) == Approx(11));
+    }
+
+    WHEN("Modify M(0, 0) into 5")
+    {
+      M(0, 0) = 5;
+      THEN("M(0, 0) == 5")
+      {
+        REQUIRE(M(0, 0) == 5);
+      }
+    }
+  }
+
   GIVEN("the following 4x4 matrix M")
   {
-    const beyond::Matrix4 M{
+    beyond::Matrix4 M{
         // clang-format off
         1,    2,    3,    4,
         5.5,  6.5,  7.5,  8.5,
@@ -388,8 +439,20 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
       REQUIRE(M(2, 2) == Approx(11));
       REQUIRE(M(3, 2) == Approx(15.5));
     }
-  }
 
+    WHEN("Modify M(0, 0) into 5")
+    {
+      M(0, 0) = 5;
+      THEN("M(0, 0) == 5")
+      {
+        REQUIRE(M(0, 0) == 5);
+      }
+    }
+  }
+}
+
+SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
+{
   GIVEN("The following 4x4 matrix")
   {
     const beyond::Matrix4 M1{
