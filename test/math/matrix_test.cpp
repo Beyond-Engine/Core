@@ -13,6 +13,11 @@ namespace beyond {
  * @{
  */
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4701)
+#endif
+
 struct Matrix2;
 struct Matrix3;
 struct Matrix4;
@@ -32,7 +37,7 @@ template <> struct MatrixTrait<Matrix4> {
 };
 
 template <typename Derived> struct MatrixBase {
-  using Trait = MatrixTrait<typename Derived>;
+  using Trait = MatrixTrait<Derived>;
 
   [[nodiscard]] constexpr auto underlying() noexcept -> Derived&
   {
@@ -339,6 +344,10 @@ struct Matrix4 : MatrixBase<Matrix4> {
         std::array<float, 16>{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1});
   }
 };
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 /** @}
  *  @} */
