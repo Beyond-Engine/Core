@@ -1,3 +1,4 @@
+#include <array>
 #include <cstdlib>
 #include <ostream>
 
@@ -16,21 +17,17 @@ struct Matrix2;
 struct Matrix3;
 struct Matrix4;
 
-template <typename Matrix>
-struct MatrixTrait;
+template <typename Matrix> struct MatrixTrait;
 
-template <>
-struct MatrixTrait<Matrix2> {
+template <> struct MatrixTrait<Matrix2> {
   static constexpr std::size_t dimension = 2;
 };
 
-template <>
-struct MatrixTrait<Matrix3> {
+template <> struct MatrixTrait<Matrix3> {
   static constexpr std::size_t dimension = 3;
 };
 
-template <>
-struct MatrixTrait<Matrix4> {
+template <> struct MatrixTrait<Matrix4> {
   static constexpr std::size_t dimension = 4;
 };
 
@@ -213,8 +210,7 @@ protected:
 };
 
 template <typename Derived>
-auto operator<<(std::ostream& os, const MatrixBase<Derived>& m)
-    -> std::ostream&
+auto operator<<(std::ostream& os, const MatrixBase<Derived>& m) -> std::ostream&
 {
   os << "mat" << m.dimension() << "(\n";
   for (std::size_t i = 0; i < m.dimension(); i++) {
@@ -228,8 +224,7 @@ auto operator<<(std::ostream& os, const MatrixBase<Derived>& m)
 }
 
 template <typename Derived>
-constexpr auto transpose(const MatrixBase<Derived>& m) noexcept
-    -> Derived
+constexpr auto transpose(const MatrixBase<Derived>& m) noexcept -> Derived
 {
   Derived r;
   for (std::size_t i = 0; i < m.dimension(); ++i) {
@@ -240,20 +235,88 @@ constexpr auto transpose(const MatrixBase<Derived>& m) noexcept
   return r;
 }
 
-struct Matrix4 : MatrixBase<Matrix4> {
-  using BaseType = MatrixBase<Matrix4>;
+struct Matrix2 : MatrixBase<Matrix2> {
+  using BaseType = MatrixBase<Matrix2>;
 
-  float data[BaseType::size()];
+  std::array<float, BaseType::size()> data;
 
-  constexpr Matrix4() noexcept
-      : data{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+  constexpr Matrix2() noexcept : data{1, 0, 0, 1} {}
+
+  constexpr Matrix2(const float v00, const float v01, const float v10,
+                    const float v11) noexcept
+      : data{v00, v10, v01, v11}
   {
   }
 
-  constexpr Matrix4(const float v00, const float v01, const float v02, const float v03,
-                 const float v10, const float v11, const float v12, const float v13,
-                 const float v20, const float v21, const float v22, const float v23,
-                 const float v30, const float v31, const float v32, const float v33) noexcept
+  explicit constexpr Matrix2(std::array<float, BaseType::size()> data_) noexcept
+      : data{data_}
+  {
+  }
+
+  friend constexpr auto operator*(const Matrix2& m, const Vector2<float> v)
+      -> Vector2<float>
+  {
+    return Vector2<float>(m.data[0] * v.x + m.data[2] * v.y,
+                          m.data[1] * v.x + m.data[3] * v.y);
+  }
+
+  static constexpr auto identity() noexcept -> Matrix2
+  {
+    return Matrix2(std::array<float, 4>{1, 0, 0, 1});
+  }
+};
+
+struct Matrix3 : MatrixBase<Matrix3> {
+  using BaseType = MatrixBase<Matrix3>;
+
+  std::array<float, BaseType::size()> data;
+
+  Matrix3() noexcept = default;
+
+  explicit constexpr Matrix3(std::array<float, BaseType::size()> data_) noexcept
+      : data{data_}
+  {
+  }
+
+  constexpr Matrix3(const float v00, const float v01, const float v02,
+                    const float v10, const float v11, const float v12,
+                    const float v20, const float v21, const float v22) noexcept
+      : data{v00, v10, v20, v01, v11, v21, v02, v12, v22}
+  {
+  }
+
+  friend constexpr auto operator*(const Matrix3& m, const Vector3<float> v)
+      -> Vector3<float>
+  {
+    return Vector3<float>(m.data[0] * v.x + m.data[3] * v.y + m.data[6] * v.z,
+                          m.data[1] * v.x + m.data[4] * v.y + m.data[7] * v.z,
+                          m.data[2] * v.x + m.data[5] * v.y + m.data[8] * v.z);
+  }
+
+  static constexpr auto identity() noexcept -> Matrix3
+  {
+    return Matrix3(std::array<float, 9>{1, 0, 0, 0, 1, 0, 0, 0, 1});
+  }
+};
+
+struct Matrix4 : MatrixBase<Matrix4> {
+  using BaseType = MatrixBase<Matrix4>;
+
+  std::array<float, BaseType::size()> data;
+
+  Matrix4() noexcept = default;
+
+  explicit constexpr Matrix4(std::array<float, BaseType::size()> data_) noexcept
+      : data{data_}
+  {
+  }
+
+  constexpr Matrix4(const float v00, const float v01, const float v02,
+                    const float v03, const float v10, const float v11,
+                    const float v12, const float v13, const float v20,
+                    const float v21, const float v22, const float v23,
+                    const float v30, const float v31, const float v32,
+                    const float v33) noexcept
       : data{v00, v10, v20, v30, v01, v11, v21, v31,
              v02, v12, v22, v32, v03, v13, v23, v33}
   {
@@ -269,6 +332,12 @@ struct Matrix4 : MatrixBase<Matrix4> {
         m.data[3] * v.x + m.data[7] * v.y + m.data[11] * v.z +
             m.data[15] * v.w);
   }
+
+  static constexpr auto identity() noexcept -> Matrix4
+  {
+    return Matrix4(
+        std::array<float, 16>{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1});
+  }
 };
 
 /** @}
@@ -277,21 +346,20 @@ struct Matrix4 : MatrixBase<Matrix4> {
 
 #include <catch2/catch.hpp>
 
-SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
+TEMPLATE_TEST_CASE("Creating identity matrices", "[beyond.core.math.mat]",
+                   beyond::Matrix2, beyond::Matrix3, beyond::Matrix4)
 {
-  GIVEN("A default constructed 4x4 matrix I")
-  {
-    const beyond::Matrix4 I;
-    THEN("It is an identity matrix")
-    {
-      for (std::size_t i = 0; i < 4; ++i) {
-        for (std::size_t j = 0; j < 4; ++j) {
-          REQUIRE(I(i, j) == Approx(i == j ? 1 : 0));
-        }
-      }
+  const auto I = TestType::identity();
+  const auto dim = I.dimension();
+  for (std::size_t i = 0; i < dim; ++i) {
+    for (std::size_t j = 0; j < dim; ++j) {
+      REQUIRE(I(i, j) == Approx(i == j ? 1 : 0));
     }
   }
+}
 
+SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
+{
   GIVEN("the following 4x4 matrix M")
   {
     const beyond::Matrix4 M{
