@@ -143,6 +143,12 @@ TEST_CASE("Radian", "[beyond.core.math.angle]")
     const Radian<double> r{static_cast<double>(pi)};
     REQUIRE(Radian<float>{r}.value() == Approx(pi));
   }
+
+  SECTION("Constants")
+  {
+    using namespace beyond::float_constants;
+    REQUIRE(Radianf::pi().value() == pi);
+  }
 }
 
 TEST_CASE("Degree", "[beyond.core.math.angle]")

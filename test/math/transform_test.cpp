@@ -1,4 +1,7 @@
+#include "beyond/core/math/angle.hpp"
+#include "beyond/core/math/function.hpp"
 #include "beyond/core/math/matrix.hpp"
+
 namespace beyond {
 /**
  * @addtogroup core
@@ -6,6 +9,28 @@ namespace beyond {
  * @addtogroup math
  * @{
  */
+
+template <typename T>
+[[nodiscard]] inline auto rotate_x(Radian<T> r) noexcept -> Matrix4<T>
+{
+  const T s = beyond::sin(r);
+  const T c = beyond::cos(r);
+
+  return {
+      // clang-format off
+      1, 0, 0, 0,
+      0, c, -s, 0,
+      0, s, c, 0,
+      0, 0, 0, 1
+      // clang-format on
+  };
+}
+
+template <typename T>
+[[nodiscard]] inline auto rotate_x(Degree<T> d) noexcept -> Matrix4<T>
+{
+  return rotate_x(Radian<T>(d));
+}
 
 /// @brief Builds a translation 4 * 4 matrix created from 3 scalars.
 template <typename T>
@@ -44,6 +69,7 @@ template <typename T>
 
 #include <catch2/catch.hpp>
 #include "beyond/core/math/serial.hpp"
+#include "matrix_test_util.hpp"
 
 TEST_CASE("Translate", "[beyond.core.math.transform]")
 {
@@ -83,4 +109,23 @@ TEST_CASE("Translate", "[beyond.core.math.transform]")
 
     REQUIRE(beyond::translate(m, 1.f, 2.f, 3.f) == expected);
   }
+}
+
+TEST_CASE("Axis-wise rotation", "[beyond.core.math.transform]")
+{
+  const float sqrt3_over_2 = sqrt(3.f) / 2.f;
+  beyond::Mat4 expected{
+      // clang-format off
+      1, 0, 0, 0,
+      0, 0.5, -sqrt3_over_2, 0,
+      0, sqrt3_over_2, 0.5, 0,
+      0, 0, 0, 1
+      // clang-format on
+  };
+
+  using namespace beyond::literals;
+  matrix_approx_match(
+      beyond::rotate_x(beyond::Radian(beyond::float_constants::pi) / 3.f),
+      expected);
+  matrix_approx_match(beyond::rotate_x(60.0_deg), expected);
 }

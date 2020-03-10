@@ -83,6 +83,11 @@ public:
     return *this;
   }
 
+  [[nodiscard]] static constexpr auto pi() noexcept -> Radian<T>
+  {
+    return Radian<T>{constant::pi<T>};
+  }
+
 private:
   T value_ = 0;
 };
@@ -281,14 +286,6 @@ template <typename T>
   return lhs.value() >= rhs.value();
 }
 
-/// @brief Construct a Radian<float> by a literial
-/// @related Radian
-[[nodiscard]] constexpr auto operator""_rad(long double v) noexcept
-    -> Radian<float>
-{
-  return Radian<float>(static_cast<float>(v));
-}
-
 /// @brief Negates the Degree
 /// @related Degree
 template <typename T>
@@ -420,6 +417,14 @@ template <typename T>
 }
 
 namespace literals {
+
+/// @brief Construct a Radian<float> by a literial
+/// @related Radian
+[[nodiscard]] constexpr auto operator""_rad(long double v) noexcept
+    -> Radian<float>
+{
+  return Radian<float>(static_cast<float>(v));
+}
 
 /// @brief Construct a Degree<float> by a literial
 /// @related Degree

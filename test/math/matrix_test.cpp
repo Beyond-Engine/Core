@@ -4,20 +4,9 @@
 #include "beyond/core/math/serial.hpp"
 
 #include "../serial_test_util.hpp"
+#include "./matrix_test_util.hpp"
 
-template <typename Mat>
-auto matrix_approx_match(const Mat& lhs, const Mat& rhs,
-                         std::string_view msg = "")
-{
-  for (std::size_t i = 0; i < lhs.dimension(); ++i) {
-    for (std::size_t j = 0; j < lhs.dimension(); ++j) {
-      INFO(fmt::format("{}: {} != {}, at ({}, {})", msg, lhs, rhs, i, j));
-      REQUIRE(lhs(i, j) == Approx(rhs(i, j)).epsilon(0.01));
-    }
-  }
-}
-
- TEMPLATE_TEST_CASE("Default constructed matrices are zero matrices",
+TEMPLATE_TEST_CASE("Default constructed matrices are zero matrices",
                    "[beyond.core.math.mat]", beyond::Mat2, beyond::Mat3,
                    beyond::Mat4)
 {
@@ -32,7 +21,7 @@ auto matrix_approx_match(const Mat& lhs, const Mat& rhs,
   }
 }
 
- TEMPLATE_TEST_CASE("Creating identity matrices", "[beyond.core.math.mat]",
+TEMPLATE_TEST_CASE("Creating identity matrices", "[beyond.core.math.mat]",
                    beyond::Mat2, beyond::Mat3, beyond::Mat4)
 {
   const auto I = TestType::identity();
