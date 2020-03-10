@@ -9,7 +9,6 @@
  * @ingroup math
  */
 
-#include <array>
 #include <cstdlib>
 
 #include "beyond/core/math/math_fwd.hpp"
@@ -243,7 +242,7 @@ template <typename Derived>
 struct Matrix2 : MatrixBase<Matrix2> {
   using BaseType = MatrixBase<Matrix2>;
 
-  std::array<float, BaseType::size()> data;
+  float data[BaseType::size()];
 
   /// @brief Create a Matrix2 with all its elements zero-initialized
   constexpr Matrix2() noexcept : data{} {}
@@ -254,11 +253,6 @@ struct Matrix2 : MatrixBase<Matrix2> {
   constexpr Matrix2(const float v00, const float v01, const float v10,
                     const float v11) noexcept
       : data{v00, v10, v01, v11}
-  {
-  }
-
-  explicit constexpr Matrix2(std::array<float, BaseType::size()> data_) noexcept
-      : data{data_}
   {
   }
 
@@ -274,23 +268,24 @@ struct Matrix2 : MatrixBase<Matrix2> {
   {
     return Matrix2(1, 0, 0, 1);
   }
+
+  [[nodiscard]] friend constexpr auto determinant(const Matrix2& m) noexcept
+      -> float
+  {
+    return m.data[0] * m.data[3] - m.data[1] * m.data[2];
+  }
 };
 
 struct Matrix3 : MatrixBase<Matrix3> {
   using BaseType = MatrixBase<Matrix3>;
 
-  std::array<float, BaseType::size()> data;
+  float data[BaseType::size()];
 
   /// @brief Create a Matrix3 with all its elements zero-initialized
   constexpr Matrix3() noexcept : data{} {}
 
   /// @brief Create a Matrix3 with all its elements uninitialized
   explicit Matrix3(UninitializedTag) noexcept {}
-
-  explicit constexpr Matrix3(std::array<float, BaseType::size()> data_) noexcept
-      : data{data_}
-  {
-  }
 
   constexpr Matrix3(const float v00, const float v01, const float v02,
                     const float v10, const float v11, const float v12,
@@ -312,23 +307,26 @@ struct Matrix3 : MatrixBase<Matrix3> {
   {
     return Matrix3(1, 0, 0, 0, 1, 0, 0, 0, 1);
   }
+
+  [[nodiscard]] friend constexpr auto determinant(const Matrix3& m) noexcept
+      -> float
+  {
+    return m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) -
+           m(0, 1) * (m(1, 0) * m(2, 2) - m(1, 2) * m(2, 0)) +
+           m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0));
+  }
 };
 
 struct Matrix4 : MatrixBase<Matrix4> {
   using BaseType = MatrixBase<Matrix4>;
 
-  std::array<float, BaseType::size()> data{};
+  float data[BaseType::size()]{};
 
   /// @brief Create a Matrix4 with all its elements zero-initialized
   constexpr Matrix4() noexcept : data{} {}
 
   /// @brief Create a Matrix4 with all its elements uninitialized
   explicit Matrix4(UninitializedTag) noexcept {}
-
-  explicit constexpr Matrix4(std::array<float, BaseType::size()> data_) noexcept
-      : data{data_}
-  {
-  }
 
   constexpr Matrix4(const float v00, const float v01, const float v02,
                     const float v03, const float v10, const float v11,
@@ -356,6 +354,35 @@ struct Matrix4 : MatrixBase<Matrix4> {
   [[nodiscard]] static constexpr auto identity() noexcept -> Matrix4
   {
     return Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+
+  [[nodiscard]] friend constexpr auto determinant(const Matrix4& m) noexcept
+      -> float
+  {
+    return m(0, 0) * m(1, 1) * m(2, 2) * m(3, 3) +
+           m(0, 0) * m(2, 1) * m(3, 2) * m(1, 3) +
+           m(0, 0) * m(3, 1) * m(1, 2) * m(2, 3) +
+           m(1, 0) * m(0, 1) * m(3, 2) * m(2, 3) +
+           m(1, 0) * m(2, 1) * m(0, 2) * m(3, 3) +
+           m(1, 0) * m(3, 1) * m(2, 2) * m(0, 3) +
+           m(2, 0) * m(0, 1) * m(1, 2) * m(3, 3) +
+           m(2, 0) * m(1, 1) * m(3, 2) * m(0, 3) +
+           m(2, 0) * m(3, 1) * m(0, 2) * m(1, 3) +
+           m(3, 0) * m(0, 1) * m(2, 2) * m(1, 3) +
+           m(3, 0) * m(1, 1) * m(0, 2) * m(2, 3) +
+           m(3, 0) * m(2, 1) * m(1, 2) * m(0, 3) -
+           m(0, 0) * m(1, 1) * m(3, 2) * m(2, 3) -
+           m(0, 0) * m(2, 1) * m(1, 2) * m(3, 3) -
+           m(0, 0) * m(3, 1) * m(2, 2) * m(1, 3) -
+           m(1, 0) * m(0, 1) * m(2, 2) * m(3, 3) -
+           m(1, 0) * m(2, 1) * m(3, 2) * m(0, 3) -
+           m(1, 0) * m(3, 1) * m(0, 2) * m(2, 3) -
+           m(2, 0) * m(0, 1) * m(3, 2) * m(1, 3) -
+           m(2, 0) * m(1, 1) * m(0, 2) * m(3, 3) -
+           m(2, 0) * m(3, 1) * m(1, 2) * m(0, 3) -
+           m(3, 0) * m(0, 1) * m(1, 2) * m(2, 3) -
+           m(3, 0) * m(1, 1) * m(2, 2) * m(0, 3) -
+           m(3, 0) * m(2, 1) * m(0, 2) * m(1, 3);
   }
 };
 

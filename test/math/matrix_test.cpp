@@ -351,7 +351,84 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
     }
   }
 
-  GIVEN("Matrix A and its transpose AT")
+  GIVEN("Matrix A and a vector v")
+  {
+    const beyond::Matrix4 A{
+        // clang-format off
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 8, 7, 6,
+        5, 4, 3, 2
+        // clang-format on
+    };
+    const beyond::Vector4f v{1, 2, 3, 4};
+
+    THEN("A*v gives the correct result")
+    {
+      REQUIRE(A * v == beyond::Vector4f{30, 70, 70, 30});
+    }
+  }
+}
+
+TEST_CASE("Matrix Transpose", "[beyond.core.math.mat]")
+{
+  GIVEN("2x2 Matrix A and its transpose AT")
+  {
+    const beyond::Matrix2 A{
+        // clang-format off
+        1, 2,
+        5, 6,
+        // clang-format on
+    };
+
+    const beyond::Matrix2 AT{
+        // clang-format off
+        1, 5,
+        2, 6,
+        // clang-format on
+    };
+
+    THEN("AT = transpose(A)")
+    {
+      REQUIRE(AT == transpose(A));
+    }
+
+    THEN("A = transpose(AT)")
+    {
+      REQUIRE(A == transpose(AT));
+    }
+  }
+
+  GIVEN("3x3 Matrix A and its transpose AT")
+  {
+    const beyond::Matrix3 A{
+        // clang-format off
+        1, 2, 3,
+        5, 6, 7,
+        9, 8, 7,
+        // clang-format on
+    };
+
+    const beyond::Matrix3 AT{
+        // clang-format off
+        1, 5, 9,
+        2, 6, 8,
+        3, 7, 7,
+        // clang-format on
+    };
+
+    THEN("AT = transpose(A)")
+    {
+      REQUIRE(AT == transpose(A));
+    }
+
+    THEN("A = transpose(AT)")
+    {
+      REQUIRE(A == transpose(AT));
+    }
+  }
+
+  GIVEN("4x4 Matrix A and its transpose AT")
   {
     const beyond::Matrix4 A{
         // clang-format off
@@ -381,22 +458,43 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
       REQUIRE(A == transpose(AT));
     }
   }
+}
 
-  GIVEN("Matrix A and a vector v")
+TEST_CASE("Matrix determinant", "[beyond.core.math.mat]")
+{
+  SECTION("2x2 matrix")
   {
-    const beyond::Matrix4 A{
+    const beyond::Matrix2 A(
         // clang-format off
-        1, 2, 3, 4,
-        5, 6, 7, 8,
-        9, 8, 7, 6,
-        5, 4, 3, 2
+        1, 5,
+        -3, 2
         // clang-format on
-    };
-    const beyond::Vector4f v{1, 2, 3, 4};
+    );
+    REQUIRE(determinant(A) == 17);
+  }
 
-    THEN("A*v gives the correct result")
-    {
-      REQUIRE(A * v == beyond::Vector4f{30, 70, 70, 30});
-    }
+  SECTION("3x3 matrix")
+  {
+    const beyond::Matrix3 A(
+        // clang-format off
+         1,  2,  6,
+        -5,  8, -4,
+         2,  6,  4
+        // clang-format on
+    );
+    REQUIRE(determinant(A) == -196);
+  }
+
+  SECTION("4x4 matrix")
+  {
+    const beyond::Matrix4 A(
+        // clang-format off
+        -2, -8,  3,  5,
+        -3,  1,  7,  3,
+         1,  2, -9,  6,
+        -6,  7,  7, -9
+        // clang-format on
+    );
+    REQUIRE(determinant(A) == -4071);
   }
 }
