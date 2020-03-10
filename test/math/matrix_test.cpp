@@ -373,11 +373,11 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         5, 4, 3, 2
         // clang-format on
     };
-    const beyond::Vector4f v{1, 2, 3, 4};
+    const beyond::Vec4 v{1, 2, 3, 4};
 
     THEN("A*v gives the correct result")
     {
-      REQUIRE(A * v == beyond::Vector4f{30, 70, 70, 30});
+      REQUIRE(A * v == beyond::Vec4{30, 70, 70, 30});
     }
   }
 }

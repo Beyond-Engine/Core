@@ -12,9 +12,10 @@
 #include <type_traits>
 #include <utility>
 
-#include "beyond/core/utils/assert.hpp"
-#include "beyond/core/utils/bit_cast.hpp"
-#include "beyond/core/utils/functional.hpp"
+#include "../utils/assert.hpp"
+#include "../utils/bit_cast.hpp"
+#include "../utils/functional.hpp"
+#include "math_fwd.hpp"
 
 namespace beyond {
 
@@ -24,25 +25,6 @@ namespace beyond {
  * @addtogroup math
  * @{
  */
-
-/**
- * @brief Fix dimensional vectors, supports a lot of common vector arithmetic
- * operations
- *
- * @see Vector<T, 2>
- * @see Vector<T, 3>
- * @see Vector<T, 4>
- */
-template <typename T, std::size_t size> struct Vector;
-
-/**
- * @brief Fix dimensional points
- *
- * @see Point<T, 2>
- * @see Point<T, 3>
- * @related Vector
- */
-template <typename T, std::size_t size> struct Point;
 
 /**
  * @brief Traits for vector like entities that holds information about
@@ -79,34 +61,6 @@ template <typename Value> struct VectorTrait<Vector<Value, 4>> {
  * Vector, and Point.
  */
 template <typename Derived, std::size_t size> struct VectorStorage;
-
-/**
- * @brief Abstraction of vector component
- */
-template <typename Trait, size_t index> struct VectorComponent {
-  using ValueType = typename Trait::ValueType;
-
-  // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  [[nodiscard]] constexpr operator ValueType&() noexcept
-  {
-    return (data_[index]);
-  }
-
-  // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  [[nodiscard]] constexpr operator const ValueType&() const noexcept
-  {
-    return (data_[index]);
-  }
-
-  // NOLINTNEXTLINE(google-runtime-operator)
-  [[nodiscard]] constexpr auto operator&() const noexcept -> const ValueType*
-  {
-    return data_ + index;
-  }
-
-private:
-  ValueType data_[1];
-};
 
 namespace detail {
 
@@ -521,8 +475,10 @@ template <typename Derived> struct VectorStorage<Derived, 2> {
 
   union {
     std::array<ValueType, 2> elem;
-    VectorComponent<Trait, 0> x;
-    VectorComponent<Trait, 1> y;
+    struct {
+      ValueType x;
+      ValueType y;
+    };
     Subvector2<Trait, 0, 1> xy;
     Subvector2<Trait, 1, 0> yx;
   };
@@ -541,9 +497,11 @@ template <typename Derived> struct VectorStorage<Derived, 3> {
 
   union {
     std::array<ValueType, 3> elem;
-    VectorComponent<Trait, 0> x;
-    VectorComponent<Trait, 1> y;
-    VectorComponent<Trait, 2> z;
+    struct {
+      ValueType x;
+      ValueType y;
+      ValueType z;
+    };
     Subvector2<VectorTrait<Vector<ValueType, 2>>, 0, 1> xy;
     Subvector2<VectorTrait<Vector<ValueType, 2>>, 1, 0> yx;
     Subvector2<VectorTrait<Vector<ValueType, 2>>, 0, 2> xz;
@@ -571,10 +529,12 @@ template <typename Derived> struct VectorStorage<Derived, 4> {
   }
   union {
     std::array<ValueType, 4> elem;
-    VectorComponent<Trait, 0> x;
-    VectorComponent<Trait, 1> y;
-    VectorComponent<Trait, 2> z;
-    VectorComponent<Trait, 3> w;
+    struct {
+      ValueType x;
+      ValueType y;
+      ValueType z;
+      ValueType w;
+    };
     Subvector2<VectorTrait<Vector<ValueType, 2>>, 0, 1> xy;
     Subvector2<VectorTrait<Vector<ValueType, 2>>, 1, 0> yx;
     Subvector2<VectorTrait<Vector<ValueType, 2>>, 0, 2> xz;
@@ -1007,23 +967,6 @@ template <typename T, std::size_t size>
 {
   return std::sqrt(distance_squared(p1, p2));
 }
-
-template <typename T> using Vector2 = Vector<T, 2>;
-template <typename T> using Vector3 = Vector<T, 3>;
-template <typename T> using Vector4 = Vector<T, 4>;
-using Vector2f = Vector2<float>;
-using Vector2i = Vector2<int>;
-using Vector3f = Vector3<float>;
-using Vector3i = Vector3<int>;
-using Vector4f = Vector4<float>;
-using Vector4i = Vector4<int>;
-
-template <typename T> using Point2 = Point<T, 2>;
-template <typename T> using Point3 = Point<T, 3>;
-using Point2f = Point2<float>;
-using Point2i = Point2<int>;
-using Point3f = Point3<float>;
-using Point3i = Point3<int>;
 
 /** @}
  *  @} */

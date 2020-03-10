@@ -14,14 +14,14 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
   {
     SECTION("2d Vectors")
     {
-      beyond::Vector2i v;
+      beyond::IVec2 v;
       REQUIRE(v.x == 0);
       REQUIRE(v.y == 0);
     }
 
     SECTION("3d Vectors")
     {
-      beyond::Vector3i v;
+      beyond::IVec3 v;
       REQUIRE(v.x == 0);
       REQUIRE(v.y == 0);
       REQUIRE(v.z == 0);
@@ -29,7 +29,7 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
 
     SECTION("4d Vectors")
     {
-      beyond::Vector4i v;
+      beyond::IVec4 v;
       REQUIRE(v.x == 0);
       REQUIRE(v.y == 0);
       REQUIRE(v.z == 0);
@@ -50,11 +50,11 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
   {
     GIVEN("A 2d Vector v1 = [x1, y1]")
     {
-      const beyond::Vector2i v1{x1, y1};
+      const beyond::IVec2 v1{x1, y1};
 
       AND_GIVEN("A 3d vector v2 created from v1 and z1")
       {
-        const beyond::Vector3i v2{v1, z1};
+        const beyond::IVec3 v2{v1, z1};
 
         THEN("v2 = [v1, z1]")
         {
@@ -65,7 +65,7 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
           WHEN("Create a 4d vector v3 from v2 and w1")
           {
 
-            const beyond::Vector4i v3{v2, w1};
+            const beyond::IVec4 v3{v2, w1};
 
             THEN("v3 = [v1, z1, w1]")
             {
@@ -80,7 +80,7 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
 
       WHEN("Create a 4d vector from v1, z1, and w1")
       {
-        const beyond::Vector4i v2{v1, z1, w1};
+        const beyond::IVec4 v2{v1, z1, w1};
         THEN("v2 = [v1, z1, w1]")
         {
           REQUIRE(v2.x == v1.x);
@@ -94,8 +94,8 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
 
   SECTION("Negating")
   {
-    const beyond::Vector4i v1{x1, y1, z1, w1};
-    const beyond::Vector4i result = -v1;
+    const beyond::IVec4 v1{x1, y1, z1, w1};
+    const beyond::IVec4 result = -v1;
     REQUIRE(result.x == -x1);
     REQUIRE(result.y == -y1);
     REQUIRE(result.z == -z1);
@@ -104,9 +104,9 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
 
   SECTION("operator+")
   {
-    beyond::Vector4i v1{x1, y1, z1, w1};
-    beyond::Vector4i v2{x2, y2, z2, w2};
-    const beyond::Vector4i result = v1 + v2;
+    beyond::IVec4 v1{x1, y1, z1, w1};
+    beyond::IVec4 v2{x2, y2, z2, w2};
+    const beyond::IVec4 result = v1 + v2;
     REQUIRE(result.x == (v1.x + v2.x));
     REQUIRE(result.y == (v1.y + v2.y));
     REQUIRE(result.z == (v1.z + v2.z));
@@ -115,9 +115,9 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
 
   SECTION("operator+=")
   {
-    beyond::Vector4i v1{x1, y1, z1, w1};
-    beyond::Vector4i v2{x2, y2, z2, w2};
-    beyond::Vector4i result = v1;
+    beyond::IVec4 v1{x1, y1, z1, w1};
+    beyond::IVec4 v2{x2, y2, z2, w2};
+    beyond::IVec4 result = v1;
     result += v2;
     REQUIRE(result.x == (v1.x + v2.x));
     REQUIRE(result.y == (v1.y + v2.y));
@@ -127,9 +127,9 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
 
   SECTION("operator-")
   {
-    const beyond::Vector4i v1{x1, y1, z1, w1};
-    const beyond::Vector4i v2{x2, y2, z2, w2};
-    const beyond::Vector4i result = v1 - v2;
+    const beyond::IVec4 v1{x1, y1, z1, w1};
+    const beyond::IVec4 v2{x2, y2, z2, w2};
+    const beyond::IVec4 result = v1 - v2;
     REQUIRE(result.x == (v1.x - v2.x));
     REQUIRE(result.y == (v1.y - v2.y));
     REQUIRE(result.z == (v1.z - v2.z));
@@ -138,9 +138,9 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
 
   SECTION("operator-=")
   {
-    const beyond::Vector4i v1{x1, y1, z1, w1};
-    const beyond::Vector4i v2{x2, y2, z2, w2};
-    beyond::Vector4i result = v1;
+    const beyond::IVec4 v1{x1, y1, z1, w1};
+    const beyond::IVec4 v2{x2, y2, z2, w2};
+    beyond::IVec4 result = v1;
     result -= v2;
     REQUIRE(result.x == (v1.x - v2.x));
     REQUIRE(result.y == (v1.y - v2.y));
@@ -150,9 +150,9 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
 
   SECTION("operator*=")
   {
-    const beyond::Vector4i v1{x1, y1, z1, w1};
+    const beyond::IVec4 v1{x1, y1, z1, w1};
     const int v2 = x2;
-    beyond::Vector4i result = v1;
+    beyond::IVec4 result = v1;
     result *= v2;
     REQUIRE(result.x == (v1.x * v2));
     REQUIRE(result.y == (v1.y * v2));
@@ -162,12 +162,12 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
 
   SECTION("Equality tests")
   {
-    const beyond::Vector4i v1{x1, y1, z1, w1};
-    const beyond::Vector4i v2{x1, y1, z1, w1};
-    const beyond::Vector4i v3{x1 + 1, y1, z1, w1};
-    const beyond::Vector4i v4{x1, y1 + 1, z1, w1};
-    const beyond::Vector4i v5{x1, y1, z1 + 1, w1};
-    const beyond::Vector4i v6{x1, y1, z1, w1 + 1};
+    const beyond::IVec4 v1{x1, y1, z1, w1};
+    const beyond::IVec4 v2{x1, y1, z1, w1};
+    const beyond::IVec4 v3{x1 + 1, y1, z1, w1};
+    const beyond::IVec4 v4{x1, y1 + 1, z1, w1};
+    const beyond::IVec4 v5{x1, y1, z1 + 1, w1};
+    const beyond::IVec4 v6{x1, y1, z1, w1 + 1};
     REQUIRE(v1 == v2);
     REQUIRE(v2 != v3);
     REQUIRE(v2 != v4);
@@ -177,13 +177,13 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
 
   SECTION("Dot product")
   {
-    const beyond::Vector4i v3{x1, y1, z1, w1};
+    const beyond::IVec4 v3{x1, y1, z1, w1};
     REQUIRE(beyond::dot(v3, v3) == (x1 * x1 + y1 * y1 + z1 * z1 + w1 * w1));
   }
 
   SECTION("Index accessing by [] and ()")
   {
-    const beyond::Vector4i v1{x1, y1, z1, w1};
+    const beyond::IVec4 v1{x1, y1, z1, w1};
     REQUIRE(v1[0] == x1);
     REQUIRE(v1(3) == w1);
   }
@@ -201,8 +201,8 @@ TEST_CASE("Floating point Vector only test", "[beyond.core.math.vec]")
 
   SECTION("operator/")
   {
-    const beyond::Vector4f v1{x1, y1, z1, w1};
-    const beyond::Vector4f result = v1 / x2;
+    const beyond::Vec4 v1{x1, y1, z1, w1};
+    const beyond::Vec4 result = v1 / x2;
     REQUIRE(result.x == Approx(v1.x / x2));
     REQUIRE(result.y == Approx(v1.y / x2));
     REQUIRE(result.z == Approx(v1.z / x2));
@@ -211,8 +211,8 @@ TEST_CASE("Floating point Vector only test", "[beyond.core.math.vec]")
 
   SECTION("operator/=")
   {
-    const beyond::Vector4f v1{x1, y1, z1, w1};
-    beyond::Vector4f result = v1;
+    const beyond::Vec4 v1{x1, y1, z1, w1};
+    beyond::Vec4 result = v1;
     result /= x2;
     REQUIRE(result.x == Approx(v1.x / x2));
     REQUIRE(result.y == Approx(v1.y / x2));
@@ -222,8 +222,8 @@ TEST_CASE("Floating point Vector only test", "[beyond.core.math.vec]")
 
   SECTION("normalize")
   {
-    const beyond::Vector4f v1{x1, y1, z1, w1};
-    const beyond::Vector4f result = beyond::normalize(v1);
+    const beyond::Vec4 v1{x1, y1, z1, w1};
+    const beyond::Vec4 result = beyond::normalize(v1);
     REQUIRE(result.x == Approx(v1.x / v1.length()));
     REQUIRE(result.y == Approx(v1.y / v1.length()));
     REQUIRE(result.z == Approx(v1.z / v1.length()));
@@ -235,19 +235,19 @@ TEST_CASE("Points", "[beyond.core.math.vec]")
 {
   SECTION("Create 3d Point from 2d Point and a scalar")
   {
-    const beyond::Point2f p1{1, 2};
-    const beyond::Point3f p2{p1, 3};
+    const beyond::FPoint2 p1{1, 2};
+    const beyond::FPoint3 p2{p1, 3};
   }
 
-  const beyond::Point3f p1{1, 2.4f, 3};
-  const beyond::Point3f p2{4, 5.4f, 4};
-  const beyond::Vector3f v1{2, 3.3f, 4.2f};
+  const beyond::FPoint3 p1{1, 2.4f, 3};
+  const beyond::FPoint3 p2{4, 5.4f, 4};
+  const beyond::Vec3 v1{2, 3.3f, 4.2f};
 
   SECTION("Point Vector addition")
   {
     SECTION("Point += Vector")
     {
-      beyond::Point3f result1 = p1;
+      beyond::FPoint3 result1 = p1;
       result1 += v1;
       REQUIRE(result1.x == Approx(p1.x + v1.x));
       REQUIRE(result1.y == Approx(p1.y + v1.y));
@@ -256,7 +256,7 @@ TEST_CASE("Points", "[beyond.core.math.vec]")
 
     SECTION("Point + Vector = Point")
     {
-      const beyond::Point3f result1 = p1 + v1;
+      const beyond::FPoint3 result1 = p1 + v1;
       REQUIRE(result1.x == Approx(p1.x + v1.x));
       REQUIRE(result1.y == Approx(p1.y + v1.y));
       REQUIRE(result1.z == Approx(p1.z + v1.z));
@@ -264,7 +264,7 @@ TEST_CASE("Points", "[beyond.core.math.vec]")
 
     SECTION("Vector + Point = Point")
     {
-      const beyond::Point3f result1 = v1 + p1;
+      const beyond::FPoint3 result1 = v1 + p1;
       REQUIRE(result1.x == Approx(p1.x + v1.x));
       REQUIRE(result1.y == Approx(p1.y + v1.y));
       REQUIRE(result1.z == Approx(p1.z + v1.z));
@@ -275,7 +275,7 @@ TEST_CASE("Points", "[beyond.core.math.vec]")
   {
     SECTION("Point -= Vector")
     {
-      beyond::Point3f result1 = p1;
+      beyond::FPoint3 result1 = p1;
       result1 -= v1;
       REQUIRE(result1.x == Approx(p1.x - v1.x));
       REQUIRE(result1.y == Approx(p1.y - v1.y));
@@ -284,7 +284,7 @@ TEST_CASE("Points", "[beyond.core.math.vec]")
 
     SECTION("Point - Vector = Point")
     {
-      const beyond::Point3f result1 = p1 - v1;
+      const beyond::FPoint3 result1 = p1 - v1;
       REQUIRE(result1.x == Approx(p1.x - v1.x));
       REQUIRE(result1.y == Approx(p1.y - v1.y));
       REQUIRE(result1.z == Approx(p1.z - v1.z));
@@ -309,18 +309,18 @@ TEST_CASE("Vector Swizzling", "[beyond.core.math.vec]")
   constexpr float c = 6.3f;
   constexpr float d = 8.4f;
 
-  beyond::Vector2f v1{a, b};
-  beyond::Vector3f v2{a, b, c};
-  beyond::Vector4f v3{a, b, c, d};
+  beyond::Vec2 v1{a, b};
+  beyond::Vec3 v2{a, b, c};
+  beyond::Vec4 v3{a, b, c, d};
 
   SECTION("Equality test")
   {
-    const beyond::Vector2f v4 = v1.xy;
+    const beyond::Vec2 v4 = v1.xy;
     CHECK(v1 == v4);
     CHECK(v1 == v1.xy);
     CHECK(v1.xy == v1.xy);
 
-    const beyond::Vector2f v5 = v1.yx;
+    const beyond::Vec2 v5 = v1.yx;
     CHECK(v1 != v5);
     CHECK(v1 != v5.xy);
     CHECK(v1.xy != v1.yx);
@@ -352,8 +352,8 @@ TEST_CASE("Vector Swizzling", "[beyond.core.math.vec]")
   {
     SECTION("Scalar multiplication")
     {
-      const beyond::Vector2f result1 = v1.xy * 2.f;
-      const beyond::Vector2f result2 = 2.f * v1.xy;
+      const beyond::Vec2 result1 = v1.xy * 2.f;
+      const beyond::Vec2 result2 = 2.f * v1.xy;
       CHECK(result1.x == Approx(v1.x * 2.f));
       CHECK(result1.y == Approx(v1.y * 2.f));
       CHECK(result1 == result2);
@@ -364,7 +364,7 @@ TEST_CASE("Vector Swizzling", "[beyond.core.math.vec]")
 
     SECTION("Scalar division")
     {
-      const beyond::Vector2f result1 = v1.xy / 2.f;
+      const beyond::Vec2 result1 = v1.xy / 2.f;
       CHECK(result1.x == Approx(v1.x / 2.f));
       CHECK(result1.y == Approx(v1.y / 2.f));
 
@@ -374,7 +374,7 @@ TEST_CASE("Vector Swizzling", "[beyond.core.math.vec]")
 
     SECTION("Addition")
     {
-      const beyond::Vector2f result1 = v1.xy + v1.yx;
+      const beyond::Vec2 result1 = v1.xy + v1.yx;
       SECTION("Binary additions")
       {
         CHECK(result1.x == Approx(v1.x + v1.y));
@@ -403,7 +403,7 @@ TEST_CASE("Vector Swizzling", "[beyond.core.math.vec]")
 
     SECTION("Subtraction")
     {
-      const beyond::Vector2f result1 = v1.xy - v1.yx;
+      const beyond::Vec2 result1 = v1.xy - v1.yx;
 
       SECTION("Binary additions")
       {
@@ -433,7 +433,7 @@ TEST_CASE("Vector Swizzling", "[beyond.core.math.vec]")
 
     SECTION("dot product")
     {
-      const beyond::Vector2f v4{b, a};
+      const beyond::Vec2 v4{b, a};
       const auto result = 2 * a * b;
 
       CHECK(dot(v1.xy, v4.xy) == Approx(result));
@@ -449,11 +449,11 @@ TEST_CASE("Cross product", "[beyond.core.math.vec]")
 {
   GIVEN("Two vectors")
   {
-    const beyond::Vector3f a{1, 2, 3};
-    const beyond::Vector3f b{2, 3, 4};
+    const beyond::Vec3 a{1, 2, 3};
+    const beyond::Vec3 b{2, 3, 4};
     THEN("cross(a,b) == [-1, 2, -1]")
     {
-      const beyond::Vector3f result1 = beyond::cross(a, b);
+      const beyond::Vec3 result1 = beyond::cross(a, b);
       REQUIRE(result1.x == Approx(-1));
       REQUIRE(result1.y == Approx(2));
       REQUIRE(result1.z == Approx(-1));
@@ -476,7 +476,7 @@ TEST_CASE("Cross product", "[beyond.core.math.vec]")
 
     THEN("cross(b, a) == [1, -2, 1]")
     {
-      const beyond::Vector3f result2 = beyond::cross(b, a);
+      const beyond::Vec3 result2 = beyond::cross(b, a);
       REQUIRE(result2.x == Approx(1));
       REQUIRE(result2.y == Approx(-2));
       REQUIRE(result2.z == Approx(1));
@@ -488,7 +488,7 @@ TEST_CASE("Vector serialization test", "[beyond.core.math.vec]")
 {
   SECTION("Output Vector2 to a stream")
   {
-    const beyond::Vector2f v{1, 2};
+    const beyond::Vec2 v{1, 2};
     const auto expected = "vec(1, 2)";
 
     REQUIRE_TO_STRING_EQ(v, expected);
@@ -496,7 +496,7 @@ TEST_CASE("Vector serialization test", "[beyond.core.math.vec]")
 
   SECTION("Output Vector3 to a stream")
   {
-    const beyond::Vector3f v{1, 2, 3};
+    const beyond::Vec3 v{1, 2, 3};
     const auto expected = "vec(1, 2, 3)";
 
     REQUIRE_TO_STRING_EQ(v, expected);
@@ -504,7 +504,7 @@ TEST_CASE("Vector serialization test", "[beyond.core.math.vec]")
 
   SECTION("Output Vector4 to a stream")
   {
-    const beyond::Vector4f v{1, 2, 3, 4};
+    const beyond::Vec4 v{1, 2, 3, 4};
     const auto expected = "vec(1, 2, 3, 4)";
 
     REQUIRE_TO_STRING_EQ(v, expected);
@@ -515,7 +515,7 @@ TEST_CASE("Point serialization test", "[beyond.core.math.vec]")
 {
   SECTION("Output Point2 to a stream")
   {
-    const beyond::Point2f p{1, 2};
+    const beyond::FPoint2 p{1, 2};
     const auto expected = "point(1, 2)";
 
     REQUIRE_TO_STRING_EQ(p, expected);
@@ -523,7 +523,7 @@ TEST_CASE("Point serialization test", "[beyond.core.math.vec]")
 
   SECTION("Output Point3 to a stream")
   {
-    const beyond::Point3f p{1, 2, 3};
+    const beyond::FPoint3 p{1, 2, 3};
     const auto expected = "point(1, 2, 3)";
 
     REQUIRE_TO_STRING_EQ(p, expected);
