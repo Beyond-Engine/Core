@@ -11,7 +11,6 @@
 
 #include <array>
 #include <cstdlib>
-#include <iosfwd>
 
 #include "beyond/core/math/math_fwd.hpp"
 #include "beyond/core/math/vector.hpp"
@@ -227,28 +226,6 @@ protected:
     return j * Trait::dimension + i;
   }
 };
-
-template <typename Derived>
-auto operator<<(std::ostream& os, const MatrixBase<Derived>& m) -> std::ostream&
-{
-  os << "mat" << m.dimension() << "(\n";
-  for (std::size_t i = 0; i < m.dimension(); i++) {
-    for (std::size_t j = 0; j < m.dimension(); j++) {
-      os << m.underlying().data[j * m.dimension() + i] << ", ";
-    }
-    os << '\n';
-  }
-  os << "\n)";
-  return os;
-}
-
-template <typename Derived>
-[[nodiscard]] auto to_string(const MatrixBase<Derived>& m) -> std::string
-{
-  std::stringstream ss;
-  ss << m;
-  return ss.str();
-}
 
 template <typename Derived>
 [[nodiscard]] constexpr auto transpose(const MatrixBase<Derived>& m) noexcept

@@ -18,8 +18,9 @@ add_library(core
         ../include/beyond/core/math/constants.hpp
         ../include/beyond/core/math/math.hpp
         ../include/beyond/core/math/vector.hpp
-        math/serial.cpp
-        ../include/beyond/core/math/serial.hpp ../include/beyond/core/math/matrix.hpp ../include/beyond/core/math/math_fwd.hpp)
+        ../include/beyond/core/math/serial.hpp
+        ../include/beyond/core/math/matrix.hpp
+        ../include/beyond/core/math/math_fwd.hpp)
 
 set(BEYOND_CORE_ASSERT_POLICY AUTO CACHE STRING "The policy of enabling
     assertion or not in beyond game engine core.

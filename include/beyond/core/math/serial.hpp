@@ -9,8 +9,10 @@
  * @ingroup math
  */
 
-#include <iosfwd>
-#include <ostream>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
+#include <fmt/ranges.h>
+#include <sstream>
 #include <string>
 
 #include "angle.hpp"
@@ -20,7 +22,10 @@
 namespace beyond {
 
 template <typename T, std::size_t n>
-[[nodiscard]] extern auto to_string(const Vector<T, n>& v) -> std::string;
+[[nodiscard]] auto to_string(const Vector<T, n>& v) -> std::string
+{
+  return fmt::format("vec({})", fmt::join(v.elem, ", "));
+}
 
 template <typename T, std::size_t n>
 auto operator<<(std::ostream& os, const Vector<T, n>& v) -> std::ostream&
@@ -30,7 +35,10 @@ auto operator<<(std::ostream& os, const Vector<T, n>& v) -> std::ostream&
 }
 
 template <typename T, std::size_t n>
-[[nodiscard]] extern auto to_string(const Point<T, n>& v) -> std::string;
+[[nodiscard]] auto to_string(const Point<T, n>& v) -> std::string
+{
+  return fmt::format("point({})", fmt::join(v.elem, ", "));
+}
 
 template <typename T, std::size_t n>
 auto operator<<(std::ostream& os, const Point<T, n>& v) -> std::ostream&
@@ -39,21 +47,55 @@ auto operator<<(std::ostream& os, const Point<T, n>& v) -> std::ostream&
   return os;
 }
 
-template <typename T>
-[[nodiscard]] extern auto to_string(Degree<T> d) -> std::string;
+template <typename T>[[nodiscard]] auto to_string(Degree<T> r) -> std::string
+{
+  return fmt::format("{}_degree", r.value());
+}
 
-template <typename T>
-[[nodiscard]] extern auto to_string(Radian<T> r) -> std::string;
+template <typename T>[[nodiscard]] auto to_string(Radian<T> r) -> std::string
+{
+  return fmt::format("{}_radian", r.value());
+}
 
 /// @brief Prints the Degree
 /// @related Degree
 template <typename T>
-extern auto operator<<(std::ostream& os, Degree<T> d) -> std::ostream&;
+auto operator<<(std::ostream& os, Degree<T> d) -> std::ostream&
+{
+  os << beyond::to_string(d);
+  return os;
+}
 
 /// @brief Prints the Radian
 /// @related Degree
 template <typename T>
-extern auto operator<<(std::ostream& os, Radian<T> r) -> std::ostream&;
+auto operator<<(std::ostream& os, Radian<T> r) -> std::ostream&
+{
+  os << beyond::to_string(r);
+  return os;
+}
+
+template <typename Derived>
+auto operator<<(std::ostream& os, const MatrixBase<Derived>& m) -> std::ostream&
+{
+  os << "mat" << m.dimension() << "(\n";
+  for (std::size_t i = 0; i < m.dimension(); i++) {
+    for (std::size_t j = 0; j < m.dimension() - 1; j++) {
+      os << m.underlying().data[j * m.dimension() + i] << ", ";
+    }
+    os << m.underlying().data[(m.dimension() - 1) * m.dimension() + i] << ",\n";
+  }
+  os << ')';
+  return os;
+}
+
+template <typename Derived>
+[[nodiscard]] auto to_string(const MatrixBase<Derived>& m) -> std::string
+{
+  std::stringstream ss;
+  ss << m;
+  return ss.str();
+}
 
 } // namespace beyond
 

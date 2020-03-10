@@ -1,9 +1,9 @@
 #include <catch2/catch.hpp>
 
-#include <iostream>
-#include <sstream>
-
 #include "beyond/core/math/matrix.hpp"
+#include "beyond/core/math/serial.hpp"
+
+#include "../serial_test_util.hpp"
 
  TEMPLATE_TEST_CASE("Default constructed matrices are zero matrices",
                    "[beyond.core.math.mat]", beyond::Matrix2, beyond::Matrix3,
@@ -32,7 +32,7 @@
   }
 }
 
-TEST_CASE("Matrices accessor", "[beyond.core.math.mat]")
+TEST_CASE("Matrices accessors", "[beyond.core.math.mat]")
 {
   GIVEN("the following 2x2 matrix M")
   {
@@ -55,6 +55,15 @@ TEST_CASE("Matrices accessor", "[beyond.core.math.mat]")
       {
         REQUIRE(M(0, 0) == 5);
       }
+    }
+
+    THEN("Can get the string representation the matrix")
+    {
+      const auto expected = R"(mat2(
+1, 2,
+5.5, 6.5,
+))";
+      REQUIRE_TO_STRING_EQ(M, expected);
     }
   }
 
@@ -82,6 +91,16 @@ TEST_CASE("Matrices accessor", "[beyond.core.math.mat]")
       {
         REQUIRE(M(0, 0) == 5);
       }
+    }
+
+    THEN("Can get the string representation the matrix")
+    {
+      const auto expected = R"(mat3(
+1, 2, 3,
+5.5, 6.5, 7.5,
+9, 10, 11,
+))";
+      REQUIRE_TO_STRING_EQ(M, expected);
     }
   }
 
@@ -112,6 +131,17 @@ TEST_CASE("Matrices accessor", "[beyond.core.math.mat]")
       {
         REQUIRE(M(0, 0) == 5);
       }
+    }
+
+    THEN("Can get the string representation the matrix")
+    {
+      const auto expected = R"(mat4(
+1, 2, 3, 4,
+5.5, 6.5, 7.5, 8.5,
+9, 10, 11, 12,
+13.5, 14.5, 15.5, 16.5,
+))";
+      REQUIRE_TO_STRING_EQ(M, expected);
     }
   }
 }
