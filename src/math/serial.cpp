@@ -1,5 +1,6 @@
 #include <fmt/ranges.h>
 #include <ostream>
+#include <sstream>
 
 #include "beyond/core/math/serial.hpp"
 

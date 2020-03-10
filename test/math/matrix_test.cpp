@@ -1,371 +1,36 @@
-#include <array>
-#include <cstdlib>
-#include <ostream>
-
-#include "beyond/core/math/vector.hpp"
-#include "beyond/core/utils/assert.hpp"
-
-namespace beyond {
-/**
- * @addtogroup core
- * @{
- * @addtogroup math
- * @{
- */
-
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4701)
-#endif
-
-struct Matrix2;
-struct Matrix3;
-struct Matrix4;
-
-template <typename Matrix> struct MatrixTrait;
-
-template <> struct MatrixTrait<Matrix2> {
-  static constexpr std::size_t dimension = 2;
-};
-
-template <> struct MatrixTrait<Matrix3> {
-  static constexpr std::size_t dimension = 3;
-};
-
-template <> struct MatrixTrait<Matrix4> {
-  static constexpr std::size_t dimension = 4;
-};
-
-template <typename Derived> struct MatrixBase {
-  using Trait = MatrixTrait<Derived>;
-
-  [[nodiscard]] constexpr auto underlying() noexcept -> Derived&
-  {
-    return static_cast<Derived&>(*this);
-  }
-
-  [[nodiscard]] constexpr auto underlying() const noexcept -> Derived const&
-  {
-    return static_cast<const Derived&>(*this);
-  }
-
-  [[nodiscard]] static constexpr auto dimension() noexcept -> std::size_t
-  {
-    return Trait::dimension;
-  }
-
-  [[nodiscard]] static constexpr auto size() noexcept -> std::size_t
-  {
-    return Trait::dimension * Trait::dimension;
-  }
-
-  /**
-   * @brief Gets the element of the matrix at i-th row and j-th column
-   *
-   * @warning If the i and j are out-of-index, the result is undefined
-   */
-  [[nodiscard]] constexpr auto operator()(std::size_t i, std::size_t j) const
-      noexcept -> float
-  {
-    BEYOND_ASSERT(i <= dimension() && j < dimension());
-    return underlying().data[flattern(i, j)];
-  }
-
-  /// @overload
-  [[nodiscard]] constexpr auto operator()(std::size_t i, std::size_t j) noexcept
-      -> float&
-  {
-    BEYOND_ASSERT(i <= dimension() && j < dimension());
-    return underlying().data[this->flattern(i, j)];
-  }
-
-  constexpr auto operator+=(const MatrixBase& other) -> Derived&
-  {
-    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
-      underlying().data[i] += other.underlying().data[i];
-    }
-
-    return underlying();
-  }
-
-  constexpr auto operator-=(const MatrixBase& other) -> Derived&
-  {
-    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
-      underlying().data[i] -= other.underlying().data[i];
-    }
-
-    return underlying();
-  }
-
-  constexpr auto operator*=(const MatrixBase& other) noexcept -> Derived
-  {
-    this->underlying() = this->underlying() * other;
-    return this->underlying();
-  }
-
-  constexpr auto operator*=(float scalar) noexcept -> Derived
-  {
-    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
-      underlying().data[i] *= scalar;
-    }
-    return this->underlying();
-  }
-
-  constexpr auto operator/=(float scalar) noexcept -> Derived
-  {
-    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
-      underlying().data[i] /= scalar;
-    }
-    return this->underlying();
-  }
-
-  [[nodiscard]] friend constexpr auto operator+(const MatrixBase& lhs,
-                                                const MatrixBase& rhs) noexcept
-      -> Derived
-  {
-    Derived result;
-    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
-      result.data[i] = lhs.underlying().data[i] + rhs.underlying().data[i];
-    }
-    return result;
-  };
-
-  [[nodiscard]] friend constexpr auto operator-(const MatrixBase& lhs,
-                                                const MatrixBase& rhs) noexcept
-      -> Derived
-  {
-    Derived result;
-    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
-      result.data[i] = lhs.underlying().data[i] - rhs.underlying().data[i];
-    }
-    return result;
-  };
-
-  [[nodiscard]] friend constexpr auto operator*(const MatrixBase& lhs,
-                                                const MatrixBase& rhs) noexcept
-      -> Derived
-  {
-    Derived result;
-    for (std::size_t i = 0; i < dimension(); i++) {
-      for (std::size_t j = 0; j < dimension(); j++) {
-        float n = 0;
-        for (std::size_t k = 0; k < dimension(); k++) {
-          n += lhs(i, k) * rhs(k, j);
-        }
-        result(i, j) = n;
-      }
-    }
-    return result;
-  }
-
-  [[nodiscard]] friend constexpr auto operator*(const MatrixBase& mat,
-                                                float s) noexcept -> Derived
-  {
-    Derived result;
-    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
-      result.data[i] = mat.underlying().data[i] * s;
-    }
-    return result;
-  };
-
-  [[nodiscard]] friend constexpr auto operator*(float s,
-                                                const MatrixBase& mat) noexcept
-      -> Derived
-  {
-    return mat * s;
-  };
-
-  [[nodiscard]] friend constexpr auto operator/(const MatrixBase& mat,
-                                                float s) noexcept -> Derived
-  {
-    Derived result;
-    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
-      result.data[i] = mat.underlying().data[i] / s;
-    }
-    return result;
-  };
-
-  [[nodiscard]] friend constexpr auto operator==(const MatrixBase& lhs,
-                                                 const MatrixBase& rhs) noexcept
-      -> bool
-  {
-    for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
-      if (lhs.underlying().data[i] != rhs.underlying().data[i]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  [[nodiscard]] friend constexpr auto operator!=(const MatrixBase& lhs,
-                                                 const MatrixBase& rhs) noexcept
-      -> bool
-  {
-    return !(lhs == rhs);
-  }
-
-protected:
-  constexpr MatrixBase() noexcept = default;
-
-  static constexpr auto flattern(std::size_t i, std::size_t j) noexcept
-      -> std::size_t
-  {
-    return j * Trait::dimension + i;
-  }
-};
-
-template <typename Derived>
-auto operator<<(std::ostream& os, const MatrixBase<Derived>& m) -> std::ostream&
-{
-  os << "mat" << m.dimension() << "(\n";
-  for (std::size_t i = 0; i < m.dimension(); i++) {
-    for (std::size_t j = 0; j < m.dimension(); j++) {
-      os << m.underlying().data[j * m.dimension() + i] << ", ";
-    }
-    os << '\n';
-  }
-  os << "\n)";
-  return os;
-}
-
-template <typename Derived>
-constexpr auto transpose(const MatrixBase<Derived>& m) noexcept -> Derived
-{
-  Derived r;
-  for (std::size_t i = 0; i < m.dimension(); ++i) {
-    for (std::size_t j = 0; j < m.dimension(); ++j) {
-      r(i, j) = m(j, i);
-    }
-  }
-  return r;
-}
-
-struct Matrix2 : MatrixBase<Matrix2> {
-  using BaseType = MatrixBase<Matrix2>;
-
-  std::array<float, BaseType::size()> data;
-
-  constexpr Matrix2() noexcept : data{1, 0, 0, 1} {}
-
-  constexpr Matrix2(const float v00, const float v01, const float v10,
-                    const float v11) noexcept
-      : data{v00, v10, v01, v11}
-  {
-  }
-
-  explicit constexpr Matrix2(std::array<float, BaseType::size()> data_) noexcept
-      : data{data_}
-  {
-  }
-
-  friend constexpr auto operator*(const Matrix2& m, const Vector2<float> v)
-      -> Vector2<float>
-  {
-    return Vector2<float>(m.data[0] * v.x + m.data[2] * v.y,
-                          m.data[1] * v.x + m.data[3] * v.y);
-  }
-
-  static constexpr auto identity() noexcept -> Matrix2
-  {
-    return Matrix2(std::array<float, 4>{1, 0, 0, 1});
-  }
-};
-
-struct Matrix3 : MatrixBase<Matrix3> {
-  using BaseType = MatrixBase<Matrix3>;
-
-  std::array<float, BaseType::size()> data;
-
-  Matrix3() noexcept = default;
-
-  explicit constexpr Matrix3(std::array<float, BaseType::size()> data_) noexcept
-      : data{data_}
-  {
-  }
-
-  constexpr Matrix3(const float v00, const float v01, const float v02,
-                    const float v10, const float v11, const float v12,
-                    const float v20, const float v21, const float v22) noexcept
-      : data{v00, v10, v20, v01, v11, v21, v02, v12, v22}
-  {
-  }
-
-  friend constexpr auto operator*(const Matrix3& m, const Vector3<float> v)
-      -> Vector3<float>
-  {
-    return Vector3<float>(m.data[0] * v.x + m.data[3] * v.y + m.data[6] * v.z,
-                          m.data[1] * v.x + m.data[4] * v.y + m.data[7] * v.z,
-                          m.data[2] * v.x + m.data[5] * v.y + m.data[8] * v.z);
-  }
-
-  static constexpr auto identity() noexcept -> Matrix3
-  {
-    return Matrix3(std::array<float, 9>{1, 0, 0, 0, 1, 0, 0, 0, 1});
-  }
-};
-
-struct Matrix4 : MatrixBase<Matrix4> {
-  using BaseType = MatrixBase<Matrix4>;
-
-  std::array<float, BaseType::size()> data;
-
-  Matrix4() noexcept = default;
-
-  explicit constexpr Matrix4(std::array<float, BaseType::size()> data_) noexcept
-      : data{data_}
-  {
-  }
-
-  constexpr Matrix4(const float v00, const float v01, const float v02,
-                    const float v03, const float v10, const float v11,
-                    const float v12, const float v13, const float v20,
-                    const float v21, const float v22, const float v23,
-                    const float v30, const float v31, const float v32,
-                    const float v33) noexcept
-      : data{v00, v10, v20, v30, v01, v11, v21, v31,
-             v02, v12, v22, v32, v03, v13, v23, v33}
-  {
-  }
-
-  friend constexpr auto operator*(const Matrix4& m, const Vector4<float> v)
-      -> Vector4<float>
-  {
-    return Vector4<float>(
-        m.data[0] * v.x + m.data[4] * v.y + m.data[8] * v.z + m.data[12] * v.w,
-        m.data[1] * v.x + m.data[5] * v.y + m.data[9] * v.z + m.data[13] * v.w,
-        m.data[2] * v.x + m.data[6] * v.y + m.data[10] * v.z + m.data[14] * v.w,
-        m.data[3] * v.x + m.data[7] * v.y + m.data[11] * v.z +
-            m.data[15] * v.w);
-  }
-
-  static constexpr auto identity() noexcept -> Matrix4
-  {
-    return Matrix4(
-        std::array<float, 16>{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1});
-  }
-};
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
-/** @}
- *  @} */
-} // namespace beyond
-
 #include <catch2/catch.hpp>
 
-// TEMPLATE_TEST_CASE("Creating identity matrices", "[beyond.core.math.mat]",
-//                   beyond::Matrix2, beyond::Matrix3, beyond::Matrix4)
-//{
-//  const auto I = TestType::identity();
-//  const auto dim = I.dimension();
-//  for (std::size_t i = 0; i < dim; ++i) {
-//    for (std::size_t j = 0; j < dim; ++j) {
-//      REQUIRE(I(i, j) == Approx(i == j ? 1 : 0));
-//    }
-//  }
-//}
+#include <iostream>
+#include <sstream>
+
+#include "beyond/core/math/matrix.hpp"
+
+ TEMPLATE_TEST_CASE("Default constructed matrices are zero matrices",
+                   "[beyond.core.math.mat]", beyond::Matrix2, beyond::Matrix3,
+                   beyond::Matrix4)
+{
+  const auto Z1 = TestType();
+  const auto Z2 = TestType::zero();
+  const auto dim = TestType::dimension();
+  for (std::size_t i = 0; i < dim; ++i) {
+    for (std::size_t j = 0; j < dim; ++j) {
+      REQUIRE(Z1(i, j) == 0);
+      REQUIRE(Z2(i, j) == 0);
+    }
+  }
+}
+
+ TEMPLATE_TEST_CASE("Creating identity matrices", "[beyond.core.math.mat]",
+                   beyond::Matrix2, beyond::Matrix3, beyond::Matrix4)
+{
+  const auto I = TestType::identity();
+  const auto dim = TestType::dimension();
+  for (std::size_t i = 0; i < dim; ++i) {
+    for (std::size_t j = 0; j < dim; ++j) {
+      REQUIRE(I(i, j) == (i == j ? 1 : 0));
+    }
+  }
+}
 
 TEST_CASE("Matrices accessor", "[beyond.core.math.mat]")
 {
@@ -506,7 +171,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 
     constexpr beyond::Matrix4 A_div_s{
         // clang-format off
-        0.5,  1,  1.5,  2,
+        0.5, 1,  1.5,  2,
         2.5, 3, 3.5, 4,
         4.5, 5, 5.5, 6,
         6.5, 7, 7.5, 8

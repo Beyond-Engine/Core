@@ -10,9 +10,11 @@
  */
 
 #include <iosfwd>
+#include <ostream>
 #include <string>
 
 #include "angle.hpp"
+#include "matrix.hpp"
 #include "vector.hpp"
 
 namespace beyond {
