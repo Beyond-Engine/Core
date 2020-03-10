@@ -23,9 +23,12 @@ struct UninitializedTag {
 
 constexpr UninitializedTag uninitialized_tag;
 
-struct Matrix2;
-struct Matrix3;
-struct Matrix4;
+template <typename T> struct Matrix2;
+template <typename T> struct Matrix3;
+template <typename T> struct Matrix4;
+using Mat2 = Matrix2<float>;
+using Mat3 = Matrix3<float>;
+using Mat4 = Matrix4<float>;
 
 /** @}
  *  @} */

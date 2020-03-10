@@ -18,8 +18,8 @@ auto matrix_approx_match(const Mat& lhs, const Mat& rhs,
 }
 
  TEMPLATE_TEST_CASE("Default constructed matrices are zero matrices",
-                   "[beyond.core.math.mat]", beyond::Matrix2, beyond::Matrix3,
-                   beyond::Matrix4)
+                   "[beyond.core.math.mat]", beyond::Mat2, beyond::Mat3,
+                   beyond::Mat4)
 {
   const auto Z1 = TestType();
   const auto Z2 = TestType::zero();
@@ -33,7 +33,7 @@ auto matrix_approx_match(const Mat& lhs, const Mat& rhs,
 }
 
  TEMPLATE_TEST_CASE("Creating identity matrices", "[beyond.core.math.mat]",
-                   beyond::Matrix2, beyond::Matrix3, beyond::Matrix4)
+                   beyond::Mat2, beyond::Mat3, beyond::Mat4)
 {
   const auto I = TestType::identity();
   const auto dim = TestType::dimension();
@@ -48,7 +48,7 @@ TEST_CASE("Matrices accessors", "[beyond.core.math.mat]")
 {
   GIVEN("the following 2x2 matrix M")
   {
-    beyond::Matrix2 M{
+    beyond::Mat2 M{
         // clang-format off
         1,    2,
         5.5,  6.5,
@@ -81,7 +81,7 @@ TEST_CASE("Matrices accessors", "[beyond.core.math.mat]")
 
   GIVEN("the following 3x3 matrix M")
   {
-    beyond::Matrix3 M{
+    beyond::Mat3 M{
         // clang-format off
         1,    2,    3,
         5.5,  6.5,  7.5,
@@ -118,7 +118,7 @@ TEST_CASE("Matrices accessors", "[beyond.core.math.mat]")
 
   GIVEN("the following 4x4 matrix M")
   {
-    beyond::Matrix4 M{
+    beyond::Mat4 M{
         // clang-format off
         1,    2,    3,    4,
         5.5,  6.5,  7.5,  8.5,
@@ -162,7 +162,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 {
   GIVEN("The following 4x4 matrix")
   {
-    const beyond::Matrix4 M1{
+    const beyond::Mat4 M1{
         // clang-format off
         1,  2,  3,  4,
         5,  6,  7,  8,
@@ -191,7 +191,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 
   GIVEN("A matrix and a scalar s")
   {
-    beyond::Matrix4 A{
+    beyond::Mat4 A{
         // clang-format off
         1,  2,  3,  4,
         5,  6,  7,  8,
@@ -202,7 +202,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 
     constexpr float s = 2;
 
-    constexpr beyond::Matrix4 A_times_s{
+    constexpr beyond::Mat4 A_times_s{
         // clang-format off
         2,  4,  6,  8,
         10, 12, 14, 16,
@@ -211,7 +211,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    constexpr beyond::Matrix4 A_div_s{
+    constexpr beyond::Mat4 A_div_s{
         // clang-format off
         0.5, 1,  1.5,  2,
         2.5, 3, 3.5, 4,
@@ -252,7 +252,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 
   GIVEN("Two matrices A and B")
   {
-    beyond::Matrix4 A{
+    beyond::Mat4 A{
         // clang-format off
         1, 2, 3, 4,
         5, 6, 7, 8,
@@ -260,7 +260,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         5, 4, 3, 2
         // clang-format on
     };
-    beyond::Matrix4 B{
+    beyond::Mat4 B{
         // clang-format off
         -2, 1,  2,  3,
         3,  2,  1,  -1,
@@ -269,7 +269,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    constexpr beyond::Matrix4 Sum{
+    constexpr beyond::Mat4 Sum{
         // clang-format off
         -1, 3, 5, 7,
         8, 8, 8, 7,
@@ -278,7 +278,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    constexpr beyond::Matrix4 Diff{
+    constexpr beyond::Mat4 Diff{
         // clang-format off
         3, 1, 1, 1,
         2, 4, 6, 9,
@@ -287,7 +287,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    constexpr beyond::Matrix4 AB{
+    constexpr beyond::Mat4 AB{
         // clang-format off
         20, 22, 50,  48,
         44, 54, 114, 108,
@@ -296,7 +296,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    constexpr beyond::Matrix4 BA{
+    constexpr beyond::Mat4 BA{
         // clang-format off
         36, 30, 24, 18,
         17, 22, 27, 32,
@@ -365,7 +365,7 @@ SCENARIO("Operations on 4x4 matrices", "[beyond.core.math.mat]")
 
   GIVEN("Matrix A and a vector v")
   {
-    const beyond::Matrix4 A{
+    const beyond::Mat4 A{
         // clang-format off
         1, 2, 3, 4,
         5, 6, 7, 8,
@@ -386,14 +386,14 @@ TEST_CASE("Matrix Transpose", "[beyond.core.math.mat]")
 {
   GIVEN("2x2 Matrix A and its transpose AT")
   {
-    const beyond::Matrix2 A{
+    const beyond::Mat2 A{
         // clang-format off
         1, 2,
         5, 6,
         // clang-format on
     };
 
-    const beyond::Matrix2 AT{
+    const beyond::Mat2 AT{
         // clang-format off
         1, 5,
         2, 6,
@@ -413,7 +413,7 @@ TEST_CASE("Matrix Transpose", "[beyond.core.math.mat]")
 
   GIVEN("3x3 Matrix A and its transpose AT")
   {
-    const beyond::Matrix3 A{
+    const beyond::Mat3 A{
         // clang-format off
         1, 2, 3,
         5, 6, 7,
@@ -421,7 +421,7 @@ TEST_CASE("Matrix Transpose", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    const beyond::Matrix3 AT{
+    const beyond::Mat3 AT{
         // clang-format off
         1, 5, 9,
         2, 6, 8,
@@ -442,7 +442,7 @@ TEST_CASE("Matrix Transpose", "[beyond.core.math.mat]")
 
   GIVEN("4x4 Matrix A and its transpose AT")
   {
-    const beyond::Matrix4 A{
+    const beyond::Mat4 A{
         // clang-format off
         1, 2, 3, 4,
         5, 6, 7, 8,
@@ -451,7 +451,7 @@ TEST_CASE("Matrix Transpose", "[beyond.core.math.mat]")
         // clang-format on
     };
 
-    const beyond::Matrix4 AT{
+    const beyond::Mat4 AT{
         // clang-format off
         1, 5, 9, 5,
         2, 6, 8, 4,
@@ -476,7 +476,7 @@ TEST_CASE("Matrix determinant", "[beyond.core.math.mat]")
 {
   SECTION("2x2 matrix")
   {
-    const beyond::Matrix2 A(
+    const beyond::Mat2 A(
         // clang-format off
         1, 5,
         -3, 2
@@ -487,7 +487,7 @@ TEST_CASE("Matrix determinant", "[beyond.core.math.mat]")
 
   SECTION("3x3 matrix")
   {
-    const beyond::Matrix3 A(
+    const beyond::Mat3 A(
         // clang-format off
          1,  2,  6,
         -5,  8, -4,
@@ -499,7 +499,7 @@ TEST_CASE("Matrix determinant", "[beyond.core.math.mat]")
 
   SECTION("4x4 matrix")
   {
-    const beyond::Matrix4 A(
+    const beyond::Mat4 A(
         // clang-format off
         -2, -8,  3,  5,
         -3,  1,  7,  3,
@@ -515,14 +515,14 @@ TEST_CASE("Matrix inverse", "[beyond.core.math.mat]")
 {
   SECTION("2x2 matrix")
   {
-    const beyond::Matrix2 A(
+    const beyond::Mat2 A(
         // clang-format off
         4,  7,
         2,  6
         // clang-format on
     );
 
-    const beyond::Matrix2 Ainv(
+    const beyond::Mat2 Ainv(
         // clang-format off
          0.6, -0.7,
         -0.2,  0.4
@@ -534,7 +534,7 @@ TEST_CASE("Matrix inverse", "[beyond.core.math.mat]")
 
   SECTION("3x3 matrix")
   {
-    const beyond::Matrix3 A(
+    const beyond::Mat3 A(
         // clang-format off
         3,  0,  2,
         2,  0, -2,
@@ -542,7 +542,7 @@ TEST_CASE("Matrix inverse", "[beyond.core.math.mat]")
         // clang-format on
     );
 
-    const beyond::Matrix3 Ainv(
+    const beyond::Mat3 Ainv(
         // clang-format off
          0.2,   0.2,   0,
         -0.2,   0.3,   1,
@@ -555,7 +555,7 @@ TEST_CASE("Matrix inverse", "[beyond.core.math.mat]")
 
   SECTION("4x4 matrix")
   {
-    const beyond::Matrix4 A(
+    const beyond::Mat4 A(
         // clang-format off
         -5,  2,  6, -8,
          1, -5,  1,  8,
@@ -564,7 +564,7 @@ TEST_CASE("Matrix inverse", "[beyond.core.math.mat]")
         // clang-format on
     );
 
-    const beyond::Matrix4 Ainv(
+    const beyond::Mat4 Ainv(
         // clang-format off
          0.218045,  0.451128,   0.240602, -0.0451128,
         -0.808271,  -1.45677,  -0.443609,  0.520677,
