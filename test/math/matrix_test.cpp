@@ -5,6 +5,18 @@
 
 #include "../serial_test_util.hpp"
 
+template <typename Mat>
+auto matrix_approx_match(const Mat& lhs, const Mat& rhs,
+                         std::string_view msg = "")
+{
+  for (std::size_t i = 0; i < lhs.dimension(); ++i) {
+    for (std::size_t j = 0; j < lhs.dimension(); ++j) {
+      INFO(fmt::format("{}: {} != {}, at ({}, {})", msg, lhs, rhs, i, j));
+      REQUIRE(lhs(i, j) == Approx(rhs(i, j)).epsilon(0.01));
+    }
+  }
+}
+
  TEMPLATE_TEST_CASE("Default constructed matrices are zero matrices",
                    "[beyond.core.math.mat]", beyond::Matrix2, beyond::Matrix3,
                    beyond::Matrix4)
@@ -496,5 +508,72 @@ TEST_CASE("Matrix determinant", "[beyond.core.math.mat]")
         // clang-format on
     );
     REQUIRE(determinant(A) == -4071);
+  }
+}
+
+TEST_CASE("Matrix inverse", "[beyond.core.math.mat]")
+{
+  SECTION("2x2 matrix")
+  {
+    const beyond::Matrix2 A(
+        // clang-format off
+        4,  7,
+        2,  6
+        // clang-format on
+    );
+
+    const beyond::Matrix2 Ainv(
+        // clang-format off
+         0.6, -0.7,
+        -0.2,  0.4
+        // clang-format on
+    );
+    matrix_approx_match(inverse(A), Ainv, "2x2 matrix inverse");
+    matrix_approx_match(A, inverse(Ainv), "2x2 matrix inverse");
+  }
+
+  SECTION("3x3 matrix")
+  {
+    const beyond::Matrix3 A(
+        // clang-format off
+        3,  0,  2,
+        2,  0, -2,
+        0,  1,  1
+        // clang-format on
+    );
+
+    const beyond::Matrix3 Ainv(
+        // clang-format off
+         0.2,   0.2,   0,
+        -0.2,   0.3,   1,
+         0.2,  -0.3,   0
+        // clang-format on
+    );
+    matrix_approx_match(inverse(A), Ainv, "3x3 matrix inverse");
+    matrix_approx_match(A, inverse(Ainv), "3x3 matrix inverse");
+  }
+
+  SECTION("4x4 matrix")
+  {
+    const beyond::Matrix4 A(
+        // clang-format off
+        -5,  2,  6, -8,
+         1, -5,  1,  8,
+         7,  7, -6, -7,
+         1, -3,  7,  4
+        // clang-format on
+    );
+
+    const beyond::Matrix4 Ainv(
+        // clang-format off
+         0.218045,  0.451128,   0.240602, -0.0451128,
+        -0.808271,  -1.45677,  -0.443609,  0.520677,
+        -0.0789474, -0.223684, -0.0526316, 0.197368,
+        -0.522556,  -0.81391,  -0.300752,  0.306391
+        // clang-format on
+    );
+
+    matrix_approx_match(inverse(A), Ainv, "4x4 matrix inverse");
+    matrix_approx_match(A, inverse(Ainv), "4x4 matrix inverse");
   }
 }

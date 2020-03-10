@@ -42,7 +42,10 @@ target_include_directories(core
         )
 
 find_package(Threads)
-target_link_libraries(core PRIVATE compiler_options
+target_link_libraries(core
+        PRIVATE
+        beyond::compiler_options
+        beyond::compiler_warnings
         PUBLIC
         Threads::Threads
         CONAN_PKG::fmt

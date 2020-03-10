@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.15)
 project(beyond_core VERSION 0.0.2 LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-include("StandardProjectSettings")
+include("cmake/StandardProjectSettings.cmake")
 include("CMakeDependentOption")
 
 option(BEYOND_CORE_BUILD_TESTS "Builds the tests" OFF)
@@ -14,10 +14,10 @@ option(BEYOND_CORE_BUILD_DOCUMENTATION
         "Build the documentation for the Beyond game engine core" OFF)
 
 if (BEYOND_CORE_BUILD_DOCUMENTATION)
-    include("doxygen")
+    include("cmake/doxygen.cmake")
 endif ()
-include("compiler")
-include("clangformat")
+include("cmake/compiler.cmake")
+include("cmake/clangformat.cmake")
 
 # Conan package manager
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)

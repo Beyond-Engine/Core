@@ -21,7 +21,11 @@ add_executable(${TEST_TARGET_NAME}
         "utils/handle_test.cpp"
         "utils/named_type_test.cpp" serial_test_util.hpp)
 
-target_link_libraries(${TEST_TARGET_NAME} PRIVATE beyond::core compiler_options catch_main)
+target_link_libraries(${TEST_TARGET_NAME}
+        PRIVATE
+        beyond::core
+        beyond::compiler_options
+        catch_main)
 
 if (${BEYOND_CORE_BUILD_TESTS_COVERAGE})
     include("../cmake/CodeCoverage.cmake")
