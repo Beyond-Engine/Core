@@ -469,6 +469,8 @@ _Pragma("clang diagnostic push")
 #elif defined(__GNUC__) || defined(__GNUG__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
+#elif defined(_MSC_VER)
+#pragma warning(push, disable : 4201)
 #endif
 
     template <typename Derived>
@@ -614,6 +616,8 @@ template <typename Derived> struct VectorStorage<Derived, 4> {
 #pragma clang diagnostic pop
 #elif defined(__GNUC__) || defined(__GNUG__)
 #pragma GCC diagnostic pop
+#elif defined(_MSC_VER)
+#pragma warning(pop)
 #endif
 
 /**
@@ -628,6 +632,7 @@ template <typename T, std::size_t... Ns>
 struct VectorBase : VectorStorage<TVec<T, sizeof...(Ns)>, sizeof...(Ns)> {
   using ValueType = T;
   using Storage = VectorStorage<TVec<T, sizeof...(Ns)>, sizeof...(Ns)>;
+  using VecType = TVec<T, sizeof...(Ns)>;
 
   /**
    * @brief Gets the dimensionality of a vector
@@ -785,7 +790,7 @@ struct VectorBase : VectorStorage<TVec<T, sizeof...(Ns)>, sizeof...(Ns)> {
 template <typename T, std::size_t... Ns>
 [[nodiscard]] constexpr auto operator+(VectorBase<T, Ns...> lhs,
                                        const VectorBase<T, Ns...>& rhs) noexcept
-    -> VectorBase<T, Ns...>
+    -> typename VectorBase<T, Ns...>::VecType
 {
   lhs += rhs;
   return lhs;
@@ -798,7 +803,7 @@ template <typename T, std::size_t... Ns>
 template <typename T, std::size_t... Ns>
 [[nodiscard]] constexpr auto operator-(VectorBase<T, Ns...> lhs,
                                        const VectorBase<T, Ns...>& rhs) noexcept
-    -> VectorBase<T, Ns...>
+    -> typename VectorBase<T, Ns...>::VecType
 {
   lhs -= rhs;
   return lhs;
@@ -811,7 +816,8 @@ template <typename T, std::size_t... Ns>
 template <typename T, std::size_t... Ns>
 [[nodiscard]] constexpr auto operator/(VectorBase<T, Ns...> lhs,
                                        T scalar) noexcept
-    -> std::enable_if_t<std::is_floating_point_v<T>, VectorBase<T, Ns...>>
+    -> std::enable_if_t<std::is_floating_point_v<T>,
+                        typename VectorBase<T, Ns...>::VecType>
 {
   lhs /= scalar;
   return lhs;
