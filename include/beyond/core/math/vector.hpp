@@ -463,14 +463,15 @@ cross(const Subvector<Trait, 3, idx1, idy1, idz1>& v1,
 }
 
 #if defined(__clang__)
-_Pragma("clang diagnostic push")
+#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-anonymous-struct"
 #pragma clang diagnostic ignored "-Wnested-anon-types"
 #elif defined(__GNUC__) || defined(__GNUG__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #elif defined(_MSC_VER)
-#pragma warning(push, disable : 4201)
+#pragma warning(push)
+#pragma warning(disable : 4201)
 #endif
 
     template <typename Derived>
