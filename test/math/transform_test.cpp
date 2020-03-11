@@ -11,7 +11,7 @@ namespace beyond {
  */
 
 template <typename T>
-[[nodiscard]] inline auto rotate_x(Radian<T> r) noexcept -> Matrix4<T>
+[[nodiscard]] inline auto rotate_x(Radian<T> r) noexcept -> TMat4<T>
 {
   const T s = beyond::sin(r);
   const T c = beyond::cos(r);
@@ -27,14 +27,14 @@ template <typename T>
 }
 
 template <typename T>
-[[nodiscard]] inline auto rotate_x(Degree<T> d) noexcept -> Matrix4<T>
+[[nodiscard]] inline auto rotate_x(Degree<T> d) noexcept -> TMat4<T>
 {
   return rotate_x(Radian<T>(d));
 }
 
 /// @brief Builds a translation 4 * 4 matrix created from 3 scalars.
 template <typename T>
-[[nodiscard]] constexpr auto translate(T x, T y, T z) noexcept -> Matrix4<T>
+[[nodiscard]] constexpr auto translate(T x, T y, T z) noexcept -> TMat4<T>
 {
   return {
       // clang-format off
@@ -48,8 +48,7 @@ template <typename T>
 
 /// @brief Builds a translation 4 * 4 matrix created from a 3d vector.
 template <typename T>
-[[nodiscard]] constexpr auto translate(const Vector3<T>& v) noexcept
-    -> Matrix4<T>
+[[nodiscard]] constexpr auto translate(const TVec3<T>& v) noexcept -> TMat4<T>
 {
   return translate(v.x, v.y, v.z);
 }
@@ -57,8 +56,8 @@ template <typename T>
 /// @brief Transforms a matrix with a translation 4 * 4 matrix created from 3
 /// scalars.
 template <typename T>
-[[nodiscard]] constexpr auto translate(const Matrix4<T>& m, T x, T y,
-                                       T z) noexcept -> Matrix4<T>
+[[nodiscard]] constexpr auto translate(const TMat4<T>& m, T x, T y,
+                                       T z) noexcept -> TMat4<T>
 {
   return translate(x, y, z) * m;
 }

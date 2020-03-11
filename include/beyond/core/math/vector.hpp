@@ -3,7 +3,7 @@
 
 /**
  * @file vector.hpp
- * @brief Provides Vector and Point classes
+ * @brief Provides TVec and TPoint classes
  * @ingroup math
  */
 
@@ -32,33 +32,33 @@ namespace beyond {
  */
 template <typename Vector> struct VectorTrait;
 
-template <typename Value> struct VectorTrait<Vector<Value, 2>> {
+template <typename Value> struct VectorTrait<TVec<Value, 2>> {
   using ValueType = Value;
-  using VectorType = Vector<Value, 2>;
-  template <typename T> using VectorTemplate = Vector<T, 2>;
+  using VectorType = TVec<Value, 2>;
+  template <typename T> using VectorTemplate = TVec<T, 2>;
   static constexpr std::size_t size = 2;
 };
 
-template <typename Value> struct VectorTrait<Vector<Value, 3>> {
+template <typename Value> struct VectorTrait<TVec<Value, 3>> {
   using ValueType = Value;
-  using VectorType = Vector<Value, 3>;
-  template <typename T> using VectorTemplate = Vector<T, 3>;
+  using VectorType = TVec<Value, 3>;
+  template <typename T> using VectorTemplate = TVec<T, 3>;
   static constexpr std::size_t size = 3;
 };
 
-template <typename Value> struct VectorTrait<Vector<Value, 4>> {
+template <typename Value> struct VectorTrait<TVec<Value, 4>> {
   using ValueType = Value;
-  using VectorType = Vector<Value, 4>;
-  template <typename T> using VectorTemplate = Vector<T, 4>;
+  using VectorType = TVec<Value, 4>;
+  template <typename T> using VectorTemplate = TVec<T, 4>;
   static constexpr std::size_t size = 4;
 };
 
 /**
  * @brief Storage of a vector-like object
- * @see Vector, Point, VectorBase
+ * @see TVec, TPoint, VectorBase
  *
  * This class storage class of vector-like objects, including
- * Vector, and Point.
+ * TVec, and TPoint.
  */
 template <typename Derived, std::size_t size> struct VectorStorage;
 
@@ -462,7 +462,17 @@ cross(const Subvector<Trait, 3, idx1, idy1, idz1>& v1,
       (v1.elem[idx1] * v2.y) - (v1.elem[idy1] * v2.x)};
 }
 
-template <typename Derived> struct VectorStorage<Derived, 2> {
+#if defined(__clang__)
+_Pragma("clang diagnostic push")
+#pragma clang diagnostic ignored "-Wgnu-anonymous-struct"
+#pragma clang diagnostic ignored "-Wnested-anon-types"
+#elif defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#endif
+
+    template <typename Derived>
+    struct VectorStorage<Derived, 2> {
   using Trait = VectorTrait<Derived>;
   using ValueType = typename Trait::ValueType;
 
@@ -502,12 +512,12 @@ template <typename Derived> struct VectorStorage<Derived, 3> {
       ValueType y;
       ValueType z;
     };
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 0, 1> xy;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 1, 0> yx;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 0, 2> xz;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 2, 0> zx;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 1, 2> yz;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 2, 1> zy;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 0, 1> xy;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 1, 0> yx;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 0, 2> xz;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 2, 0> zx;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 1, 2> yz;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 2, 1> zy;
     Subvector3<Trait, 0, 1, 2> xyz;
     Subvector3<Trait, 0, 2, 1> xzy;
     Subvector3<Trait, 1, 0, 2> yxz;
@@ -535,43 +545,43 @@ template <typename Derived> struct VectorStorage<Derived, 4> {
       ValueType z;
       ValueType w;
     };
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 0, 1> xy;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 1, 0> yx;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 0, 2> xz;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 2, 0> zx;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 1, 2> yz;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 2, 1> zy;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 0, 3> xw;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 1, 3> yw;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 2, 3> zw;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 3, 0> wx;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 3, 1> wy;
-    Subvector2<VectorTrait<Vector<ValueType, 2>>, 3, 2> wz;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 0, 1> xy;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 1, 0> yx;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 0, 2> xz;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 2, 0> zx;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 1, 2> yz;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 2, 1> zy;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 0, 3> xw;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 1, 3> yw;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 2, 3> zw;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 3, 0> wx;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 3, 1> wy;
+    Subvector2<VectorTrait<TVec<ValueType, 2>>, 3, 2> wz;
 
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 0, 1, 2> xyz;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 0, 1, 3> xyw;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 0, 2, 1> xzy;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 0, 2, 3> xzw;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 0, 3, 1> xwy;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 0, 3, 2> xwz;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 1, 0, 2> yxz;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 1, 0, 3> yxw;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 1, 2, 0> yzx;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 1, 2, 3> yzw;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 1, 3, 0> ywx;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 1, 3, 2> ywz;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 2, 0, 1> zxy;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 2, 0, 3> zxw;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 2, 1, 0> zyx;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 2, 1, 3> zyw;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 2, 3, 0> zwx;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 2, 3, 1> zwy;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 3, 0, 1> wxy;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 3, 0, 2> wxz;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 3, 1, 0> wyx;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 3, 1, 2> wyz;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 3, 2, 0> wzx;
-    Subvector3<VectorTrait<Vector<ValueType, 3>>, 3, 2, 1> wzy;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 0, 1, 2> xyz;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 0, 1, 3> xyw;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 0, 2, 1> xzy;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 0, 2, 3> xzw;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 0, 3, 1> xwy;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 0, 3, 2> xwz;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 1, 0, 2> yxz;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 1, 0, 3> yxw;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 1, 2, 0> yzx;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 1, 2, 3> yzw;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 1, 3, 0> ywx;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 1, 3, 2> ywz;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 2, 0, 1> zxy;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 2, 0, 3> zxw;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 2, 1, 0> zyx;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 2, 1, 3> zyw;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 2, 3, 0> zwx;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 2, 3, 1> zwy;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 3, 0, 1> wxy;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 3, 0, 2> wxz;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 3, 1, 0> wyx;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 3, 1, 2> wyz;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 3, 2, 0> wzx;
+    Subvector3<VectorTrait<TVec<ValueType, 3>>, 3, 2, 1> wzy;
 
     Subvector4<Trait, 0, 1, 2, 3> xyzw;
     Subvector4<Trait, 0, 1, 3, 2> xywz;
@@ -600,18 +610,24 @@ template <typename Derived> struct VectorStorage<Derived, 4> {
   };
 };
 
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic pop
+#endif
+
 /**
- * @brief This class serve as base class for Vector, Bivector, and Trivectors.
+ * @brief This class serve as base class for TVec, Bivector, and Trivectors.
  *
  * This class contains all the possible operations on vectors and anti-vectors
  * (Bivector and Trivector).
  *
- * @see Vector, VectorStorage
+ * @see TVec, VectorStorage
  */
 template <typename T, std::size_t... Ns>
-struct VectorBase : VectorStorage<Vector<T, sizeof...(Ns)>, sizeof...(Ns)> {
+struct VectorBase : VectorStorage<TVec<T, sizeof...(Ns)>, sizeof...(Ns)> {
   using ValueType = T;
-  using Storage = VectorStorage<Vector<T, sizeof...(Ns)>, sizeof...(Ns)>;
+  using Storage = VectorStorage<TVec<T, sizeof...(Ns)>, sizeof...(Ns)>;
 
   /**
    * @brief Gets the dimensionality of a vector
@@ -805,61 +821,59 @@ template <typename T, std::size_t... Ns>
 /// @note Only available for floating point vectors
 template <typename T, std::size_t... Ns>
 [[nodiscard]] constexpr auto normalize(const VectorBase<T, Ns...>& v) noexcept
-    -> std::enable_if_t<std::is_floating_point_v<T>, Vector<T, sizeof...(Ns)>>
+    -> std::enable_if_t<std::is_floating_point_v<T>, TVec<T, sizeof...(Ns)>>
 {
   return v / v.length();
 }
 
-template <typename T> struct Vector<T, 2> : VectorBase<T, 0, 1> {
+template <typename T> struct TVec<T, 2> : VectorBase<T, 0, 1> {
   using ValueType = T;
   using Base = VectorBase<T, 0, 1>;
 
-  constexpr Vector() noexcept = default;
-  constexpr Vector(T xx, T yy) noexcept : Base{xx, yy} {}
+  constexpr TVec() noexcept = default;
+  constexpr TVec(T xx, T yy) noexcept : Base{xx, yy} {}
 
   // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  constexpr Vector(const Base& base) noexcept : Base{base} {}
+  constexpr TVec(const Base& base) noexcept : Base{base} {}
   // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  constexpr Vector(Base&& base) noexcept : Base{std::forward<Base>(base)} {}
+  constexpr TVec(Base&& base) noexcept : Base{std::forward<Base>(base)} {}
 };
 
-template <typename T> struct Vector<T, 3> : VectorBase<T, 0, 1, 2> {
+template <typename T> struct TVec<T, 3> : VectorBase<T, 0, 1, 2> {
   using ValueType = T;
   using Base = VectorBase<T, 0, 1, 2>;
 
-  constexpr Vector() noexcept = default;
-  constexpr Vector(const Vector<T, 2>& v, T zz) noexcept : Base{v[0], v[1], zz}
-  {
-  }
-  constexpr Vector(T xx, T yy, T zz) noexcept : Base{xx, yy, zz} {}
+  constexpr TVec() noexcept = default;
+  constexpr TVec(const TVec<T, 2>& v, T zz) noexcept : Base{v[0], v[1], zz} {}
+  constexpr TVec(T xx, T yy, T zz) noexcept : Base{xx, yy, zz} {}
 
   // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  constexpr Vector(const Base& base) noexcept : Base{base} {}
+  constexpr TVec(const Base& base) noexcept : Base{base} {}
   // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  constexpr Vector(Base&& base) noexcept : Base{std::forward<Base>(base)} {}
+  constexpr TVec(Base&& base) noexcept : Base{std::forward<Base>(base)} {}
 };
 
-template <typename T> struct Vector<T, 4> : VectorBase<T, 0, 1, 2, 3> {
+template <typename T> struct TVec<T, 4> : VectorBase<T, 0, 1, 2, 3> {
   using ValueType = T;
   using Base = VectorBase<T, 0, 1, 2, 3>;
 
-  constexpr Vector() noexcept = default;
-  constexpr Vector(T xx, T yy, T zz, T ww) noexcept : Base{xx, yy, zz, ww} {}
+  constexpr TVec() noexcept = default;
+  constexpr TVec(T xx, T yy, T zz, T ww) noexcept : Base{xx, yy, zz, ww} {}
 
-  constexpr Vector(const Vector<T, 2>& v, T zz, T ww) noexcept
+  constexpr TVec(const TVec<T, 2>& v, T zz, T ww) noexcept
       : Base{v[0], v[1], zz, ww}
   {
   }
 
-  constexpr Vector(const Vector<T, 3>& v, T ww) noexcept
+  constexpr TVec(const TVec<T, 3>& v, T ww) noexcept
       : Base{v[0], v[1], v[2], ww}
   {
   }
 
   // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  constexpr Vector(const Base& base) noexcept : Base{base} {}
+  constexpr TVec(const Base& base) noexcept : Base{base} {}
   // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  constexpr Vector(Base&& base) noexcept : Base{std::forward<Base>(base)} {}
+  constexpr TVec(Base&& base) noexcept : Base{std::forward<Base>(base)} {}
 };
 
 /**
@@ -901,57 +915,58 @@ template <typename T, std::size_t... Ns>
 
 /**
  * @brief Calculates cross product of two 3d vectors
- * @related Vector
+ * @related TVec
  */
 template <typename T>
-[[nodiscard]] constexpr auto cross(const Vector<T, 3>& v1,
-                                   const Vector<T, 3>& v2) noexcept
-    -> Vector<T, 3>
+[[nodiscard]] constexpr auto cross(const TVec<T, 3>& v1,
+                                   const TVec<T, 3>& v2) noexcept -> TVec<T, 3>
 {
   return {(v1.y * v2.z) - (v1.z * v2.y), (v1.z * v2.x) - (v1.x * v2.z),
           (v1.x * v2.y) - (v1.y * v2.x)};
 }
 
-template <typename T> struct Point<T, 2> : Vector<T, 2> {
-  using Vector<T, 2>::Vector;
+template <typename T> struct TPoint<T, 2> : TVec<T, 2> {
+  using TVec<T, 2>::TVec;
 };
 
-template <typename T> struct Point<T, 3> : Vector<T, 3> {
-  using Vector<T, 3>::Vector;
+template <typename T> struct TPoint<T, 3> : TVec<T, 3> {
+  using TVec<T, 3>::TVec;
 
-  constexpr Point(const Point<T, 2>& p, T zz) noexcept : Point{p.x, p.y, zz} {}
+  constexpr TPoint(const TPoint<T, 2>& p, T zz) noexcept : TPoint{p.x, p.y, zz}
+  {
+  }
 };
 
 /**
- * @brief Point + Vector = Point
- * @related Point
+ * @brief TPoint + TVec = TPoint
+ * @related TPoint
  */
 template <typename T, std::size_t size>
-[[nodiscard]] constexpr auto operator+(const Point<T, size>& p,
-                                       const Vector<T, size>& v) noexcept
-    -> Point<T, size>
+[[nodiscard]] constexpr auto operator+(const TPoint<T, size>& p,
+                                       const TVec<T, size>& v) noexcept
+    -> TPoint<T, size>
 {
-  return static_cast<Point<T, size>>((static_cast<Vector<T, size>>(p) + v));
+  return static_cast<TPoint<T, size>>((static_cast<TVec<T, size>>(p) + v));
 }
 
 /**
- * @brief Vector + Point = Point
- * @related Point
+ * @brief TVec + TPoint = TPoint
+ * @related TPoint
  */
 template <typename T, std::size_t size>
-[[nodiscard]] constexpr auto operator+(const Vector<T, size>& v,
-                                       const Point<T, size>& p) noexcept
-    -> Point<T, size>
+[[nodiscard]] constexpr auto operator+(const TVec<T, size>& v,
+                                       const TPoint<T, size>& p) noexcept
+    -> TPoint<T, size>
 {
-  return static_cast<Point<T, size>>((static_cast<Vector<T, size>>(p) + v));
+  return static_cast<TPoint<T, size>>((static_cast<TVec<T, size>>(p) + v));
 }
 
 /**
  * @brief Gets the squared distance between two points
  */
 template <typename T, std::size_t size>
-[[nodiscard]] constexpr auto distance_squared(const Point<T, size>& p1,
-                                              const Point<T, size>& p2) noexcept
+[[nodiscard]] constexpr auto
+distance_squared(const TPoint<T, size>& p1, const TPoint<T, size>& p2) noexcept
     -> T
 {
   const auto dx = p2 - p1;
@@ -962,8 +977,8 @@ template <typename T, std::size_t size>
  * @brief Gets the distance between two points
  */
 template <typename T, std::size_t size>
-[[nodiscard]] auto distance(const Point<T, size>& p1,
-                            const Point<T, size>& p2) noexcept -> T
+[[nodiscard]] auto distance(const TPoint<T, size>& p1,
+                            const TPoint<T, size>& p2) noexcept -> T
 {
   return std::sqrt(distance_squared(p1, p2));
 }

@@ -6,7 +6,7 @@
 #include "beyond/core/math/serial.hpp"
 #include "beyond/core/math/vector.hpp"
 
-TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
+TEST_CASE("All TVec types test", "[beyond.core.math.vec]")
 {
   using Catch::literals::operator""_a;
 
@@ -48,7 +48,7 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
 
   SECTION("Construct higher dimensional vectors from lower dimension")
   {
-    GIVEN("A 2d Vector v1 = [x1, y1]")
+    GIVEN("A 2d TVec v1 = [x1, y1]")
     {
       const beyond::IVec2 v1{x1, y1};
 
@@ -189,7 +189,7 @@ TEST_CASE("All Vector types test", "[beyond.core.math.vec]")
   }
 }
 
-TEST_CASE("Floating point Vector only test", "[beyond.core.math.vec]")
+TEST_CASE("Floating point TVec only test", "[beyond.core.math.vec]")
 {
   using Catch::literals::operator""_a;
 
@@ -233,58 +233,58 @@ TEST_CASE("Floating point Vector only test", "[beyond.core.math.vec]")
 
 TEST_CASE("Points", "[beyond.core.math.vec]")
 {
-  SECTION("Create 3d Point from 2d Point and a scalar")
+  SECTION("Create 3d TPoint from 2d TPoint and a scalar")
   {
-    const beyond::FPoint2 p1{1, 2};
-    const beyond::FPoint3 p2{p1, 3};
+    const beyond::Point2 p1{1, 2};
+    const beyond::Point3 p2{p1, 3};
   }
 
-  const beyond::FPoint3 p1{1, 2.4f, 3};
-  const beyond::FPoint3 p2{4, 5.4f, 4};
+  const beyond::Point3 p1{1, 2.4f, 3};
+  const beyond::Point3 p2{4, 5.4f, 4};
   const beyond::Vec3 v1{2, 3.3f, 4.2f};
 
-  SECTION("Point Vector addition")
+  SECTION("TPoint TVec addition")
   {
-    SECTION("Point += Vector")
+    SECTION("TPoint += TVec")
     {
-      beyond::FPoint3 result1 = p1;
+      beyond::Point3 result1 = p1;
       result1 += v1;
       REQUIRE(result1.x == Approx(p1.x + v1.x));
       REQUIRE(result1.y == Approx(p1.y + v1.y));
       REQUIRE(result1.z == Approx(p1.z + v1.z));
     }
 
-    SECTION("Point + Vector = Point")
+    SECTION("TPoint + TVec = TPoint")
     {
-      const beyond::FPoint3 result1 = p1 + v1;
+      const beyond::Point3 result1 = p1 + v1;
       REQUIRE(result1.x == Approx(p1.x + v1.x));
       REQUIRE(result1.y == Approx(p1.y + v1.y));
       REQUIRE(result1.z == Approx(p1.z + v1.z));
     }
 
-    SECTION("Vector + Point = Point")
+    SECTION("TVec + TPoint = TPoint")
     {
-      const beyond::FPoint3 result1 = v1 + p1;
+      const beyond::Point3 result1 = v1 + p1;
       REQUIRE(result1.x == Approx(p1.x + v1.x));
       REQUIRE(result1.y == Approx(p1.y + v1.y));
       REQUIRE(result1.z == Approx(p1.z + v1.z));
     }
   }
 
-  SECTION("Point Vector subtraction")
+  SECTION("TPoint TVec subtraction")
   {
-    SECTION("Point -= Vector")
+    SECTION("TPoint -= TVec")
     {
-      beyond::FPoint3 result1 = p1;
+      beyond::Point3 result1 = p1;
       result1 -= v1;
       REQUIRE(result1.x == Approx(p1.x - v1.x));
       REQUIRE(result1.y == Approx(p1.y - v1.y));
       REQUIRE(result1.z == Approx(p1.z - v1.z));
     }
 
-    SECTION("Point - Vector = Point")
+    SECTION("TPoint - TVec = TPoint")
     {
-      const beyond::FPoint3 result1 = p1 - v1;
+      const beyond::Point3 result1 = p1 - v1;
       REQUIRE(result1.x == Approx(p1.x - v1.x));
       REQUIRE(result1.y == Approx(p1.y - v1.y));
       REQUIRE(result1.z == Approx(p1.z - v1.z));
@@ -302,7 +302,7 @@ TEST_CASE("Points", "[beyond.core.math.vec]")
   }
 }
 
-TEST_CASE("Vector Swizzling", "[beyond.core.math.vec]")
+TEST_CASE("TVec Swizzling", "[beyond.core.math.vec]")
 {
   constexpr float a = 2.1f;
   constexpr float b = 4.2f;
@@ -484,9 +484,9 @@ TEST_CASE("Cross product", "[beyond.core.math.vec]")
   }
 }
 
-TEST_CASE("Vector serialization test", "[beyond.core.math.vec]")
+TEST_CASE("TVec serialization test", "[beyond.core.math.vec]")
 {
-  SECTION("Output Vector2 to a stream")
+  SECTION("Output TVec2 to a stream")
   {
     const beyond::Vec2 v{1, 2};
     const auto expected = "vec(1, 2)";
@@ -494,7 +494,7 @@ TEST_CASE("Vector serialization test", "[beyond.core.math.vec]")
     REQUIRE_TO_STRING_EQ(v, expected);
   }
 
-  SECTION("Output Vector3 to a stream")
+  SECTION("Output TVec3 to a stream")
   {
     const beyond::Vec3 v{1, 2, 3};
     const auto expected = "vec(1, 2, 3)";
@@ -502,7 +502,7 @@ TEST_CASE("Vector serialization test", "[beyond.core.math.vec]")
     REQUIRE_TO_STRING_EQ(v, expected);
   }
 
-  SECTION("Output Vector4 to a stream")
+  SECTION("Output TVec4 to a stream")
   {
     const beyond::Vec4 v{1, 2, 3, 4};
     const auto expected = "vec(1, 2, 3, 4)";
@@ -511,19 +511,19 @@ TEST_CASE("Vector serialization test", "[beyond.core.math.vec]")
   }
 }
 
-TEST_CASE("Point serialization test", "[beyond.core.math.vec]")
+TEST_CASE("TPoint serialization test", "[beyond.core.math.vec]")
 {
-  SECTION("Output Point2 to a stream")
+  SECTION("Output TPoint2 to a stream")
   {
-    const beyond::FPoint2 p{1, 2};
+    const beyond::Point2 p{1, 2};
     const auto expected = "point(1, 2)";
 
     REQUIRE_TO_STRING_EQ(p, expected);
   }
 
-  SECTION("Output Point3 to a stream")
+  SECTION("Output TPoint3 to a stream")
   {
-    const beyond::FPoint3 p{1, 2, 3};
+    const beyond::Point3 p{1, 2, 3};
     const auto expected = "point(1, 2, 3)";
 
     REQUIRE_TO_STRING_EQ(p, expected);

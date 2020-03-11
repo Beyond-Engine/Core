@@ -22,26 +22,26 @@
 namespace beyond {
 
 template <typename T, std::size_t n>
-[[nodiscard]] auto to_string(const Vector<T, n>& v) -> std::string
+[[nodiscard]] auto to_string(const TVec<T, n>& v) -> std::string
 {
   return fmt::format("vec({})", fmt::join(v.elem, ", "));
 }
 
 template <typename T, std::size_t n>
-auto operator<<(std::ostream& os, const Vector<T, n>& v) -> std::ostream&
+auto operator<<(std::ostream& os, const TVec<T, n>& v) -> std::ostream&
 {
   os << beyond::to_string(v);
   return os;
 }
 
 template <typename T, std::size_t n>
-[[nodiscard]] auto to_string(const Point<T, n>& v) -> std::string
+[[nodiscard]] auto to_string(const TPoint<T, n>& v) -> std::string
 {
   return fmt::format("point({})", fmt::join(v.elem, ", "));
 }
 
 template <typename T, std::size_t n>
-auto operator<<(std::ostream& os, const Point<T, n>& v) -> std::ostream&
+auto operator<<(std::ostream& os, const TPoint<T, n>& v) -> std::ostream&
 {
   os << beyond::to_string(v);
   return os;
