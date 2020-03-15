@@ -474,8 +474,7 @@ cross(const Subvector<Trait, 3, idx1, idy1, idz1>& v1,
 #pragma warning(disable : 4201)
 #endif
 
-    template <typename Derived>
-    struct VectorStorage<Derived, 2> {
+template <typename Derived> struct VectorStorage<Derived, 2> {
   using Trait = VectorTrait<Derived>;
   using ValueType = typename Trait::ValueType;
 
@@ -844,6 +843,11 @@ template <typename T> struct TVec<T, 2> : VectorBase<T, 0, 1> {
   constexpr TVec(const Base& base) noexcept : Base{base} {}
   // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
   constexpr TVec(Base&& base) noexcept : Base{std::forward<Base>(base)} {}
+
+  [[nodiscard]] static constexpr auto dimension() noexcept -> std::size_t
+  {
+    return 2;
+  }
 };
 
 template <typename T> struct TVec<T, 3> : VectorBase<T, 0, 1, 2> {
@@ -858,6 +862,11 @@ template <typename T> struct TVec<T, 3> : VectorBase<T, 0, 1, 2> {
   constexpr TVec(const Base& base) noexcept : Base{base} {}
   // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
   constexpr TVec(Base&& base) noexcept : Base{std::forward<Base>(base)} {}
+
+  [[nodiscard]] static constexpr auto dimension() noexcept -> std::size_t
+  {
+    return 3;
+  }
 };
 
 template <typename T> struct TVec<T, 4> : VectorBase<T, 0, 1, 2, 3> {
@@ -881,6 +890,11 @@ template <typename T> struct TVec<T, 4> : VectorBase<T, 0, 1, 2, 3> {
   constexpr TVec(const Base& base) noexcept : Base{base} {}
   // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
   constexpr TVec(Base&& base) noexcept : Base{std::forward<Base>(base)} {}
+
+  [[nodiscard]] static constexpr auto dimension() noexcept -> std::size_t
+  {
+    return 4;
+  }
 };
 
 /**

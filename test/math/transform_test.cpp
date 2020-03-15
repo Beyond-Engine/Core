@@ -98,13 +98,59 @@ TEST_CASE("Axis-wise rotation", "[beyond.core.math.transform]")
 
 TEST_CASE("Scaling", "[beyond.core.math.transform]")
 {
-  beyond::Mat4 expected{
-      // clang-format off
-      1.5, 0, 0, 0,
-      0, 2.5, 0, 0,
-      0, 0, 3.5, 0,
-      0, 0, 0, 1
-      // clang-format on
-  };
-  matrix_approx_match(beyond::scale(1.5f, 2.5f, 3.5f), expected);
+  SECTION("Creates scaling matrix")
+  {
+    beyond::Mat4 expected{
+        // clang-format off
+        1.5, 0, 0, 0,
+        0, 2.5, 0, 0,
+        0, 0, 3.5, 0,
+        0, 0, 0, 1
+        // clang-format on
+    };
+    matrix_approx_match(beyond::scale(1.5f, 2.5f, 3.5f), expected);
+    matrix_approx_match(beyond::scale(beyond::Vec3{1.5f, 2.5f, 3.5f}),
+                        expected);
+  }
+
+  SECTION("Scaling existing matrix")
+  {
+    beyond::Mat4 m{
+        // clang-format off
+        2, 0, 0, 0,
+        0, 2, 0, 0,
+        0, 0, 2, 0,
+        0, 0, 0, 1
+        // clang-format on
+    };
+
+    beyond::Mat4 expected{
+        // clang-format off
+        3, 0, 0, 0,
+        0, 5, 0, 0,
+        0, 0, 7, 0,
+        0, 0, 0, 1
+        // clang-format on
+    };
+
+    REQUIRE(beyond::scale(m, 1.5f, 2.5f, 3.5f) == expected);
+  }
+}
+
+TEST_CASE("Apply transformations together",
+          "[.][beyond.core.math.transform][integration]")
+{
+  const auto A = beyond::rotate_x(beyond::Radian::pi() / 2.f);
+  const auto B = beyond::scale(5.f, 5.f, 5.f);
+  const auto C = beyond::translate(10.f, 5.f, 7.f);
+
+  const auto v = beyond::Vec4{1, 0, 1, 1};
+  const auto v1 = A * v;
+  vector_approx_match(v1, beyond::Vec4{1, -1, 0, 1});
+  const auto v2 = B * v1;
+  vector_approx_match(v2, beyond::Vec4{5, -5, 0, 1});
+  const auto v3 = C * v2;
+  vector_approx_match(v3, beyond::Vec4{15, 0, 7, 1});
+
+  vector_approx_match(v3, C * B * A * v);
 }

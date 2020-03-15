@@ -18,7 +18,7 @@ namespace beyond {
 
 /**
  * @defgroup transform Transform
- * @brief Matrix transformations for 3D scenes
+ * @brief Matrix transformations
  * @ingroup math
  *
  * @{
@@ -138,6 +138,22 @@ template <typename T>
       0, 0, 0, 1
       // clang-format on
   };
+}
+
+/// @brief Builds a scale 4 * 4 matrix created from a 3d vector.
+template <typename T>
+[[nodiscard]] constexpr auto scale(const TVec3<T>& v) noexcept -> TMat4<T>
+{
+  return scale(v.x, v.y, v.z);
+}
+
+/// @brief Transforms a matrix with a translation 4 * 4 matrix created from 3
+/// scalars.
+template <typename T>
+[[nodiscard]] constexpr auto scale(const TMat4<T>& m, T x, T y, T z) noexcept
+    -> TMat4<T>
+{
+  return scale(x, y, z) * m;
 }
 
 /** @}
