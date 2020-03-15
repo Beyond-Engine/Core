@@ -156,6 +156,24 @@ template <typename T>
   return scale(x, y, z) * m;
 }
 
+/**
+ * @brief Creates a matrix for an orthographic parallel viewing volume.
+ */
+template <typename T>
+[[nodiscard]] constexpr auto ortho(T left, T right, T bottom, T top, T z_near,
+                                   T z_far) -> TMat4<T>
+{
+  TMat4<T> Result;
+  Result[0][0] = static_cast<T>(2) / (right - left);
+  Result[1][1] = static_cast<T>(2) / (top - bottom);
+  Result[2][2] = -static_cast<T>(2) / (z_far - z_near);
+  Result[3][0] = -(right + left) / (right - left);
+  Result[3][1] = -(top + bottom) / (top - bottom);
+  Result[3][2] = -(z_far + z_near) / (z_far - z_near);
+  Result[3][3] = static_cast<T>(1);
+  return Result;
+}
+
 /** @}
  *  @}
  *  @} */

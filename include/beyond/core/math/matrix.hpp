@@ -48,6 +48,7 @@ template <typename T> struct MatrixTrait<TMat4<T>> {
 template <typename Derived> struct MatrixBase {
   using Trait = MatrixTrait<Derived>;
   using ValueType = typename Trait::ValueType;
+  using ColumnType = TVec<ValueType, Trait::dimension>;
 
   [[nodiscard]] constexpr auto underlying() noexcept -> Derived&
   {
@@ -219,6 +220,20 @@ template <typename Derived> struct MatrixBase {
   {
     return Derived();
   }
+
+  /// @brief Gets the i-th column of a matrix
+  constexpr auto operator[](std::size_t i) noexcept -> ColumnType&
+  {
+    return *reinterpret_cast<ColumnType*>(underlying().data +
+                                          i * Trait::dimension);
+  };
+
+  /// @overload
+  constexpr auto operator[](std::size_t i) const noexcept -> const ColumnType&
+  {
+    return *reinterpret_cast<const ColumnType*>(underlying().data +
+                                                i * Trait::dimension);
+  };
 
 protected:
   constexpr MatrixBase() noexcept = default;

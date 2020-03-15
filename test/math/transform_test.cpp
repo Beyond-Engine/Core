@@ -154,3 +154,22 @@ TEST_CASE("Apply transformations together",
 
   vector_approx_match(v3, C * B * A * v);
 }
+
+TEST_CASE("Orthogonal Projection", "[beyond.core.math.transform]")
+{
+  const float left = 0, right = 800, bottom = 0, top = 600, z_near = 0,
+              z_far = 1;
+
+  const auto result = beyond::ortho(left, right, bottom, top, z_near, z_far);
+
+  beyond::Mat4 expected{
+      // clang-format off
+      2.f / (right - left), 0,                    0,                       -(right + left) / (right - left),
+      0,                    2.f / (top - bottom), 0,                       -(top + bottom) / (top - bottom),
+      0,                    0,                    -2.f / (z_far - z_near), -(z_far + z_near) / (z_far - z_near),
+      0,                    0,                    0,                       1
+      // clang-format on
+  };
+
+  matrix_approx_match(expected, result);
+}
