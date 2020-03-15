@@ -20,22 +20,22 @@ namespace beyond {
  * @{
  */
 
-template <typename Value> class Degree;
+template <typename Value> class TDegree;
 
 /**
- * @brief Radian angle wrapper
- * @see Degree
+ * @brief TRadian Radian is a number wrapper for angles
+ * @see TDegree
  */
-template <typename T> class Radian {
+template <typename T> class TRadian {
 public:
   static_assert(std::is_floating_point_v<T>);
   using ValueType = T;
 
-  constexpr Radian() = default;
-  explicit constexpr Radian(T v) noexcept : value_{v} {}
+  constexpr TRadian() = default;
+  explicit constexpr TRadian(T v) noexcept : value_{v} {}
 
-  /// @brief Converts a Degree to Radian
-  constexpr Radian(Degree<T> r) noexcept
+  /// @brief Converts a TDegree to TRadian
+  constexpr TRadian(TDegree<T> r) noexcept
       : value_{r.value() * constant::pi<T> / 180}
   {
   }
@@ -44,48 +44,48 @@ public:
    * @brief Convert from radian of another underlying type
    */
   template <typename U>
-  explicit constexpr Radian(Radian<U> r) noexcept
+  explicit constexpr TRadian(TRadian<U> r) noexcept
       : value_{static_cast<T>(r.value())}
   {
   }
 
-  /// @brief Gets the underlying numerical value of the Radian
+  /// @brief Gets the underlying numerical value of the TRadian
   [[nodiscard]] constexpr auto value() const noexcept -> T
   {
     return value_;
   }
 
-  /// @brief Adds another Radian to this radian
-  constexpr auto operator+=(Radian<T> rhs) noexcept -> Radian&
+  /// @brief Adds another TRadian to this radian
+  constexpr auto operator+=(TRadian<T> rhs) noexcept -> TRadian&
   {
     value_ += rhs.value_;
     return *this;
   }
 
-  /// @brief Subtracts another Radian to this radian
-  constexpr auto operator-=(Radian<T> rhs) noexcept -> Radian&
+  /// @brief Subtracts another TRadian to this radian
+  constexpr auto operator-=(TRadian<T> rhs) noexcept -> TRadian&
   {
     value_ -= rhs.value_;
     return *this;
   }
 
   /// @brief Multiples a scalar to this radian
-  constexpr auto operator*=(T rhs) noexcept -> Radian&
+  constexpr auto operator*=(T rhs) noexcept -> TRadian&
   {
     value_ *= rhs;
     return *this;
   }
 
   /// @brief Divides this radian by a scalar
-  constexpr auto operator/=(T rhs) noexcept -> Radian&
+  constexpr auto operator/=(T rhs) noexcept -> TRadian&
   {
     value_ /= rhs;
     return *this;
   }
 
-  [[nodiscard]] static constexpr auto pi() noexcept -> Radian<T>
+  [[nodiscard]] static constexpr auto pi() noexcept -> TRadian<T>
   {
-    return Radian<T>{constant::pi<T>};
+    return TRadian<T>{constant::pi<T>};
   }
 
 private:
@@ -93,60 +93,60 @@ private:
 };
 
 /**
- * @brief Degree angle wrapper
- * @see Radian
+ * @brief TDegree Degree is a number wrapper for angles
+ * @see TRadian
  */
-template <typename T> class Degree {
+template <typename T> class TDegree {
 public:
   static_assert(std::is_floating_point_v<T>);
   using ValueType = T;
 
-  constexpr Degree() = default;
-  explicit constexpr Degree(T v) noexcept : value_{v} {}
+  constexpr TDegree() = default;
+  explicit constexpr TDegree(T v) noexcept : value_{v} {}
 
-  constexpr Degree(Radian<T> r) noexcept
+  constexpr TDegree(TRadian<T> r) noexcept
       : value_{r.value() / constant::pi<T> * 180}
   {
   }
 
   /**
-   * @brief Convert from Degree of another underlying type
+   * @brief Convert from TDegree of another underlying type
    */
   template <typename U>
-  explicit constexpr Degree(Degree<U> r) noexcept
+  explicit constexpr TDegree(TDegree<U> r) noexcept
       : value_{static_cast<T>(r.value())}
   {
   }
 
-  /// @brief Gets the underlying numerical value of the Degree
+  /// @brief Gets the underlying numerical value of the TDegree
   [[nodiscard]] constexpr auto value() const noexcept -> T
   {
     return value_;
   }
 
-  /// @brief Adds another Degree to this Degree
-  constexpr auto operator+=(Degree<T> rhs) noexcept -> Degree&
+  /// @brief Adds another TDegree to this TDegree
+  constexpr auto operator+=(TDegree<T> rhs) noexcept -> TDegree&
   {
     value_ += rhs.value_;
     return *this;
   }
 
-  /// @brief Subtracts another Degree to this Degree
-  constexpr auto operator-=(Degree<T> rhs) noexcept -> Degree&
+  /// @brief Subtracts another TDegree to this TDegree
+  constexpr auto operator-=(TDegree<T> rhs) noexcept -> TDegree&
   {
     value_ -= rhs.value_;
     return *this;
   }
 
-  /// @brief Multiples a scalar to this Degree
-  constexpr auto operator*=(T rhs) noexcept -> Degree&
+  /// @brief Multiples a scalar to this TDegree
+  constexpr auto operator*=(T rhs) noexcept -> TDegree&
   {
     value_ *= rhs;
     return *this;
   }
 
-  /// @brief Divides this Degree by a scalar
-  constexpr auto operator/=(T rhs) noexcept -> Degree&
+  /// @brief Divides this TDegree by a scalar
+  constexpr auto operator/=(T rhs) noexcept -> TDegree&
   {
     value_ /= rhs;
     return *this;
@@ -156,261 +156,261 @@ private:
   T value_ = 0;
 };
 
-/// @brief Negates the Radian
-/// @related Radian
+/// @brief Negates the TRadian
+/// @related TRadian
 template <typename T>
-[[nodiscard]] constexpr auto operator-(Radian<T> r) noexcept -> Radian<T>
+[[nodiscard]] constexpr auto operator-(TRadian<T> r) noexcept -> TRadian<T>
 {
-  return Radian<T>{-r.value()};
+  return TRadian<T>{-r.value()};
 }
 
 /// @brief Adds two Radians
-/// @related Radian
+/// @related TRadian
 template <typename T>
-[[nodiscard]] constexpr auto operator+(Radian<T> lhs, Radian<T> rhs) noexcept
-    -> Radian<T>
+[[nodiscard]] constexpr auto operator+(TRadian<T> lhs, TRadian<T> rhs) noexcept
+    -> TRadian<T>
 {
-  return Radian<T>{lhs.value() + rhs.value()};
+  return TRadian<T>{lhs.value() + rhs.value()};
 }
 
 /// @brief Subtracts two Radians
-/// @related Radian
+/// @related TRadian
 template <typename T>
-[[nodiscard]] constexpr auto operator-(Radian<T> lhs, Radian<T> rhs) noexcept
-    -> Radian<T>
+[[nodiscard]] constexpr auto operator-(TRadian<T> lhs, TRadian<T> rhs) noexcept
+    -> TRadian<T>
 {
-  return Radian<T>{lhs.value() - rhs.value()};
+  return TRadian<T>{lhs.value() - rhs.value()};
 }
 
-/// @brief Multiplies Radian with a scalar
-/// @related Radian
+/// @brief Multiplies TRadian with a scalar
+/// @related TRadian
 template <typename T>
-[[nodiscard]] constexpr auto operator*(Radian<T> lhs, T rhs) noexcept
-    -> Radian<T>
+[[nodiscard]] constexpr auto operator*(TRadian<T> lhs, T rhs) noexcept
+    -> TRadian<T>
 {
-  return Radian<T>{lhs.value() * rhs};
+  return TRadian<T>{lhs.value() * rhs};
 }
 
 /// @overload
-/// @related Radian
+/// @related TRadian
 template <typename T>
-[[nodiscard]] constexpr auto operator*(T lhs, Radian<T> rhs) noexcept
-    -> Radian<T>
+[[nodiscard]] constexpr auto operator*(T lhs, TRadian<T> rhs) noexcept
+    -> TRadian<T>
 {
-  return Radian<T>{lhs * rhs.value()};
+  return TRadian<T>{lhs * rhs.value()};
 }
 
-/// @brief Divides this Radian by a scalar
-/// @related Radian
+/// @brief Divides this TRadian by a scalar
+/// @related TRadian
 template <typename T>
-[[nodiscard]] constexpr auto operator/(Radian<T> lhs, T rhs) noexcept
-    -> Radian<T>
+[[nodiscard]] constexpr auto operator/(TRadian<T> lhs, T rhs) noexcept
+    -> TRadian<T>
 {
-  return Radian<T>{lhs.value() / rhs};
+  return TRadian<T>{lhs.value() / rhs};
 }
 
 /**
- * @brief Divides a Radian value by another Radian.
- * @related Radian
+ * @brief Divides a TRadian value by another TRadian.
+ * @related TRadian
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator/(Radian<T> lhs, Radian<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator/(TRadian<T> lhs, TRadian<T> rhs) noexcept
     -> T
 {
   return lhs.value() / rhs.value();
 }
 
 /**
- * @brief Equality comparison between two `Radian`s
- * @related Radian
+ * @brief Equality comparison between two `TRadian`s
+ * @related TRadian
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator==(Radian<T> lhs, Radian<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator==(TRadian<T> lhs, TRadian<T> rhs) noexcept
     -> bool
 {
   return lhs.value() == rhs.value();
 }
 
 /**
- * @brief Inequality comparison between two `Radian`s
- * @related Radian
+ * @brief Inequality comparison between two `TRadian`s
+ * @related TRadian
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator!=(Radian<T> lhs, Radian<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator!=(TRadian<T> lhs, TRadian<T> rhs) noexcept
     -> bool
 {
   return lhs.value() != rhs.value();
 }
 
 /**
- * @brief Less than operator between two `Radian`s
- * @related Radian
+ * @brief Less than operator between two `TRadian`s
+ * @related TRadian
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator<(Radian<T> lhs, Radian<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator<(TRadian<T> lhs, TRadian<T> rhs) noexcept
     -> bool
 {
   return lhs.value() < rhs.value();
 }
 
 /**
- * @brief Greater than operator between two `Radian`s
- * @related Radian
+ * @brief Greater than operator between two `TRadian`s
+ * @related TRadian
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator>(Radian<T> lhs, Radian<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator>(TRadian<T> lhs, TRadian<T> rhs) noexcept
     -> bool
 {
   return lhs.value() > rhs.value();
 }
 
 /**
- * @brief Less than or equal operator between two `Radian`s
- * @related Radian
+ * @brief Less than or equal operator between two `TRadian`s
+ * @related TRadian
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator<=(Radian<T> lhs, Radian<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator<=(TRadian<T> lhs, TRadian<T> rhs) noexcept
     -> bool
 {
   return lhs.value() <= rhs.value();
 }
 
 /**
- * @brief Greater than or equal operator between two `Radian`s
- * @related Radian
+ * @brief Greater than or equal operator between two `TRadian`s
+ * @related TRadian
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator>=(Radian<T> lhs, Radian<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator>=(TRadian<T> lhs, TRadian<T> rhs) noexcept
     -> bool
 {
   return lhs.value() >= rhs.value();
 }
 
-/// @brief Negates the Degree
-/// @related Degree
+/// @brief Negates the TDegree
+/// @related TDegree
 template <typename T>
-[[nodiscard]] constexpr auto operator-(Degree<T> r) noexcept -> Degree<T>
+[[nodiscard]] constexpr auto operator-(TDegree<T> r) noexcept -> TDegree<T>
 {
-  return Degree<T>{-r.value()};
+  return TDegree<T>{-r.value()};
 }
 
 /// @brief Adds two Degrees
-/// @related Degree
+/// @related TDegree
 template <typename T>
-[[nodiscard]] constexpr auto operator+(Degree<T> lhs, Degree<T> rhs) noexcept
-    -> Degree<T>
+[[nodiscard]] constexpr auto operator+(TDegree<T> lhs, TDegree<T> rhs) noexcept
+    -> TDegree<T>
 {
-  return Degree<T>{lhs.value() + rhs.value()};
+  return TDegree<T>{lhs.value() + rhs.value()};
 }
 
 /// @brief Subtracts two Degrees
-/// @related Degree
+/// @related TDegree
 template <typename T>
-[[nodiscard]] constexpr auto operator-(Degree<T> lhs, Degree<T> rhs) noexcept
-    -> Degree<T>
+[[nodiscard]] constexpr auto operator-(TDegree<T> lhs, TDegree<T> rhs) noexcept
+    -> TDegree<T>
 {
-  return Degree<T>{lhs.value() - rhs.value()};
+  return TDegree<T>{lhs.value() - rhs.value()};
 }
 
-/// @brief Multiplies Degree with a scalar
-/// @related Degree
+/// @brief Multiplies TDegree with a scalar
+/// @related TDegree
 template <typename T>
-[[nodiscard]] constexpr auto operator*(Degree<T> lhs, T rhs) noexcept
-    -> Degree<T>
+[[nodiscard]] constexpr auto operator*(TDegree<T> lhs, T rhs) noexcept
+    -> TDegree<T>
 {
-  return Degree<T>{lhs.value() * rhs};
+  return TDegree<T>{lhs.value() * rhs};
 }
 
 /// @overload
-/// @related Degree
+/// @related TDegree
 template <typename T>
-[[nodiscard]] constexpr auto operator*(T lhs, Degree<T> rhs) noexcept
-    -> Degree<T>
+[[nodiscard]] constexpr auto operator*(T lhs, TDegree<T> rhs) noexcept
+    -> TDegree<T>
 {
-  return Degree<T>{lhs * rhs.value()};
+  return TDegree<T>{lhs * rhs.value()};
 }
 
-/// @brief Divides this Degree by a scalar
-/// @related Degree
+/// @brief Divides this TDegree by a scalar
+/// @related TDegree
 template <typename T>
-[[nodiscard]] constexpr auto operator/(Degree<T> lhs, T rhs) noexcept
-    -> Degree<T>
+[[nodiscard]] constexpr auto operator/(TDegree<T> lhs, T rhs) noexcept
+    -> TDegree<T>
 {
-  return Degree<T>{lhs.value() / rhs};
+  return TDegree<T>{lhs.value() / rhs};
 }
 
 /**
- * @brief Divides a Degree value by another Degree.
- * @related Degree
+ * @brief Divides a TDegree value by another TDegree.
+ * @related TDegree
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator/(Degree<T> lhs, Degree<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator/(TDegree<T> lhs, TDegree<T> rhs) noexcept
     -> T
 {
   return lhs.value() / rhs.value();
 }
 
 /**
- * @brief Equality comparison between two `Degree`s
- * @related Degree
+ * @brief Equality comparison between two `TDegree`s
+ * @related TDegree
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator==(Degree<T> lhs, Degree<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator==(TDegree<T> lhs, TDegree<T> rhs) noexcept
     -> bool
 {
   return lhs.value() == rhs.value();
 }
 
 /**
- * @brief Inequality comparison between two `Degree`s
- * @related Degree
+ * @brief Inequality comparison between two `TDegree`s
+ * @related TDegree
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator!=(Degree<T> lhs, Degree<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator!=(TDegree<T> lhs, TDegree<T> rhs) noexcept
     -> bool
 {
   return lhs.value() != rhs.value();
 }
 
 /**
- * @brief Less than operator between two `Degree`s
- * @related Degree
+ * @brief Less than operator between two `TDegree`s
+ * @related TDegree
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator<(Degree<T> lhs, Degree<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator<(TDegree<T> lhs, TDegree<T> rhs) noexcept
     -> bool
 {
   return lhs.value() < rhs.value();
 }
 
 /**
- * @brief Greater than operator between two `Degree`s
- * @related Degree
+ * @brief Greater than operator between two `TDegree`s
+ * @related TDegree
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator>(Degree<T> lhs, Degree<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator>(TDegree<T> lhs, TDegree<T> rhs) noexcept
     -> bool
 {
   return lhs.value() > rhs.value();
 }
 
 /**
- * @brief Less than or equal operator between two `Degree`s
- * @related Degree
+ * @brief Less than or equal operator between two `TDegree`s
+ * @related TDegree
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator<=(Degree<T> lhs, Degree<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator<=(TDegree<T> lhs, TDegree<T> rhs) noexcept
     -> bool
 {
   return lhs.value() <= rhs.value();
 }
 
 /**
- * @brief Greater than or equal operator between two `Degree`s
- * @related Degree
+ * @brief Greater than or equal operator between two `TDegree`s
+ * @related TDegree
  */
 template <typename T>
-[[nodiscard]] constexpr auto operator>=(Degree<T> lhs, Degree<T> rhs) noexcept
+[[nodiscard]] constexpr auto operator>=(TDegree<T> lhs, TDegree<T> rhs) noexcept
     -> bool
 {
   return lhs.value() >= rhs.value();
@@ -418,28 +418,28 @@ template <typename T>
 
 namespace literals {
 
-/// @brief Construct a Radian<float> by a literial
-/// @related Radian
+/// @brief Construct a TRadian<float> by a literial
+/// @related TRadian
 [[nodiscard]] constexpr auto operator""_rad(long double v) noexcept
-    -> Radian<float>
+    -> TRadian<float>
 {
-  return Radian<float>(static_cast<float>(v));
+  return TRadian<float>(static_cast<float>(v));
 }
 
-/// @brief Construct a Degree<float> by a literial
-/// @related Degree
+/// @brief Construct a TDegree<float> by a literial
+/// @related TDegree
 [[nodiscard]] constexpr auto operator""_deg(long double v) noexcept
-    -> Degree<float>
+    -> TDegree<float>
 {
-  return Degree<float>(static_cast<float>(v));
+  return TDegree<float>(static_cast<float>(v));
 }
 
 } // namespace literals
 
-using Radianf = Radian<float>;
-using Radiand = Radian<double>;
-using Degreef = Degree<float>;
-using Degreed = Degree<double>;
+using Radian = TRadian<float>;
+using DRadian = TRadian<double>;
+using Degree = TDegree<float>;
+using DDegree = TDegree<double>;
 
 /** @}
  *  @} */

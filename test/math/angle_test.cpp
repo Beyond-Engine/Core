@@ -13,17 +13,17 @@ using namespace beyond;
 using beyond::float_constants::pi;
 using namespace beyond::literals;
 
-TEST_CASE("Radian", "[beyond.core.math.angle]")
+TEST_CASE("TRadian", "[beyond.core.math.angle]")
 {
   SECTION("Default construction")
   {
-    Radian<float> rad;
+    TRadian<float> rad;
     REQUIRE(rad.value() == Approx(0));
   }
 
-  GIVEN("A Radian r1 = pi")
+  GIVEN("A TRadian r1 = pi")
   {
-    Radian<float> r1{pi};
+    TRadian<float> r1{pi};
     REQUIRE(r1.value() == Approx(pi));
 
     THEN("-r1 = -pi")
@@ -31,9 +31,9 @@ TEST_CASE("Radian", "[beyond.core.math.angle]")
       REQUIRE((-r1).value() == Approx(-pi));
     }
 
-    AND_GIVEN("Another Radian r2 = pi / 2")
+    AND_GIVEN("Another TRadian r2 = pi / 2")
     {
-      const Radian<float> r2{pi / 2};
+      const TRadian<float> r2{pi / 2};
 
       WHEN("r1 += r2")
       {
@@ -133,36 +133,36 @@ TEST_CASE("Radian", "[beyond.core.math.angle]")
     }
   }
 
-  SECTION("Create Radian by a literal")
+  SECTION("Create TRadian by a literal")
   {
     REQUIRE((1._rad).value() == Approx(1));
   }
 
   SECTION("Converts from radian of another type")
   {
-    const Radian<double> r{static_cast<double>(pi)};
-    REQUIRE(Radian<float>{r}.value() == Approx(pi));
+    const TRadian<double> r{static_cast<double>(pi)};
+    REQUIRE(TRadian<float>{r}.value() == Approx(pi));
   }
 
   SECTION("Constants")
   {
     using namespace beyond::float_constants;
-    REQUIRE(Radianf::pi().value() == pi);
+    REQUIRE(Radian::pi().value() == pi);
   }
 }
 
-TEST_CASE("Degree", "[beyond.core.math.angle]")
+TEST_CASE("TDegree", "[beyond.core.math.angle]")
 {
 
   SECTION("Default construction")
   {
-    Degree<float> deg;
+    TDegree<float> deg;
     REQUIRE(deg.value() == Approx(0));
   }
 
-  GIVEN("A Degree d1 = 90_deg")
+  GIVEN("A TDegree d1 = 90_deg")
   {
-    Degree<float> d1{90};
+    TDegree<float> d1{90};
     REQUIRE(d1.value() == Approx(90));
 
     THEN("-d1 = -90")
@@ -170,9 +170,9 @@ TEST_CASE("Degree", "[beyond.core.math.angle]")
       REQUIRE((-d1).value() == Approx(-90));
     }
 
-    AND_GIVEN("Another Degree d2 = 45_deg")
+    AND_GIVEN("Another TDegree d2 = 45_deg")
     {
-      const Degree<float> d2{45};
+      const TDegree<float> d2{45};
 
       WHEN("d1 += d2")
       {
@@ -272,52 +272,52 @@ TEST_CASE("Degree", "[beyond.core.math.angle]")
     }
   }
 
-  SECTION("Create Degree by a literal")
+  SECTION("Create TDegree by a literal")
   {
     REQUIRE((45._deg).value() == Approx(45));
   }
 
-  SECTION("Converts from Degree of another type")
+  SECTION("Converts from TDegree of another type")
   {
-    const Degree<double> r{60};
-    REQUIRE(Degree<float>{r}.value() == Approx(60));
+    const TDegree<double> r{60};
+    REQUIRE(TDegree<float>{r}.value() == Approx(60));
   }
 }
 
-TEST_CASE("Conversion between Radian and Degree", "[beyond.core.math.angle]")
+TEST_CASE("Conversion between TRadian and TDegree", "[beyond.core.math.angle]")
 {
-  GIVEN("A Radian pi")
+  GIVEN("A TRadian pi")
   {
-    const Radian<float> r{pi};
-    THEN("Create a Degree 180_deg from that radian")
+    const TRadian<float> r{pi};
+    THEN("Create a TDegree 180_deg from that radian")
     {
-      REQUIRE(Degree<float>{r}.value() == Approx(180));
+      REQUIRE(TDegree<float>{r}.value() == Approx(180));
     }
   }
 
-  GIVEN("A Degree 90")
+  GIVEN("A TDegree 90")
   {
-    const Degree<float> d{90};
-    THEN("Create a Radian pi/2 from that degree")
+    const TDegree<float> d{90};
+    THEN("Create a TRadian pi/2 from that degree")
     {
-      REQUIRE(Radian<float>{d}.value() == Approx(pi / 2));
+      REQUIRE(TRadian<float>{d}.value() == Approx(pi / 2));
     }
   }
 }
 
 TEST_CASE("Angle serialization test", "[beyond.core.math.angle]")
 {
-  SECTION("Output Radian to a stream")
+  SECTION("Output TRadian to a stream")
   {
-    const Radian<float> r{1};
+    const TRadian<float> r{1};
     const auto expected = "1_radian";
 
     REQUIRE_TO_STRING_EQ(r, expected);
   }
 
-  SECTION("Output Degree to a stream")
+  SECTION("Output TDegree to a stream")
   {
-    const Degree<float> d{90};
+    const TDegree<float> d{90};
     const auto expected = "90_degree";
 
     REQUIRE_TO_STRING_EQ(d, expected);

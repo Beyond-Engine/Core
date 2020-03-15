@@ -1,74 +1,7 @@
-#include "beyond/core/math/angle.hpp"
-#include "beyond/core/math/function.hpp"
-#include "beyond/core/math/matrix.hpp"
-
-namespace beyond {
-/**
- * @addtogroup core
- * @{
- * @addtogroup math
- * @{
- */
-
-template <typename T>
-[[nodiscard]] inline auto rotate_x(Radian<T> r) noexcept -> TMat4<T>
-{
-  const T s = beyond::sin(r);
-  const T c = beyond::cos(r);
-
-  return {
-      // clang-format off
-      1, 0, 0, 0,
-      0, c, -s, 0,
-      0, s, c, 0,
-      0, 0, 0, 1
-      // clang-format on
-  };
-}
-
-template <typename T>
-[[nodiscard]] inline auto rotate_x(Degree<T> d) noexcept -> TMat4<T>
-{
-  return rotate_x(Radian<T>(d));
-}
-
-/// @brief Builds a translation 4 * 4 matrix created from 3 scalars.
-template <typename T>
-[[nodiscard]] constexpr auto translate(T x, T y, T z) noexcept -> TMat4<T>
-{
-  return {
-      // clang-format off
-      1, 0, 0, x,
-      0, 1, 0, y,
-      0, 0, 1, z,
-      0, 0, 0, 1
-      // clang-format on
-  };
-}
-
-/// @brief Builds a translation 4 * 4 matrix created from a 3d vector.
-template <typename T>
-[[nodiscard]] constexpr auto translate(const TVec3<T>& v) noexcept -> TMat4<T>
-{
-  return translate(v.x, v.y, v.z);
-}
-
-/// @brief Transforms a matrix with a translation 4 * 4 matrix created from 3
-/// scalars.
-template <typename T>
-[[nodiscard]] constexpr auto translate(const TMat4<T>& m, T x, T y,
-                                       T z) noexcept -> TMat4<T>
-{
-  return translate(x, y, z) * m;
-}
-
-/** @}
- *  @} */
-} // namespace beyond
-
-#include <catch2/catch.hpp>
 #include "beyond/core/math/serial.hpp"
+#include "beyond/core/math/transform.hpp"
 #include "matrix_test_util.hpp"
+#include <catch2/catch.hpp>
 
 TEST_CASE("Translate", "[beyond.core.math.transform]")
 {
@@ -112,19 +45,66 @@ TEST_CASE("Translate", "[beyond.core.math.transform]")
 
 TEST_CASE("Axis-wise rotation", "[beyond.core.math.transform]")
 {
-  const float sqrt3_over_2 = sqrt(3.f) / 2.f;
+  using namespace beyond::literals;
+
+  const auto c = 0.5f;
+  const auto s = std::sqrt(3.f) / 2.f;
+
+  SECTION("rotate_x")
+  {
+    beyond::Mat4 expected{
+        // clang-format off
+        1, 0, 0, 0,
+        0, c, -s, 0,
+        0, s, c, 0,
+        0, 0, 0, 1
+        // clang-format on
+    };
+
+    matrix_approx_match(beyond::rotate_x(beyond::Radian::pi() / 3.f), expected);
+    matrix_approx_match(beyond::rotate_x(60.0_deg), expected);
+  }
+
+  SECTION("rotate_y")
+  {
+    beyond::Mat4 expected{
+        // clang-format off
+        c, 0, s, 0,
+        0, 1, 0, 0,
+        -s, 0, c, 0,
+        0, 0, 0, 1
+        // clang-format on
+    };
+
+    matrix_approx_match(beyond::rotate_y(beyond::Radian::pi() / 3.f), expected);
+    matrix_approx_match(beyond::rotate_y(60.0_deg), expected);
+  }
+
+  SECTION("rotate_z")
+  {
+    beyond::Mat4 expected{
+        // clang-format off
+        c, -s, 0, 0,
+        s, c, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+        // clang-format on
+    };
+
+    matrix_approx_match(beyond::rotate_z(beyond::Radian::pi() / 3.f), expected);
+    matrix_approx_match(beyond::rotate_z(60.0_deg), expected);
+  }
+}
+
+TEST_CASE("Scaling", "[beyond.core.math.transform]")
+{
   beyond::Mat4 expected{
       // clang-format off
-      1, 0, 0, 0,
-      0, 0.5, -sqrt3_over_2, 0,
-      0, sqrt3_over_2, 0.5, 0,
+      1.5, 0, 0, 0,
+      0, 2.5, 0, 0,
+      0, 0, 3.5, 0,
       0, 0, 0, 1
       // clang-format on
   };
-
-  using namespace beyond::literals;
-  matrix_approx_match(
-      beyond::rotate_x(beyond::Radian(beyond::float_constants::pi) / 3.f),
-      expected);
-  matrix_approx_match(beyond::rotate_x(60.0_deg), expected);
+  matrix_approx_match(beyond::scale(1.5f, 2.5f, 3.5f), expected);
 }

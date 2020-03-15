@@ -47,29 +47,29 @@ auto operator<<(std::ostream& os, const TPoint<T, n>& v) -> std::ostream&
   return os;
 }
 
-template <typename T>[[nodiscard]] auto to_string(Degree<T> r) -> std::string
+template <typename T>[[nodiscard]] auto to_string(TDegree<T> r) -> std::string
 {
   return fmt::format("{}_degree", r.value());
 }
 
-template <typename T>[[nodiscard]] auto to_string(Radian<T> r) -> std::string
+template <typename T>[[nodiscard]] auto to_string(TRadian<T> r) -> std::string
 {
   return fmt::format("{}_radian", r.value());
 }
 
-/// @brief Prints the Degree
-/// @related Degree
+/// @brief Prints the TDegree
+/// @related TDegree
 template <typename T>
-auto operator<<(std::ostream& os, Degree<T> d) -> std::ostream&
+auto operator<<(std::ostream& os, TDegree<T> d) -> std::ostream&
 {
   os << beyond::to_string(d);
   return os;
 }
 
-/// @brief Prints the Radian
-/// @related Degree
+/// @brief Prints the TRadian
+/// @related TDegree
 template <typename T>
-auto operator<<(std::ostream& os, Radian<T> r) -> std::ostream&
+auto operator<<(std::ostream& os, TRadian<T> r) -> std::ostream&
 {
   os << beyond::to_string(r);
   return os;

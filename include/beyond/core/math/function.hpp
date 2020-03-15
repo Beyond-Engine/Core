@@ -25,14 +25,14 @@ namespace beyond {
  * @brief Computes the sine of arg
  * @tparam Angle The type of the angle, can be either degree or radian
  * @note Unlike the standard library conterpart, this function only accept
- * either Degree or Radian
- * @see Degree
- * @see Radian
+ * either TDegree or TRadian
+ * @see TDegree
+ * @see TRadian
  */
 template <typename Angle>
 [[nodiscard]] inline auto sin(Angle arg) noexcept -> typename Angle::ValueType
 {
-  beyond::Radian r{arg};
+  beyond::TRadian r{arg};
   return std::sin(r.value());
 }
 
@@ -40,14 +40,14 @@ template <typename Angle>
  * @brief Computes the cosine of arg
  * @tparam Angle The type of the angle, can be either degree or radian
  * @note Unlike the standard library conterpart, this function only accept
- * either Degree or Radian
- * @see Degree
- * @see Radian
+ * either TDegree or TRadian
+ * @see TDegree
+ * @see TRadian
  */
 template <typename Angle>
 [[nodiscard]] inline auto cos(Angle arg) noexcept -> typename Angle::ValueType
 {
-  beyond::Radian r{arg};
+  beyond::TRadian r{arg};
   return std::cos(r.value());
 }
 
@@ -55,81 +55,81 @@ template <typename Angle>
  * @brief Computes the tangent of arg
  * @tparam Angle The type of the angle, can be either degree or radian
  * @note Unlike the standard library conterpart, this function only accept
- * either Degree or Radian
- * @see Degree
- * @see Radian
+ * either TDegree or TRadian
+ * @see TDegree
+ * @see TRadian
  */
 template <typename Angle>
 [[nodiscard]] inline auto tan(Angle arg) noexcept -> typename Angle::ValueType
 {
-  beyond::Radian r{arg};
+  beyond::TRadian r{arg};
   return std::tan(r.value());
 }
 
 /**
  * @brief Computes the principal value of the arc sine of arg
  * @tparam T A floating-point type
- * @see Radian
+ * @see TRadian
  */
 template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
-[[nodiscard]] inline auto asin(T arg) noexcept -> Radian<T>
+[[nodiscard]] inline auto asin(T arg) noexcept -> TRadian<T>
 {
-  return beyond::Radian<T>{std::asin(arg)};
+  return beyond::TRadian<T>{std::asin(arg)};
 }
 
 /**
  * @overload
  * @tparam T An integral type
- * @see Radian
+ * @see TRadian
  */
 template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
-[[nodiscard]] inline auto asin(T arg) noexcept -> Radian<double>
+[[nodiscard]] inline auto asin(T arg) noexcept -> TRadian<double>
 {
-  return beyond::Radian<double>{std::asin(arg)};
+  return beyond::TRadian<double>{std::asin(arg)};
 }
 
 /**
  * @brief Computes the principal value of the arc cosine of arg
  * @tparam T A floating-point type
- * @see Radian
+ * @see TRadian
  */
 template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
-[[nodiscard]] inline auto acos(T arg) noexcept -> Radian<T>
+[[nodiscard]] inline auto acos(T arg) noexcept -> TRadian<T>
 {
-  return beyond::Radian<T>{std::acos(arg)};
+  return beyond::TRadian<T>{std::acos(arg)};
 }
 
 /**
  * @overload
  * @tparam T An integral type
- * @see Radian
+ * @see TRadian
  */
 template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
-[[nodiscard]] inline auto acos(T arg) noexcept -> Radian<double>
+[[nodiscard]] inline auto acos(T arg) noexcept -> TRadian<double>
 {
-  return beyond::Radian<double>{std::acos(arg)};
+  return beyond::TRadian<double>{std::acos(arg)};
 }
 
 /**
  * @brief Computes the principal value of the arc tangent of arg
  * @tparam T A floating-point type
- * @see Radian
+ * @see TRadian
  */
 template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
-[[nodiscard]] inline auto atan(T arg) noexcept -> Radian<T>
+[[nodiscard]] inline auto atan(T arg) noexcept -> TRadian<T>
 {
-  return beyond::Radian<T>{std::atan(arg)};
+  return beyond::TRadian<T>{std::atan(arg)};
 }
 
 /**
  * @overload
  * @tparam T An integral type
- * @see Radian
+ * @see TRadian
  */
 template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
-[[nodiscard]] inline auto atan(T arg) noexcept -> Radian<double>
+[[nodiscard]] inline auto atan(T arg) noexcept -> TRadian<double>
 {
-  return beyond::Radian<double>{std::atan(arg)};
+  return beyond::TRadian<double>{std::atan(arg)};
 }
 
 /**
@@ -137,7 +137,7 @@ template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
  * determine the correct quadrant.
  * @tparam T1 A floating-point type for y
  * @tparam T2 A floating-point type for x
- * @see Radian
+ * @see TRadian
  */
 template <typename T1, typename T2,
           typename = std::enable_if_t<std::conjunction_v<
@@ -146,9 +146,9 @@ template <typename T1, typename T2,
 {
   using PromotedType = std::common_type_t<T1, T2>;
   if constexpr (std::is_integral_v<PromotedType>) {
-    return Radian<double>{std::atan2(y, x)};
+    return TRadian<double>{std::atan2(y, x)};
   } else {
-    return Radian<PromotedType>{std::atan2(y, x)};
+    return TRadian<PromotedType>{std::atan2(y, x)};
   }
 }
 

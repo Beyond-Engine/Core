@@ -20,7 +20,7 @@ add_executable(${TEST_TARGET_NAME}
         "utils/function_ref_test.cpp"
         "utils/handle_test.cpp"
         "utils/named_type_test.cpp"
-        serial_test_util.hpp math/transform_test.cpp math/matrix_test_util.hpp)
+        serial_test_util.hpp math/transform_test.cpp math/matrix_test_util.hpp ../include/beyond/core/math/transform.hpp)
 
 target_link_libraries(${TEST_TARGET_NAME}
         PRIVATE
