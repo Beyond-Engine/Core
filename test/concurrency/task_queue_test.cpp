@@ -8,7 +8,7 @@
 
 #include <jthread.hpp>
 
- TEST_CASE("Task Queue push and pop", "[beyond.core.concurrency.task_queue]")
+TEST_CASE("Task Queue push and pop", "[beyond.core.concurrency.task_queue]")
 {
   std::array<beyond::TaskQueue, 4> queues;
   auto& aq = queues[0];
@@ -39,7 +39,7 @@
 
   std::vector<nostd::jthread> threads;
 
-  SECTION("Pop and run all the tasks")
+  SECTION("Pop and render all the tasks")
   {
     for (auto& queue : queues) {
       while (!queue.empty()) {
@@ -58,7 +58,7 @@
     REQUIRE(output.size() == 6);
   }
 
-  SECTION("Try to pop and run all the tasks")
+  SECTION("Try to pop and render all the tasks")
   {
     for (auto& queue : queues) {
       while (!queue.empty()) {
