@@ -50,8 +50,8 @@
 // code is never reached.
 #define BEYOND_UNREACHABLE()                                                   \
   do {                                                                         \
-    panic(fmt::format("[{}:{}] Reach unreachable code {}\n", __FILE__,         \
-                      __LINE__, __func__));                                    \
+    ::beyond::panic(fmt::format("[{}:{}] Reach unreachable code {}\n",         \
+                                __FILE__, __LINE__, __func__));                \
   } while (0)
 #else
 #define BEYOND_ASSERT(condition)                                               \
