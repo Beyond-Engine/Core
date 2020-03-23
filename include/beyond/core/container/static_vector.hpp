@@ -92,13 +92,46 @@ public:
     std::destroy_n(reinterpret_cast<T*>(data_), size_);
   }
 
-  static_vector(const static_vector&) = default;
-  auto operator=(const static_vector&) & -> static_vector& = default;
-  static_vector(static_vector&&) noexcept(
-      std::is_nothrow_move_constructible_v<value_type>) = default;
-  auto operator=(static_vector&&) &
-      noexcept(std::is_nothrow_move_assignable_v<value_type>)
-          -> static_vector& = default;
+  static_vector(const static_vector& rhs) noexcept(
+      std::is_nothrow_copy_constructible_v<value_type>)
+      : size_{rhs.size_}
+  {
+    std::uninitialized_copy_n(std::begin(rhs), rhs.size_,
+                              reinterpret_cast<T*>(data_));
+  }
+
+  auto operator=(const static_vector& rhs) &
+      noexcept(std::is_nothrow_copy_constructible_v<value_type>)
+          -> static_vector&
+  {
+    if (this != &rhs) {
+      std::destroy_n(reinterpret_cast<T*>(data_), size_);
+      std::uninitialized_copy_n(std::begin(rhs), rhs.size_,
+                                reinterpret_cast<T*>(data_));
+      size_ = rhs.size_;
+    }
+    return *this;
+  }
+
+  static_vector(static_vector&& rhs) noexcept(
+      std::is_nothrow_move_constructible_v<value_type>)
+      : size_{rhs.size_}
+  {
+    std::uninitialized_move_n(std::begin(rhs), rhs.size_,
+                              reinterpret_cast<T*>(data_));
+  }
+
+  auto operator=(static_vector&& rhs) &
+      noexcept(std::is_nothrow_move_assignable_v<value_type>) -> static_vector&
+  {
+    if (this != &rhs) {
+      std::destroy_n(reinterpret_cast<T*>(data_), size_);
+      std::uninitialized_move_n(std::begin(rhs), rhs.size_,
+                                reinterpret_cast<T*>(data_));
+      size_ = rhs.size_;
+    }
+    return *this;
+  }
 
   /**
    * @brief Gets the capacity of the `static_vector`
@@ -308,6 +341,18 @@ public:
       return data_;
     }
 
+    constexpr auto operator+=(difference_type n) noexcept -> Itr&
+    {
+      data_ += n;
+      return *this;
+    }
+
+    constexpr auto operator-=(difference_type n) noexcept -> Itr&
+    {
+      data_ -= n;
+      return *this;
+    }
+
     constexpr auto operator++() noexcept -> Itr&
     {
       ++data_;
@@ -453,7 +498,6 @@ swap(static_vector<T, N>& lhs,
 
 // TODO(lesley): lexicographically compares
 // Free functions TODO(lesley): erase, erase_if
-// TODO(lesley): deduction guide
 
 } // namespace beyond
 
