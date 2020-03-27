@@ -4,6 +4,8 @@
 #include <beyond/core/container/static_vector.hpp>
 #include <string>
 
+#include "../raii_counter.hpp"
+
 using namespace beyond;
 
 TEST_CASE("static_vector", "[beyond.core.container.static_vector]")
@@ -87,6 +89,60 @@ TEST_CASE("static_vector constructors", "[beyond.core.container.static_vector]")
     static_vector<int, 10> v{1, 2, 3, 4, 5};
     REQUIRE(v.size() == 5);
     REQUIRE(v[3] == 4);
+  }
+}
+
+TEST_CASE("static_vector copies and moves",
+          "[beyond.core.container.static_vector]")
+{
+  Counters counters;
+  static_vector<Small, 3> v{Small{counters}};
+  CHECK(counters.constructor == 1);
+  CHECK(counters.copy == 1);
+  CHECK(counters.move == 0);
+  CHECK(counters.destructor == 1);
+
+  SECTION("Copy constructor")
+  {
+    static_vector<Small, 3> v2{v};
+    CHECK(counters.constructor == 1);
+    CHECK(counters.copy == 2);
+    CHECK(counters.move == 0);
+    CHECK(counters.destructor == 1);
+  }
+
+  SECTION("Copy assignment")
+  {
+    Counters counters2;
+    static_vector<Small, 3> v2{counters2};
+    v2 = v;
+    CHECK(counters.constructor == 1);
+    CHECK(counters.copy == 2);
+    CHECK(counters.move == 0);
+    CHECK(counters.destructor == 1);
+
+    CHECK(counters2.constructor == 1);
+    CHECK(counters2.copy == 1);
+    CHECK(counters2.move == 0);
+    CHECK(counters2.destructor == 2);
+  }
+
+  SECTION("Copy assignment self")
+  {
+    v = v;
+    CHECK(counters.constructor == 1);
+    CHECK(counters.copy == 1);
+    CHECK(counters.move == 0);
+    CHECK(counters.destructor == 1);
+  }
+
+  SECTION("Move constructor")
+  {
+    static_vector<Small, 3> v2{std::move(v)};
+    CHECK(counters.constructor == 1);
+    CHECK(counters.copy == 1);
+    CHECK(counters.move == 1);
+    CHECK(counters.destructor == 1);
   }
 }
 
@@ -186,9 +242,26 @@ TEST_CASE("static_vector iterators", "[beyond.core.container.static_vector]")
   {
     static_vector<int, 8> v{1, 2, 3};
 
-    SECTION("operator[]")
+    AND_GIVEN("i1 = v.begin()")
     {
-      // TODO
+      auto i1 = v.begin();
+      AND_WHEN("i1 += 3")
+      {
+        i1 += 3;
+        AND_THEN("i1 is at v.end()")
+        {
+          REQUIRE(i1 == v.end());
+        }
+
+        AND_WHEN("i1 -= 2")
+        {
+          i1 -= 2;
+          AND_THEN("*i1 == 2")
+          {
+            REQUIRE(*i1 == 2);
+          }
+        }
+      }
     }
 
     SECTION("Random access iterator affine space operations")
