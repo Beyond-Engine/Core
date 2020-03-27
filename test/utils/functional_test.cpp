@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "beyond/core/utils/functional.hpp"
+#include "beyond/utils/functional.hpp"
 
 TEST_CASE("Assign function object", "[beyond.core.util.funtional]")
 {

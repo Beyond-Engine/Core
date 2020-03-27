@@ -3,8 +3,8 @@
 #include <sstream>
 
 #include "../serial_test_util.hpp"
-#include "beyond/core/math/serial.hpp"
-#include "beyond/core/math/vector.hpp"
+#include "beyond/math/serial.hpp"
+#include "beyond/math/vector.hpp"
 
 TEST_CASE("All TVec types test", "[beyond.core.math.vec]")
 {

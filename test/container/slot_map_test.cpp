@@ -3,7 +3,7 @@
 #include <utility>
 #include <vector>
 
-#include <beyond/core/utils/assert.hpp>
+#include <beyond/utils/assert.hpp>
 
 namespace beyond {
 
@@ -273,7 +273,7 @@ private:
 
 #include <catch2/catch.hpp>
 
-#include <beyond/core/utils/handle.hpp>
+#include <beyond/utils/handle.hpp>
 
 namespace {
 

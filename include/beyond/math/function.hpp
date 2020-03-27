@@ -2,18 +2,12 @@
 #define BEYOND_CORE_MATH_HPP
 
 /**
- * @file math.hpp
- * @brief This file contains various mathmatic utility functions
+ * @file function.hpp
+ * @brief This file contains various mathematic utility functions
  * @ingroup math
  */
 
-/**
- * @defgroup math Math
- * @brief Mathematics and geometry codes of the beyond game engine
- * @ingroup core
- */
-
-#include "beyond/core/math/angle.hpp"
+#include "angle.hpp"
 
 #include <cmath>
 #include <type_traits>

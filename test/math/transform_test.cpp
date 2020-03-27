@@ -1,5 +1,5 @@
-#include "beyond/core/math/serial.hpp"
-#include "beyond/core/math/transform.hpp"
+#include "beyond/math/serial.hpp"
+#include "beyond/math/transform.hpp"
 #include "matrix_test_util.hpp"
 #include <catch2/catch.hpp>
 

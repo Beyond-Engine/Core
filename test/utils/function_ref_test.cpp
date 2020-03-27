@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "beyond/core/utils/function_ref.hpp"
+#include "beyond/utils/function_ref.hpp"
 
 TEST_CASE("function_ref assignments", "[beyond.core.function_ref]")
 {

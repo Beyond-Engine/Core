@@ -4,8 +4,8 @@
 #include <functional>
 #include <utility>
 
-#include "beyond/core/utils/crtp.hpp"
-#include "beyond/core/utils/type_traits.hpp"
+#include "crtp.hpp"
+#include "type_traits.hpp"
 
 // Enable empty base class optimization with multiple inheritance on Visual
 // Studio.

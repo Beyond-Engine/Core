@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include <beyond/core/concurrency/task_queue.hpp>
+#include <beyond/concurrency/task_queue.hpp>
 
 #include <array>
 #include <string>

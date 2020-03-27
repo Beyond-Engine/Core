@@ -2,9 +2,9 @@
 
 #include <sstream>
 
-#include "beyond/core/math/angle.hpp"
-#include "beyond/core/math/constants.hpp"
-#include "beyond/core/math/serial.hpp"
+#include "beyond/math/angle.hpp"
+#include "beyond/math/constants.hpp"
+#include "beyond/math/serial.hpp"
 
 #include "../serial_test_util.hpp"
 

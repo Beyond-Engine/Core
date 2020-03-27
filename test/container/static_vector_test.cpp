@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 
 #include <array>
-#include <beyond/core/container/static_vector.hpp>
+#include <beyond/container/static_vector.hpp>
 #include <string>
 
 #include "../raii_counter.hpp"

@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 
-#include "beyond/core/math/matrix.hpp"
-#include "beyond/core/math/serial.hpp"
+#include "beyond/math/matrix.hpp"
+#include "beyond/math/serial.hpp"
 
 #include "../serial_test_util.hpp"
 #include "./matrix_test_util.hpp"

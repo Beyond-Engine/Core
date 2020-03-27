@@ -1,28 +1,28 @@
 add_library(core
-        ../include/beyond/core/concurrency/task_queue.hpp
-        ../include/beyond/core/container/static_vector.hpp
-        ../include/beyond/core/ecs/sparse_map.hpp
-        ../include/beyond/core/ecs/sparse_set.hpp
-        ../include/beyond/core/utils/assert.hpp
-        ../include/beyond/core/utils/arrow_proxy.hpp
-        ../include/beyond/core/utils/bit_cast.hpp
-        ../include/beyond/core/utils/crtp.hpp
-        ../include/beyond/core/utils/functional.hpp
-        ../include/beyond/core/utils/function_ref.hpp
-        ../include/beyond/core/utils/handle.hpp
-        ../include/beyond/core/utils/named_type.hpp
-        ../include/beyond/core/utils/panic.hpp
+        ../include/beyond/concurrency/task_queue.hpp
+        ../include/beyond/container/static_vector.hpp
+        ../include/beyond/ecs/sparse_map.hpp
+        ../include/beyond/ecs/sparse_set.hpp
+        ../include/beyond/utils/assert.hpp
+        ../include/beyond/utils/arrow_proxy.hpp
+        ../include/beyond/utils/bit_cast.hpp
+        ../include/beyond/utils/crtp.hpp
+        ../include/beyond/utils/functional.hpp
+        ../include/beyond/utils/function_ref.hpp
+        ../include/beyond/utils/handle.hpp
+        ../include/beyond/utils/named_type.hpp
+        ../include/beyond/utils/panic.hpp
         utils/panic.cpp
-        ../include/beyond/core/types/optional.hpp
-        ../include/beyond/core/utils/type_traits.hpp
-        ../include/beyond/core/math/angle.hpp
-        ../include/beyond/core/math/constants.hpp
-        ../include/beyond/core/math/vector.hpp
-        ../include/beyond/core/math/serial.hpp
-        ../include/beyond/core/math/matrix.hpp
-        ../include/beyond/core/math/math.hpp
-        ../include/beyond/core/math/math_fwd.hpp
-        ../include/beyond/core/math/transform.hpp)
+        ../include/beyond/types/optional.hpp
+        ../include/beyond/utils/type_traits.hpp
+        ../include/beyond/math/angle.hpp
+        ../include/beyond/math/constants.hpp
+        ../include/beyond/math/vector.hpp
+        ../include/beyond/math/serial.hpp
+        ../include/beyond/math/matrix.hpp
+        ../include/beyond/math/math.hpp
+        ../include/beyond/math/math_fwd.hpp
+        ../include/beyond/math/transform.hpp)
 
 set(BEYOND_CORE_ASSERT_POLICY AUTO CACHE STRING "The policy of enabling
     assertion or not in beyond game engine core.

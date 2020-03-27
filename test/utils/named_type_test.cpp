@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "beyond/core/utils/named_type.hpp"
+#include "beyond/utils/named_type.hpp"
 
 using NamedDouble = beyond::NamedType<double, struct NamedDoubleTag>;
 using NamedDoubleR = beyond::NamedType<double&, struct NamedDoubleTag>;

@@ -12,9 +12,9 @@
 #include <type_traits>
 #include <utility>
 
-#include "../utils/assert.hpp"
-#include "../utils/bit_cast.hpp"
-#include "../utils/functional.hpp"
+#include "beyond/utils/assert.hpp"
+#include "beyond/utils/bit_cast.hpp"
+#include "beyond/utils/functional.hpp"
 #include "math_fwd.hpp"
 
 namespace beyond {

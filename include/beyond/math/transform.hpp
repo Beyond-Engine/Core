@@ -3,9 +3,9 @@
 #ifndef BEYOND_CORE_MATH_TRANSFORM_HPP
 #define BEYOND_CORE_MATH_TRANSFORM_HPP
 
-#include "beyond/core/math/angle.hpp"
-#include "beyond/core/math/function.hpp"
-#include "beyond/core/math/matrix.hpp"
+#include "angle.hpp"
+#include "function.hpp"
+#include "matrix.hpp"
 
 namespace beyond {
 

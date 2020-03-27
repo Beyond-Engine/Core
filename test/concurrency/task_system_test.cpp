@@ -2,9 +2,9 @@
 #include <cstdint>
 #include <jthread.hpp>
 
-#include <beyond/core/concurrency/task_queue.hpp>
+#include <beyond/concurrency/task_queue.hpp>
 
- namespace beyond {
+namespace beyond {
 
 /**
  * @addtogroup core
@@ -13,8 +13,8 @@
  * @{
  */
 
- class TaskSystem {
- public:
+class TaskSystem {
+public:
   TaskSystem() = default;
   ~TaskSystem() = default;
 
@@ -23,7 +23,7 @@
   TaskSystem(TaskSystem&&) noexcept = delete;
   auto operator=(TaskSystem&&) & noexcept -> TaskSystem = delete;
 
- private:
+private:
   const std::uint32_t size_ = nostd::jthread::hardware_concurrency();
 };
 
@@ -33,7 +33,7 @@
 
 #include <catch2/catch.hpp>
 
- TEST_CASE("Task System", "[beyond.core.concurrency.task_system]")
+TEST_CASE("Task System", "[beyond.core.concurrency.task_system]")
 {
   beyond::TaskSystem task_system;
 }

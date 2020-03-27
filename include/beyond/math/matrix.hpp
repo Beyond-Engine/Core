@@ -11,9 +11,9 @@
 
 #include <cstdlib>
 
-#include "beyond/core/math/math_fwd.hpp"
-#include "beyond/core/math/vector.hpp"
-#include "beyond/core/utils/assert.hpp"
+#include "beyond/utils/assert.hpp"
+#include "math_fwd.hpp"
+#include "vector.hpp"
 
 namespace beyond {
 /**

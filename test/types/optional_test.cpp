@@ -1,4 +1,4 @@
-#include "beyond/core/types/optional.hpp"
+#include "beyond/types/optional.hpp"
 #include <catch2/catch.hpp>
 
 #include <tuple>
@@ -438,7 +438,8 @@ TEST_CASE("optional Monadic operations", "[beyond.core.types.optional]")
 
   SECTION("map constexpr")
   {
-#if !defined(_MSC_VER)
+    /*
+     * TODO: enable when C++20
     // test each overload in turn
     constexpr beyond::optional<int> o16 = 42;
     constexpr auto o16r = o16.map(get_int);
@@ -454,7 +455,7 @@ TEST_CASE("optional Monadic operations", "[beyond.core.types.optional]")
     constexpr beyond::optional<int> o36 = beyond::nullopt;
     constexpr auto o36r = std::move(o36).map(get_int);
     STATIC_REQUIRE(!o36r);
-#endif
+    */
   }
 
   SECTION("transform")
@@ -584,7 +585,8 @@ TEST_CASE("optional Monadic operations", "[beyond.core.types.optional]")
 
   SECTION("transform constexpr")
   {
-#if !defined(_MSC_VER)
+    /*
+     * TODO: enable when C++20
     // test each overload in turn
     constexpr beyond::optional<int> o16 = 42;
     constexpr auto o16r = o16.transform(get_int);
@@ -600,7 +602,7 @@ TEST_CASE("optional Monadic operations", "[beyond.core.types.optional]")
     constexpr beyond::optional<int> o36 = beyond::nullopt;
     constexpr auto o36r = std::move(o36).transform(get_int);
     STATIC_REQUIRE(!o36r);
-#endif
+    */
   }
 
   SECTION("and_then")
@@ -710,8 +712,8 @@ TEST_CASE("optional Monadic operations", "[beyond.core.types.optional]")
 
   SECTION("constexpr and_then")
   {
-#if !defined(_MSC_VER)
-
+    /*
+     * TODO: enable when C++20
     constexpr beyond::optional<int> o10 = 42;
     constexpr auto o10r = o10.and_then(get_opt_int);
     REQUIRE(*o10r == 42);
@@ -727,7 +729,7 @@ TEST_CASE("optional Monadic operations", "[beyond.core.types.optional]")
     constexpr beyond::optional<int> o19 = beyond::nullopt;
     constexpr auto o19r = std::move(o19).and_then(get_opt_int);
     REQUIRE(!o19r);
-#endif
+    */
   }
 
   SECTION("or else")
