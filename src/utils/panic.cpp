@@ -5,7 +5,7 @@
 
 namespace beyond {
 
-[[noreturn]] auto panic(std::string_view msg) -> void
+[[noreturn]] auto panic(std::string_view msg) noexcept -> void
 {
   std::fputs(msg.data(), stderr);
   std::fflush(stderr);
