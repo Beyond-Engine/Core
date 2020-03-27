@@ -18,4 +18,4 @@ However, it is solid enough that I use it in a bunch of my personal projects inc
 - [Jumpy Thieves](https://github.com/cugdc/Jumpy-Thieves): A live-coded 2D game in my club
 
 ## License
-This repository is released under Apache License 2.0. See [License](file:License) for more information.
+This repository is released under Mit License. See [License](file:License) for more information.
