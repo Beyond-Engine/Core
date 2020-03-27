@@ -13,6 +13,7 @@ add_library(core
         ../include/beyond/core/utils/named_type.hpp
         ../include/beyond/core/utils/panic.hpp
         utils/panic.cpp
+        ../include/beyond/core/types/optional.hpp
         ../include/beyond/core/utils/type_traits.hpp
         ../include/beyond/core/math/angle.hpp
         ../include/beyond/core/math/constants.hpp

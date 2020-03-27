@@ -3,7 +3,7 @@
 #include "beyond/core/math/math.hpp"
 #include <cmath>
 
-TEST_CASE("Trig functions", "[beyond.core.math]")
+TEST_CASE("Scalar Trig functions", "[beyond.core.math]")
 {
   using namespace beyond::literals;
   const beyond::TDegree<float> d = 60._deg;
@@ -73,7 +73,7 @@ TEST_CASE("Trig functions", "[beyond.core.math]")
   }
 }
 
-TEST_CASE("lerp", "[beyond.core.math]")
+TEST_CASE("Scalar lerp", "[beyond.core.math]")
 {
   REQUIRE(beyond::lerp(0, 3, 0.5) == Approx(1.5));
 }
