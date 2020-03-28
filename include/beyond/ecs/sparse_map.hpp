@@ -4,7 +4,7 @@
 #include <iterator>
 #include <vector>
 
-#include "beyond/utils/arrow_proxy.hpp"
+#include "../utils/arrow_proxy.hpp"
 #include "sparse_set.hpp"
 
 /**

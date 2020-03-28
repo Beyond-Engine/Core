@@ -11,7 +11,7 @@
 
 #include <cstdlib>
 
-#include "beyond/utils/assert.hpp"
+#include "../utils/assert.hpp"
 #include "math_fwd.hpp"
 #include "vector.hpp"
 

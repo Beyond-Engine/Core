@@ -1,9 +1,9 @@
-/**
- @file optional.hpp
- @brief An implementation of std::optional with monadic extensions
+/*
+ optional.hpp
+ An implementation of std::optional with monadic extensions
  Written in 2017 by Simon Brand (simonrbrand@gmail.com, @TartanLlama)
  Forked and modified in 2020 by Lesley Lai
-**/
+*/
 
 #ifndef BEYOND_CORE_TYPES_OPTIONAL_HPP
 #define BEYOND_CORE_TYPES_OPTIONAL_HPP
@@ -24,15 +24,15 @@
 namespace beyond {
 #ifndef BEYOND_MONOSTATE_INPLACE_MUTEX
 #define BEYOND_MONOSTATE_INPLACE_MUTEX
-/// Used to represent an optional with no data; essentially a bool
+/// @brief Used to represent an optional with no data; essentially a bool
 class monostate_t {
 };
 
-///  A tag type to tell optional to construct its value in-place
+/// @brief A tag type to tell optional to construct its value in-place
 struct in_place_t {
   explicit in_place_t() = default;
 };
-/// A tag to tell optional to construct its value in-place
+/// @brief A tag to tell optional to construct its value in-place
 static constexpr in_place_t in_place{};
 #endif
 
@@ -426,13 +426,13 @@ template <class T> struct optional_delete_assign_base<T, false, false> {
 
 } // namespace detail
 
-/// A tag type to represent an empty optional
+/// @brief A tag type to represent an empty optional
 struct nullopt_t {
   struct do_not_use {
   };
   constexpr explicit nullopt_t(do_not_use, do_not_use) noexcept {}
 };
-/// Represents an empty optional
+/// @brief Represents an empty optional
 static constexpr nullopt_t nullopt{nullopt_t::do_not_use{},
                                    nullopt_t::do_not_use{}};
 
@@ -445,6 +445,8 @@ public:
   }
 };
 
+/// @brief An optional implementation with monadic extension
+///
 /// An optional object is an object that contains the storage for another
 /// object and manages the lifetime of this contained object, if any. The
 /// contained object may be initialized after the optional object has been
@@ -463,7 +465,7 @@ class optional : private detail::optional_move_assign_base<T>,
                 "instantiation of optional with nullopt_t is ill-formed");
 
 public:
-  /// Carries out some operation which returns an optional on the stored
+  /// @brief Carries out some operation which returns an optional on the stored
   /// object if there is one.
   template <class F> constexpr auto and_then(F&& f) &
   {
@@ -475,6 +477,7 @@ public:
                        : result(nullopt);
   }
 
+  /// @overload
   template <class F> constexpr auto and_then(F&& f) &&
   {
     using result = std::invoke_result_t<F, T&&>;
@@ -485,6 +488,7 @@ public:
                        : result(nullopt);
   }
 
+  /// @overload
   template <class F> constexpr auto and_then(F&& f) const&
   {
     using result = std::invoke_result_t<F, const T&>;
@@ -495,6 +499,7 @@ public:
                        : result(nullopt);
   }
 
+  /// @overload
   template <class F> constexpr auto and_then(F&& f) const&&
   {
     using result = std::invoke_result_t<F, const T&&>;
@@ -505,49 +510,55 @@ public:
                        : result(nullopt);
   }
 
-  /// Carries out some operation on the stored object if there is one.
+  /// @brief Carries out some operation on the stored object if there is one.
   template <class F> constexpr auto map(F&& f) &
   {
     return optional_map_impl(*this, std::forward<F>(f));
   }
 
+  /// @overload
   template <class F> constexpr auto map(F&& f) &&
   {
     return optional_map_impl(std::move(*this), std::forward<F>(f));
   }
 
+  /// @overload
   template <class F> constexpr auto map(F&& f) const&
   {
     return optional_map_impl(*this, std::forward<F>(f));
   }
 
+  /// @overload
   template <class F> constexpr auto map(F&& f) const&&
   {
     return optional_map_impl(std::move(*this), std::forward<F>(f));
   }
 
-  /// Carries out some operation on the stored object if there is one.
+  /// @brief Carries out some operation on the stored object if there is one.
   template <class F> constexpr auto transform(F&& f) &
   {
     return optional_map_impl(*this, std::forward<F>(f));
   }
 
+  /// @overload
   template <class F> constexpr auto transform(F&& f) &&
   {
     return optional_map_impl(std::move(*this), std::forward<F>(f));
   }
 
+  /// @overload
   template <class F> constexpr auto transform(F&& f) const&
   {
     return optional_map_impl(*this, std::forward<F>(f));
   }
 
+  /// @overload
   template <class F> constexpr auto transform(F&& f) const&&
   {
     return optional_map_impl(std::move(*this), std::forward<F>(f));
   }
 
-  /// Calls `f` if the optional is empty
+  /// @brief Calls `f` if the optional is empty
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
   optional<T> constexpr or_else(F&& f) &
   {
@@ -558,12 +569,14 @@ public:
     return nullopt;
   }
 
+  /// @overload
   template <class F, detail::disable_if_ret_void<F>* = nullptr>
   optional<T> constexpr or_else(F&& f) &
   {
     return has_value() ? *this : std::forward<F>(f)();
   }
 
+  /// @overload
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
   optional<T> or_else(F&& f) &&
   {
@@ -574,12 +587,14 @@ public:
     return nullopt;
   }
 
+  /// @overload
   template <class F, detail::disable_if_ret_void<F>* = nullptr>
   optional<T> constexpr or_else(F&& f) &&
   {
     return has_value() ? std::move(*this) : std::forward<F>(f)();
   }
 
+  /// @overload
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
   optional<T> or_else(F&& f) const&
   {
@@ -590,12 +605,14 @@ public:
     return nullopt;
   }
 
+  /// @overload
   template <class F, detail::disable_if_ret_void<F>* = nullptr>
   optional<T> constexpr or_else(F&& f) const&
   {
     return has_value() ? *this : std::forward<F>(f)();
   }
 
+  /// @overload
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
   optional<T> or_else(F&& f) const&&
   {
@@ -606,38 +623,43 @@ public:
     return nullopt;
   }
 
+  /// @overload
   template <class F, detail::disable_if_ret_void<F>* = nullptr>
   optional<T> or_else(F&& f) const&&
   {
     return has_value() ? std::move(*this) : std::forward<F>(f)();
   }
 
-  /// Maps the stored value with `f` if there is one, otherwise returns `u`.
+  /// @brief Maps the stored value with `f` if there is one, otherwise returns
+  /// `u`.
   template <class F, class U> U map_or(F&& f, U&& u) &
   {
     return has_value() ? std::invoke(std::forward<F>(f), **this)
                        : std::forward<U>(u);
   }
 
+  /// @overload
   template <class F, class U> U map_or(F&& f, U&& u) &&
   {
     return has_value() ? std::invoke(std::forward<F>(f), std::move(**this))
                        : std::forward<U>(u);
   }
 
+  /// @overload
   template <class F, class U> U map_or(F&& f, U&& u) const&
   {
     return has_value() ? std::invoke(std::forward<F>(f), **this)
                        : std::forward<U>(u);
   }
 
+  /// @overload
   template <class F, class U> U map_or(F&& f, U&& u) const&&
   {
     return has_value() ? std::invoke(std::forward<F>(f), std::move(**this))
                        : std::forward<U>(u);
   }
 
-  /// Maps the stored value with `f` if there is one, otherwise calls
+  /// @brief Maps the stored value with `f` if there is one, otherwise calls
   /// `u` and returns the result.
   template <class F, class U>
   std::invoke_result_t<U> map_or_else(F&& f, U&& u) &
@@ -646,6 +668,7 @@ public:
                        : std::forward<U>(u)();
   }
 
+  /// @overload
   template <class F, class U>
   std::invoke_result_t<U> map_or_else(F&& f, U&& u) &&
   {
@@ -653,6 +676,7 @@ public:
                        : std::forward<U>(u)();
   }
 
+  /// @overload
   template <class F, class U>
   std::invoke_result_t<U> map_or_else(F&& f, U&& u) const&
   {
@@ -660,6 +684,7 @@ public:
                        : std::forward<U>(u)();
   }
 
+  /// @overload
   template <class F, class U>
   std::invoke_result_t<U> map_or_else(F&& f, U&& u) const&&
   {
@@ -667,7 +692,7 @@ public:
                        : std::forward<U>(u)();
   }
 
-  /// Returns `u` if `*this` has a value, otherwise an empty optional.
+  /// @brief Returns `u` if `*this` has a value, otherwise an empty optional.
   template <class U>
   constexpr optional<typename std::decay<U>::type> conjunction(U&& u) const
   {
@@ -675,48 +700,55 @@ public:
     return has_value() ? result{u} : result{nullopt};
   }
 
-  /// Returns `rhs` if `*this` is empty, otherwise the current value.
+  /// @brief Returns `rhs` if `*this` is empty, otherwise the current value.
   constexpr optional disjunction(const optional& rhs) &
   {
     return has_value() ? *this : rhs;
   }
 
+  /// @overload
   constexpr optional disjunction(const optional& rhs) const&
   {
     return has_value() ? *this : rhs;
   }
 
+  /// @overload
   constexpr optional disjunction(const optional& rhs) &&
   {
     return has_value() ? std::move(*this) : rhs;
   }
 
+  /// @overload
   constexpr optional disjunction(const optional& rhs) const&&
   {
     return has_value() ? std::move(*this) : rhs;
   }
 
+  /// @overload
   constexpr optional disjunction(optional&& rhs) &
   {
     return has_value() ? *this : std::move(rhs);
   }
 
+  /// @overload
   constexpr optional disjunction(optional&& rhs) const&
   {
     return has_value() ? *this : std::move(rhs);
   }
 
+  /// @overload
   constexpr optional disjunction(optional&& rhs) &&
   {
     return has_value() ? std::move(*this) : std::move(rhs);
   }
 
+  /// @overload
   constexpr optional disjunction(optional&& rhs) const&&
   {
     return has_value() ? std::move(*this) : std::move(rhs);
   }
 
-  /// Takes the value out of the optional, leaving it empty
+  /// @brief Takes the value out of the optional, leaving it empty
   optional take()
   {
     optional ret = std::move(*this);
@@ -726,24 +758,24 @@ public:
 
   using value_type = T;
 
-  /// Constructs an optional that does not contain a value.
+  /// @brief Constructs an optional that does not contain a value.
   constexpr optional() noexcept = default;
 
   constexpr optional(nullopt_t) noexcept {}
 
-  /// Copy constructor
+  /// @brief Copy constructor
   ///
   /// If `rhs` contains a value, the stored value is direct-initialized with
   /// it. Otherwise, the constructed optional is empty.
   constexpr optional(const optional& rhs) = default;
 
-  /// Move constructor
+  /// @brief Move constructor
   ///
   /// If `rhs` contains a value, the stored value is direct-initialized with
   /// it. Otherwise, the constructed optional is empty.
   constexpr optional(optional&& rhs) = default;
 
-  /// Constructs the stored value in-place using the given arguments.
+  /// @brief Constructs the stored value in-place using the given arguments.
   template <class... Args>
   constexpr explicit optional(
       std::enable_if_t<std::is_constructible<T, Args...>::value, in_place_t>,
@@ -752,6 +784,7 @@ public:
   {
   }
 
+  /// @overload
   template <class U, class... Args>
   constexpr explicit optional(
       std::enable_if_t<
@@ -762,7 +795,7 @@ public:
     this->construct(il, std::forward<Args>(args)...);
   }
 
-  /// Constructs the stored value with `u`.
+  /// @brief Constructs the stored value with `u`.
   template <class U = T,
             std::enable_if_t<std::is_convertible<U&&, T>::value>* = nullptr,
             detail::enable_forward_value<T, U>* = nullptr>
@@ -770,6 +803,7 @@ public:
   {
   }
 
+  /// @overload
   template <class U = T,
             std::enable_if_t<!std::is_convertible<U&&, T>::value>* = nullptr,
             detail::enable_forward_value<T, U>* = nullptr>
@@ -777,7 +811,7 @@ public:
   {
   }
 
-  /// Converting copy constructor.
+  /// @brief Converting copy constructor.
   template <
       class U, detail::enable_from_other<T, U, const U&>* = nullptr,
       std::enable_if_t<std::is_convertible<const U&, T>::value>* = nullptr>
@@ -788,6 +822,7 @@ public:
     }
   }
 
+  /// @overload
   template <
       class U, detail::enable_from_other<T, U, const U&>* = nullptr,
       std::enable_if_t<!std::is_convertible<const U&, T>::value>* = nullptr>
@@ -798,7 +833,7 @@ public:
     }
   }
 
-  /// Converting move constructor.
+  /// @brief Converting move constructor.
   template <class U, detail::enable_from_other<T, U, U&&>* = nullptr,
             std::enable_if_t<std::is_convertible<U&&, T>::value>* = nullptr>
   optional(optional<U>&& rhs)
@@ -808,6 +843,7 @@ public:
     }
   }
 
+  /// @overload
   template <class U, detail::enable_from_other<T, U, U&&>* = nullptr,
             std::enable_if_t<!std::is_convertible<U&&, T>::value>* = nullptr>
   explicit optional(optional<U>&& rhs)
@@ -817,10 +853,10 @@ public:
     }
   }
 
-  /// Destroys the stored value if there is one.
+  /// @brief Destroys the stored value if there is one.
   ~optional() = default;
 
-  /// Assignment to empty.
+  /// @brief Assignment to empty.
   ///
   /// Destroys the current value if there is one.
   optional& operator=(nullopt_t) noexcept
@@ -833,20 +869,20 @@ public:
     return *this;
   }
 
-  /// Copy assignment.
+  /// @brief Copy assignment.
   ///
   /// Copies the value from `rhs` if there is one. Otherwise resets the stored
   /// value in `*this`.
   optional& operator=(const optional& rhs) = default;
 
-  /// Move assignment.
+  /// @brief Move assignment.
   ///
   /// Moves the value from `rhs` if there is one. Otherwise resets the stored
   /// value in `*this`.
   optional& operator=(optional&& rhs) = default;
 
-  /// Assigns the stored value from `u`, destroying the old value if there was
-  /// one.
+  /// @brief Assigns the stored value from `u`, destroying the old value if
+  /// there was one.
   template <class U = T, detail::enable_assign_forward<T, U>* = nullptr>
   optional& operator=(U&& u)
   {
@@ -859,7 +895,7 @@ public:
     return *this;
   }
 
-  /// Converting copy assignment operator.
+  /// @brief Converting copy assignment operator.
   ///
   /// Copies the value from `rhs` if there is one. Otherwise resets the stored
   /// value in `*this`.
@@ -882,8 +918,8 @@ public:
     return *this;
   }
 
-  /// Moves the value from `rhs` if there is one. Otherwise resets the stored
-  /// value in `*this`.
+  /// @brief Moves the value from `rhs` if there is one. Otherwise resets the
+  /// stored value in `*this`.
   template <class U, detail::enable_assign_from_other<T, U, U>* = nullptr>
   optional& operator=(optional<U>&& rhs) noexcept
   {
@@ -902,8 +938,8 @@ public:
     return *this;
   }
 
-  /// Constructs the value in-place, destroying the current one if there is
-  /// one.
+  /// @brief Constructs the value in-place, destroying the current one if there
+  /// is one.
   template <class... Args> T& emplace(Args&&... args)
   {
     static_assert(std::is_constructible<T, Args&&...>::value,
@@ -914,6 +950,7 @@ public:
     return value();
   }
 
+  /// @overload
   template <class U, class... Args>
   std::enable_if_t<
       std::is_constructible<T, std::initializer_list<U>&, Args&&...>::value, T&>
@@ -924,7 +961,7 @@ public:
     return value();
   }
 
-  /// Swaps this optional with the other.
+  /// @brief Swaps this optional with the other.
   ///
   /// If neither optionals have a value, nothing happens.
   /// If both have a value, the values are swapped.
@@ -950,50 +987,55 @@ public:
     swap(this->m_has_value, rhs.m_has_value);
   }
 
-  /// Returns a pointer to the stored value
+  /// @brief Returns a pointer to the stored value
   constexpr const T* operator->() const
   {
     return std::addressof(this->m_value);
   }
 
+  /// @overload
   constexpr T* operator->()
   {
     return std::addressof(this->m_value);
   }
 
-  /// Returns the stored value
+  /// @brief Returns the stored value
   constexpr T& operator*() &
   {
     return this->m_value;
   }
 
+  /// @overload
   constexpr const T& operator*() const&
   {
     return this->m_value;
   }
 
+  /// @overload
   constexpr T&& operator*() &&
   {
     return std::move(this->m_value);
   }
 
+  /// @overload
   constexpr const T&& operator*() const&&
   {
     return std::move(this->m_value);
   }
 
-  /// Returns whether or not the optional has a value
+  /// @brief Returns whether or not the optional has a value
   constexpr bool has_value() const noexcept
   {
     return this->m_has_value;
   }
 
+  /// @brief Returns whether or not the optional has a value
   constexpr explicit operator bool() const noexcept
   {
     return this->m_has_value;
   }
 
-  /// Returns the contained value if there is one, otherwise throws
+  /// @brief Returns the contained value if there is one, otherwise throws
   /// bad_optional_access
   constexpr T& value() &
   {
@@ -1001,12 +1043,16 @@ public:
       return this->m_value;
     throw bad_optional_access();
   }
+
+  /// @overload
   constexpr const T& value() const&
   {
     if (has_value())
       return this->m_value;
     throw bad_optional_access();
   }
+
+  /// @overload
   constexpr T&& value() &&
   {
     if (has_value())
@@ -1014,6 +1060,7 @@ public:
     throw bad_optional_access();
   }
 
+  /// @overload
   constexpr const T&& value() const&&
   {
     if (has_value())
@@ -1021,7 +1068,7 @@ public:
     throw bad_optional_access();
   }
 
-  /// Returns the stored value if there is one, otherwise returns `u`
+  /// @brief Returns the stored value if there is one, otherwise returns `u`
   template <class U> constexpr T value_or(U&& u) const&
   {
     static_assert(std::is_copy_constructible<T>::value &&
@@ -1030,6 +1077,7 @@ public:
     return has_value() ? **this : static_cast<T>(std::forward<U>(u));
   }
 
+  /// @overload
   template <class U> constexpr T value_or(U&& u) &&
   {
     static_assert(std::is_move_constructible<T>::value &&
@@ -1038,7 +1086,7 @@ public:
     return has_value() ? **this : static_cast<T>(std::forward<U>(u));
   }
 
-  /// Destroys the stored value if one exists, making the optional empty
+  /// @brief Destroys the stored value if one exists, making the optional empty
   void reset() noexcept
   {
     if (has_value()) {
@@ -1664,7 +1712,7 @@ public:
     throw bad_optional_access();
   }
 
-  /// Returns the stored value if there is one, otherwise returns `u`
+  /// @brief Returns the stored value if there is one, otherwise returns `u`
   template <class U> constexpr T value_or(U&& u) const& noexcept
   {
     static_assert(std::is_copy_constructible<T>::value &&
@@ -1673,7 +1721,7 @@ public:
     return has_value() ? **this : static_cast<T>(std::forward<U>(u));
   }
 
-  /// \group value_or
+  /// @overload
   template <class U> constexpr T value_or(U&& u) && noexcept
   {
     static_assert(std::is_move_constructible<T>::value &&

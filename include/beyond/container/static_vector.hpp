@@ -9,8 +9,8 @@
 
 #include <fmt/format.h>
 
-#include <beyond/utils/assert.hpp>
-#include <beyond/utils/bit_cast.hpp>
+#include "../utils/assert.hpp"
+#include "../utils/bit_cast.hpp"
 
 namespace beyond {
 
