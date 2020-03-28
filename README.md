@@ -2,12 +2,12 @@
 [![Build Status](https://travis-ci.org/Beyond-Engine/Core.svg?branch=master)](https://travis-ci.org/Beyond-Engine/Core)
 [![Build status](https://ci.appveyor.com/api/projects/status/4fd4193gbuj65w0e?svg=true)](https://ci.appveyor.com/project/LesleyLai/core)
 
-beyond::core is a library with a bunch of utilities that are associated with graphics and game programming.
+`beyond::core` is a library with a bunch of utilities that are associated with graphics and game programming.
 It forms the core utilities of the [Beyond Game Engine](https://github.com/Beyond-Engine/Beyond-Game-Engine).
 
 ## Codemap
 
-Abseil contains the following C++ library components:
+`beyond::core` contains the following C++ library components:
 
 * [`concurrency`](include/beyond/concurrency/)  (incomplete and unusable)
   <br /> contains high level constructs for concurrent programming.
