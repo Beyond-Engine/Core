@@ -14,7 +14,7 @@
 
 #include "../utils/assert.hpp"
 #include "../utils/bit_cast.hpp"
-#include "../utils/functional.hpp"
+#include "detail/swizzle.hpp"
 #include "math_fwd.hpp"
 
 namespace beyond {
@@ -35,6 +35,7 @@ template <typename Vector> struct VectorTrait;
 template <typename Value> struct VectorTrait<TVec<Value, 2>> {
   using ValueType = Value;
   using VectorType = TVec<Value, 2>;
+  using PointType = TPoint<Value, 2>;
   template <typename T> using VectorTemplate = TVec<T, 2>;
   static constexpr std::size_t size = 2;
 };
@@ -42,6 +43,7 @@ template <typename Value> struct VectorTrait<TVec<Value, 2>> {
 template <typename Value> struct VectorTrait<TVec<Value, 3>> {
   using ValueType = Value;
   using VectorType = TVec<Value, 3>;
+  using PointType = TPoint<Value, 3>;
   template <typename T> using VectorTemplate = TVec<T, 3>;
   static constexpr std::size_t size = 3;
 };
@@ -49,6 +51,7 @@ template <typename Value> struct VectorTrait<TVec<Value, 3>> {
 template <typename Value> struct VectorTrait<TVec<Value, 4>> {
   using ValueType = Value;
   using VectorType = TVec<Value, 4>;
+  using PointType = TPoint<Value, 4>;
   template <typename T> using VectorTemplate = TVec<T, 4>;
   static constexpr std::size_t size = 4;
 };
@@ -61,418 +64,6 @@ template <typename Value> struct VectorTrait<TVec<Value, 4>> {
  * TVec, and TPoint.
  */
 template <typename Derived, std::size_t size> struct VectorStorage;
-
-namespace detail {
-
-template <typename Trait, std::size_t... indices> struct VectorConverter;
-
-template <typename Trait, std::size_t index_x, std::size_t index_y>
-struct VectorConverter<Trait, index_x, index_y> {
-  using ValueType = typename Trait::ValueType;
-  using VectorType = typename Trait::VectorType;
-
-  [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
-      -> VectorType
-  {
-    return VectorType(data[index_x], data[index_y]);
-  }
-};
-
-template <typename Trait> struct VectorConverter<Trait, 0, 1> {
-  using ValueType = typename Trait::ValueType;
-  using VectorType = typename Trait::VectorType;
-
-  [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
-      -> const VectorType&
-  {
-    return (*bit_cast<const VectorType*>(data));
-  }
-
-  [[nodiscard]] static constexpr auto convert(ValueType* data) -> VectorType&
-  {
-    return (*bit_cast<VectorType*>(data));
-  }
-};
-
-template <typename Trait> struct VectorConverter<Trait, 1, 2> {
-  using ValueType = typename Trait::ValueType;
-  using VectorType = typename Trait::VectorType;
-
-  [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
-      -> const VectorType&
-  {
-    return (*bit_cast<const VectorType*>(data + 1)); // NOLINT
-  }
-
-  [[nodiscard]] static constexpr auto convert(ValueType* data) -> VectorType&
-  {
-    return (bit_cast<VectorType>(data + 1)); // NOLINT
-  }
-};
-
-template <typename Trait> struct VectorConverter<Trait, 2, 3> {
-  using ValueType = typename Trait::ValueType;
-  using VectorType = typename Trait::VectorType;
-
-  [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
-      -> const VectorType&
-  {
-    return (*bit_cast<const VectorType*>(data + 2)); // NOLINT
-  }
-
-  [[nodiscard]] static constexpr auto convert(ValueType* data) -> VectorType&
-  {
-    return (bit_cast<VectorType>(data + 2)); // NOLINT
-  }
-};
-
-template <typename Trait, std::size_t index_x, std::size_t index_y,
-          std::size_t index_z>
-struct VectorConverter<Trait, index_x, index_y, index_z> {
-  using ValueType = typename Trait::ValueType;
-  using VectorType = typename Trait::VectorType;
-
-  [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
-      -> VectorType
-  {
-    return VectorType(data[index_x], data[index_y], data[index_z]);
-  }
-};
-
-template <typename Trait> struct VectorConverter<Trait, 0, 1, 2> {
-  using ValueType = typename Trait::ValueType;
-  using VectorType = typename Trait::VectorType;
-
-  [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
-      -> const VectorType&
-  {
-    return (*bit_cast<const VectorType*>(data));
-  }
-
-  [[nodiscard]] static constexpr auto convert(ValueType* data) -> VectorType&
-  {
-    return (*bit_cast<VectorType*>(data));
-  }
-};
-
-template <typename Trait> struct VectorConverter<Trait, 1, 2, 3> {
-  using ValueType = typename Trait::ValueType;
-  using VectorType = typename Trait::VectorType;
-
-  [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
-      -> const VectorType&
-  {
-    return (*bit_cast<const VectorType*>(data + 1));
-  }
-
-  [[nodiscard]] static constexpr auto convert(ValueType* data) -> VectorType&
-  {
-    return (*bit_cast<VectorType*>(data + 1));
-  }
-};
-
-template <typename Trait, std::size_t index_x, std::size_t index_y,
-          std::size_t index_z, std::size_t index_w>
-struct VectorConverter<Trait, index_x, index_y, index_z, index_w> {
-  using ValueType = typename Trait::ValueType;
-  using VectorType = typename Trait::VectorType;
-
-  [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
-      -> VectorType
-  {
-    return VectorType(data[index_x], data[index_y], data[index_z],
-                      data[index_w]);
-  }
-};
-
-template <typename Trait> struct VectorConverter<Trait, 0, 1, 2, 3> {
-  using ValueType = typename Trait::ValueType;
-  using VectorType = typename Trait::VectorType;
-
-  [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
-      -> const VectorType&
-  {
-    return (*bit_cast<const VectorType*>(data));
-  }
-
-  [[nodiscard]] static constexpr auto convert(ValueType* data) -> VectorType&
-  {
-    return (*bit_cast<VectorType*>(data));
-  }
-};
-
-} // namespace detail
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices>
-struct Subvector {
-  using ValueType = typename Trait::ValueType;
-  using VectorType = typename Trait::VectorType;
-
-  std::array<ValueType, dimensions> elem;
-
-  // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  [[nodiscard]] constexpr operator VectorType() noexcept
-  {
-    return (detail::VectorConverter<Trait, indices...>::convert(elem.data()));
-  }
-
-  // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  [[nodiscard]] constexpr operator VectorType() const noexcept
-  {
-    return (detail::VectorConverter<Trait, indices...>::convert(elem.data()));
-  }
-
-  constexpr auto operator=(VectorType v) noexcept -> Subvector&
-  {
-    return assignment_impl(v, Assign<ValueType>{},
-                           std::make_index_sequence<dimensions>{});
-  }
-
-  constexpr auto operator+=(typename Trait::VectorType v) noexcept -> Subvector&
-  {
-    return assignment_impl(v, PlusEqual<ValueType>{},
-                           std::make_index_sequence<dimensions>{});
-  }
-
-  constexpr auto operator-=(typename Trait::VectorType v) noexcept -> Subvector&
-  {
-    return assignment_impl(v, MinusEqual<ValueType>{},
-                           std::make_index_sequence<dimensions>{});
-  }
-
-  template <typename T>
-  constexpr auto operator*=(T scalar) noexcept -> Subvector&
-  {
-    ((elem[indices] *= scalar), ...);
-    return (*this);
-  }
-
-  template <typename T>
-  constexpr auto operator/=(T scalar) noexcept -> Subvector&
-  {
-    ((elem[indices] /= scalar), ...);
-    return (*this);
-  }
-
-  template <std::size_t... indices2>
-  constexpr auto
-  operator=(Subvector<Trait, dimensions, indices2...> value) noexcept
-      -> Subvector&
-  {
-    ((elem[indices] = value.elem[indices2]), ...);
-    return (*this);
-  }
-
-private:
-  // Implementation helper for assignment operations
-  template <typename Func, std::size_t... indices2>
-  constexpr auto assignment_impl(VectorType v, Func f,
-                                 std::index_sequence<indices2...>) noexcept
-      -> Subvector&
-  {
-    (f(elem[indices], v[indices2]), ...);
-    return (*this);
-  }
-};
-
-template <typename Trait, std::size_t index_x, std::size_t index_y>
-using Subvector2 = Subvector<Trait, 2, index_x, index_y>;
-
-template <typename Trait, std::size_t index_x, std::size_t index_y,
-          std::size_t index_z>
-using Subvector3 = Subvector<Trait, 3, index_x, index_y, index_z>;
-
-template <typename Trait, std::size_t index_x, std::size_t index_y,
-          std::size_t index_z, std::size_t index_w>
-using Subvector4 = Subvector<Trait, 4, index_x, index_y, index_z, index_w>;
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices1,
-          std::size_t... indices2>
-[[nodiscard]] constexpr auto
-operator==(const Subvector<Trait, dimensions, indices1...>& v1,
-           const Subvector<Trait, dimensions, indices2...>& v2) noexcept -> bool
-{
-  return (... && (v1.elem[indices1] == v2.elem[indices2]));
-}
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices1,
-          std::size_t... indices2>
-[[nodiscard]] constexpr auto
-operator!=(const Subvector<Trait, dimensions, indices1...>& v1,
-           const Subvector<Trait, dimensions, indices2...>& v2) noexcept -> bool
-{
-  return (... || (v1.elem[indices1] != v2.elem[indices2]));
-}
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices>
-[[nodiscard]] constexpr auto
-operator*(const Subvector<Trait, dimensions, indices...>& v,
-          typename Trait::ValueType scalar) noexcept
-{
-  return typename Trait::template VectorTemplate<typename Trait::ValueType>{
-      (v.elem[indices] * scalar)...};
-}
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices,
-          typename T>
-[[nodiscard]] constexpr auto
-operator*(T scalar, const Subvector<Trait, dimensions, indices...>& v) noexcept
-{
-  return v * scalar;
-}
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices>
-[[nodiscard]] constexpr auto
-operator/(const Subvector<Trait, dimensions, indices...>& v,
-          typename Trait::ValueType scalar) noexcept
-{
-  return typename Trait::template VectorTemplate<typename Trait::ValueType>{
-      (v.elem[indices] / scalar)...};
-}
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices1,
-          std::size_t... indices2>
-[[nodiscard]] constexpr auto
-operator+(const Subvector<Trait, dimensions, indices1...>& v1,
-          const Subvector<Trait, dimensions, indices2...>& v2) noexcept
-{
-  return typename Trait::VectorType{(v1.elem[indices1] + v2.elem[indices2])...};
-}
-
-#if defined(__GNUC__) || defined(__GNUG__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsequence-point"
-#endif
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices1>
-[[nodiscard]] constexpr auto
-operator+(const Subvector<Trait, dimensions, indices1...>& v1,
-          const typename Trait::VectorType& v2) noexcept
-{
-  std::size_t i = 0;
-  return typename Trait::VectorType{(v1.elem[indices1] + v2.elem[i++])...};
-}
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices1>
-[[nodiscard]] constexpr auto
-operator+(const typename Trait::VectorType& v2,
-          const Subvector<Trait, dimensions, indices1...>& v1) noexcept
-{
-  std::size_t i = 0;
-  return typename Trait::VectorType{(v1.elem[indices1] + v2.elem[i++])...};
-}
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices1,
-          std::size_t... indices2>
-[[nodiscard]] constexpr auto
-operator-(const Subvector<Trait, dimensions, indices1...>& v1,
-          const Subvector<Trait, dimensions, indices2...>& v2) noexcept
-{
-  return typename Trait::VectorType{(v1.elem[indices1] - v2.elem[indices2])...};
-}
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices1>
-[[nodiscard]] constexpr auto
-operator-(const Subvector<Trait, dimensions, indices1...>& v1,
-          const typename Trait::VectorType& v2) noexcept
-{
-  std::size_t i = 0;
-  return typename Trait::VectorType{(v1.elem[indices1] - v2.elem[i++])...};
-}
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices1>
-[[nodiscard]] constexpr auto
-operator-(const typename Trait::VectorType& v2,
-          const Subvector<Trait, dimensions, indices1...>& v1) noexcept
-{
-  std::size_t i = 0;
-  return typename Trait::VectorType{(v2.elem[i++] - v1.elem[indices1])...};
-}
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices1,
-          std::size_t... indices2>
-[[nodiscard]] constexpr auto
-dot_impl(const Subvector<Trait, dimensions, indices1...>& v1,
-         const typename Trait::VectorType& v2, std::index_sequence<indices2...>)
-{
-  return (... + (v1.elem[indices1] * v2[indices2]));
-}
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices1,
-          typename Incices = std::make_index_sequence<dimensions>>
-[[nodiscard]] constexpr auto
-dot(const Subvector<Trait, dimensions, indices1...>& v1,
-    const typename Trait::VectorType& v2) noexcept
-{
-  return dot_impl(v1, v2, std::make_index_sequence<dimensions>{});
-}
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices1>
-[[nodiscard]] constexpr auto
-dot(const typename Trait::VectorType& v2,
-    const Subvector<Trait, dimensions, indices1...>& v1) noexcept
-{
-  return dot_impl(v1, v2, std::make_index_sequence<dimensions>{});
-}
-
-template <typename Trait, std::size_t dimensions, std::size_t... indices1,
-          std::size_t... indices2>
-[[nodiscard]] constexpr auto
-dot(const Subvector<Trait, dimensions, indices1...>& v1,
-    const Subvector<Trait, dimensions, indices2...>& v2) noexcept
-{
-  return (... + (v1.elem[indices1] * v2.elem[indices2]));
-}
-
-#if defined(__GNUC__) || defined(__GNUG__)
-#pragma GCC diagnostic pop
-#endif
-
-template <typename Trait, std::size_t idx1, std::size_t idy1, std::size_t idz1,
-          std::size_t idx2, std::size_t idy2, std::size_t idz2>
-[[nodiscard]] constexpr auto
-cross(const Subvector<Trait, 3, idx1, idy1, idz1>& v1,
-      const Subvector<Trait, 3, idx2, idy2, idz2>& v2) noexcept
-{
-  return typename Trait::VectorType{
-      (v1.elem[idy1] * v2.elem[idz2]) - (v1.elem[idz1] * v2.elem[idy2]),
-      (v1.elem[idz1] * v2.elem[idx2]) - (v1.elem[idx1] * v2.elem[idz2]),
-      (v1.elem[idx1] * v2.elem[idy2]) - (v1.elem[idy1] * v2.elem[idx2])};
-}
-
-template <typename Trait, std::size_t idx2, std::size_t idy2, std::size_t idz2>
-[[nodiscard]] constexpr auto
-cross(const typename Trait::VectorType& v1,
-      const Subvector<Trait, 3, idx2, idy2, idz2>& v2) noexcept
-{
-  return typename Trait::VectorType{
-      (v1.y * v2.elem[idz2]) - (v1.z * v2.elem[idy2]),
-      (v1.z * v2.elem[idx2]) - (v1.x * v2.elem[idz2]),
-      (v1.x * v2.elem[idy2]) - (v1.y * v2.elem[idx2])};
-}
-
-template <typename Trait, std::size_t idx1, std::size_t idy1, std::size_t idz1>
-[[nodiscard]] constexpr auto
-cross(const Subvector<Trait, 3, idx1, idy1, idz1>& v1,
-      const typename Trait::VectorType& v2) noexcept
-{
-  return typename Trait::VectorType{
-      (v1.elem[idy1] * v2.z) - (v1.elem[idz1] * v2.y),
-      (v1.elem[idz1] * v2.x) - (v1.elem[idx1] * v2.z),
-      (v1.elem[idx1] * v2.y) - (v1.elem[idy1] * v2.x)};
-}
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wgnu-anonymous-struct"
-#pragma clang diagnostic ignored "-Wnested-anon-types"
-#elif defined(__GNUC__) || defined(__GNUG__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#elif defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 4201)
-#endif
 
 template <typename Derived> struct VectorStorage<Derived, 2> {
   using Trait = VectorTrait<Derived>;
@@ -499,6 +90,7 @@ template <typename Derived> struct VectorStorage<Derived, 2> {
 template <typename Derived> struct VectorStorage<Derived, 3> {
   using Trait = VectorTrait<Derived>;
   using ValueType = typename Trait::ValueType;
+  using Trait2 = VectorTrait<TVec<ValueType, 2>>;
 
   constexpr VectorStorage() noexcept : elem{{}} {}
   explicit constexpr VectorStorage(
@@ -514,12 +106,12 @@ template <typename Derived> struct VectorStorage<Derived, 3> {
       ValueType y;
       ValueType z;
     };
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 0, 1> xy;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 1, 0> yx;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 0, 2> xz;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 2, 0> zx;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 1, 2> yz;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 2, 1> zy;
+    Subvector2<Trait2, 0, 1> xy;
+    Subvector2<Trait2, 1, 0> yx;
+    Subvector2<Trait2, 0, 2> xz;
+    Subvector2<Trait2, 2, 0> zx;
+    Subvector2<Trait2, 1, 2> yz;
+    Subvector2<Trait2, 2, 1> zy;
     Subvector3<Trait, 0, 1, 2> xyz;
     Subvector3<Trait, 0, 2, 1> xzy;
     Subvector3<Trait, 1, 0, 2> yxz;
@@ -532,6 +124,8 @@ template <typename Derived> struct VectorStorage<Derived, 3> {
 template <typename Derived> struct VectorStorage<Derived, 4> {
   using Trait = VectorTrait<Derived>;
   using ValueType = typename Trait::ValueType;
+  using Trait2 = VectorTrait<TVec<ValueType, 2>>;
+  using Trait3 = VectorTrait<TVec<ValueType, 3>>;
 
   constexpr VectorStorage() noexcept : elem{{}} {}
   explicit constexpr VectorStorage(
@@ -547,43 +141,43 @@ template <typename Derived> struct VectorStorage<Derived, 4> {
       ValueType z;
       ValueType w;
     };
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 0, 1> xy;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 1, 0> yx;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 0, 2> xz;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 2, 0> zx;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 1, 2> yz;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 2, 1> zy;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 0, 3> xw;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 1, 3> yw;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 2, 3> zw;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 3, 0> wx;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 3, 1> wy;
-    Subvector2<VectorTrait<TVec<ValueType, 2>>, 3, 2> wz;
+    Subvector2<Trait2, 0, 1> xy;
+    Subvector2<Trait2, 1, 0> yx;
+    Subvector2<Trait2, 0, 2> xz;
+    Subvector2<Trait2, 2, 0> zx;
+    Subvector2<Trait2, 1, 2> yz;
+    Subvector2<Trait2, 2, 1> zy;
+    Subvector2<Trait2, 0, 3> xw;
+    Subvector2<Trait2, 1, 3> yw;
+    Subvector2<Trait2, 2, 3> zw;
+    Subvector2<Trait2, 3, 0> wx;
+    Subvector2<Trait2, 3, 1> wy;
+    Subvector2<Trait2, 3, 2> wz;
 
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 0, 1, 2> xyz;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 0, 1, 3> xyw;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 0, 2, 1> xzy;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 0, 2, 3> xzw;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 0, 3, 1> xwy;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 0, 3, 2> xwz;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 1, 0, 2> yxz;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 1, 0, 3> yxw;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 1, 2, 0> yzx;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 1, 2, 3> yzw;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 1, 3, 0> ywx;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 1, 3, 2> ywz;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 2, 0, 1> zxy;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 2, 0, 3> zxw;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 2, 1, 0> zyx;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 2, 1, 3> zyw;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 2, 3, 0> zwx;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 2, 3, 1> zwy;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 3, 0, 1> wxy;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 3, 0, 2> wxz;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 3, 1, 0> wyx;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 3, 1, 2> wyz;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 3, 2, 0> wzx;
-    Subvector3<VectorTrait<TVec<ValueType, 3>>, 3, 2, 1> wzy;
+    Subvector3<Trait3, 0, 1, 2> xyz;
+    Subvector3<Trait3, 0, 1, 3> xyw;
+    Subvector3<Trait3, 0, 2, 1> xzy;
+    Subvector3<Trait3, 0, 2, 3> xzw;
+    Subvector3<Trait3, 0, 3, 1> xwy;
+    Subvector3<Trait3, 0, 3, 2> xwz;
+    Subvector3<Trait3, 1, 0, 2> yxz;
+    Subvector3<Trait3, 1, 0, 3> yxw;
+    Subvector3<Trait3, 1, 2, 0> yzx;
+    Subvector3<Trait3, 1, 2, 3> yzw;
+    Subvector3<Trait3, 1, 3, 0> ywx;
+    Subvector3<Trait3, 1, 3, 2> ywz;
+    Subvector3<Trait3, 2, 0, 1> zxy;
+    Subvector3<Trait3, 2, 0, 3> zxw;
+    Subvector3<Trait3, 2, 1, 0> zyx;
+    Subvector3<Trait3, 2, 1, 3> zyw;
+    Subvector3<Trait3, 2, 3, 0> zwx;
+    Subvector3<Trait3, 2, 3, 1> zwy;
+    Subvector3<Trait3, 3, 0, 1> wxy;
+    Subvector3<Trait3, 3, 0, 2> wxz;
+    Subvector3<Trait3, 3, 1, 0> wyx;
+    Subvector3<Trait3, 3, 1, 2> wyz;
+    Subvector3<Trait3, 3, 2, 0> wzx;
+    Subvector3<Trait3, 3, 2, 1> wzy;
 
     Subvector4<Trait, 0, 1, 2, 3> xyzw;
     Subvector4<Trait, 0, 1, 3, 2> xywz;
@@ -623,8 +217,7 @@ template <typename Derived> struct VectorStorage<Derived, 4> {
 /**
  * @brief This class serve as base class for TVec, Bivector, and Trivectors.
  *
- * This class contains all the possible operations on vectors and anti-vectors
- * (Bivector and Trivector).
+ * This class contains all the possible operations on vectors and anti-vectors.
  *
  * @see TVec, VectorStorage
  */
@@ -656,9 +249,9 @@ struct VectorBase : VectorStorage<TVec<T, sizeof...(Ns)>, sizeof...(Ns)> {
    * @see length_squared()
    */
   template <typename U = ValueType>
-  [[nodiscard]] auto length() const noexcept
-      -> std::enable_if_t<std::is_floating_point_v<U>, U>
+  [[nodiscard]] auto length() const noexcept -> U
   {
+    static_assert(std::is_floating_point_v<U>);
     return std::sqrt(length_squared());
   }
 
@@ -735,9 +328,9 @@ struct VectorBase : VectorStorage<TVec<T, sizeof...(Ns)>, sizeof...(Ns)> {
    * @brief Divides this vector by a scalar
    */
   template <typename U = ValueType>
-  constexpr auto operator/=(U rhs) noexcept
-      -> std::enable_if_t<std::is_floating_point_v<U>, VectorBase&>
+  constexpr auto operator/=(U rhs) noexcept -> VectorBase&
   {
+    static_assert(std::is_floating_point_v<U>);
     BEYOND_ASSERT_MSG(rhs != 0, "Devide by zero");
     const auto inv = static_cast<ValueType>(1) / rhs;
     ((Storage::elem[Ns] *= inv), ...);
@@ -815,10 +408,10 @@ template <typename T, std::size_t... Ns>
  */
 template <typename T, std::size_t... Ns>
 [[nodiscard]] constexpr auto operator/(VectorBase<T, Ns...> lhs,
-                                       T scalar) noexcept
-    -> std::enable_if_t<std::is_floating_point_v<T>,
-                        typename VectorBase<T, Ns...>::VecType>
+                                       T scalar) noexcept ->
+    typename VectorBase<T, Ns...>::VecType
 {
+  static_assert(std::is_floating_point_v<T>);
   lhs /= scalar;
   return lhs;
 }
@@ -827,8 +420,9 @@ template <typename T, std::size_t... Ns>
 /// @note Only available for floating point vectors
 template <typename T, std::size_t... Ns>
 [[nodiscard]] constexpr auto normalize(const VectorBase<T, Ns...>& v) noexcept
-    -> std::enable_if_t<std::is_floating_point_v<T>, TVec<T, sizeof...(Ns)>>
+    -> TVec<T, sizeof...(Ns)>
 {
+  static_assert(std::is_floating_point_v<T>);
   return v / v.length();
 }
 

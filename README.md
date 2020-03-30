@@ -20,7 +20,7 @@ It forms the core utilities of the [Beyond Game Engine](https://github.com/Beyon
 * [`types`](include/beyond/types/)
   <br /> contains non-container utility types, like an
   `optional` type with monadic extensions.
-* [`utils`](include/beyond/utility/)
+* [`utils`](include/beyond/utils/)
   <br />  contains utility and helper code.
 
 ## Usage

@@ -6,7 +6,7 @@
 #include "beyond/math/serial.hpp"
 #include "beyond/math/vector.hpp"
 
-TEST_CASE("All TVec types test", "[beyond.core.math.vec]")
+TEST_CASE("Vec All types test", "[beyond.core.math.vec]")
 {
   using Catch::literals::operator""_a;
 
@@ -189,7 +189,7 @@ TEST_CASE("All TVec types test", "[beyond.core.math.vec]")
   }
 }
 
-TEST_CASE("Floating point TVec only test", "[beyond.core.math.vec]")
+TEST_CASE("Vec Floating point only test", "[beyond.core.math.vec]")
 {
   using Catch::literals::operator""_a;
 
@@ -302,7 +302,7 @@ TEST_CASE("Points", "[beyond.core.math.vec]")
   }
 }
 
-TEST_CASE("TVec Swizzling", "[beyond.core.math.vec]")
+TEST_CASE("Vec Swizzling test", "[beyond.core.math.vec]")
 {
   constexpr float a = 2.1f;
   constexpr float b = 4.2f;
@@ -445,7 +445,134 @@ TEST_CASE("TVec Swizzling", "[beyond.core.math.vec]")
   }
 }
 
-TEST_CASE("Cross product", "[beyond.core.math.vec]")
+TEST_CASE("Point Swizzling test", "[beyond.core.math.pec]")
+{
+  constexpr float a = 2.1f;
+  constexpr float b = 4.2f;
+  constexpr float c = 6.3f;
+
+  beyond::Point2 p1{a, b};
+  beyond::Point3 p2{a, b, c};
+
+  SECTION("Equality test")
+  {
+    const beyond::Point2 p4 = p1.xy;
+    CHECK(p1 == p4);
+    CHECK(p1 == p1.xy);
+    CHECK(p1.xy == p1.xy);
+
+    const beyond::Point2 p5 = p1.yx;
+    CHECK(p1 != p5);
+    CHECK(p1 != p5.xy);
+    CHECK(p1.xy != p1.yx);
+  }
+
+  SECTION("Swizzle assignment")
+  {
+    p2 = p2.yxz;
+    CHECK(p2.x == Approx(b));
+    CHECK(p2.y == Approx(a));
+    CHECK(p2.z == Approx(c));
+  }
+
+  SECTION("Arithmetics on swizzed structures")
+  {
+    SECTION("Scalar multiplication")
+    {
+      const beyond::Point2 result1 = p1.xy * 2.f;
+      const beyond::Point2 result2 = 2.f * p1.xy;
+      CHECK(result1.x == Approx(p1.x * 2.f));
+      CHECK(result1.y == Approx(p1.y * 2.f));
+      CHECK(result1 == result2);
+
+      p1.xy *= 2.f;
+      CHECK(result1 == p1);
+    }
+
+    SECTION("Scalar dipision")
+    {
+      const beyond::Point2 result1 = p1.xy / 2.f;
+      CHECK(result1.x == Approx(p1.x / 2.f));
+      CHECK(result1.y == Approx(p1.y / 2.f));
+
+      p1.xy /= 2.f;
+      CHECK(result1 == p1);
+    }
+
+    SECTION("Addition")
+    {
+      const beyond::Point2 result1 = p1.xy + p1.yx;
+      SECTION("Binary additions")
+      {
+        CHECK(result1.x == Approx(p1.x + p1.y));
+        CHECK(result1.y == Approx(p1.x + p1.y));
+
+        const auto result2 = p1.xy + p1;
+        CHECK(result2.x == Approx(p1.x * 2.f));
+        CHECK(result2.y == Approx(p1.y * 2.f));
+
+        const auto result3 = p1 + p1.xy;
+        CHECK(result3 == result2);
+      }
+
+      SECTION("Self increment")
+      {
+        p1.yx += p1;
+        REQUIRE(p1 == result1);
+      }
+
+      SECTION("Self increment with another swizzler")
+      {
+        p1.yx += p1.xy;
+        REQUIRE(p1 == result1);
+      }
+    }
+
+    SECTION("Subtraction")
+    {
+      const beyond::Point2 result1 = p1.xy - p1.yx;
+
+      SECTION("Binary additions")
+      {
+        CHECK(result1.x == Approx(p1.x - p1.y));
+        CHECK(result1.y == Approx(p1.y - p1.x));
+
+        const auto result2 = p1.xy - p1;
+        CHECK(result2.x == Approx(0));
+        CHECK(result2.y == Approx(0));
+
+        const auto result3 = p1 - p1.xy;
+        CHECK(result3 == result2);
+      }
+
+      SECTION("Self decrement")
+      {
+        p1.yx -= p1;
+        REQUIRE(p1 == result1);
+      }
+
+      SECTION("Self decrement with another swizzler")
+      {
+        p1.yx -= p1.xy;
+        REQUIRE(p1 == result1);
+      }
+    }
+
+    SECTION("dot product")
+    {
+      const beyond::Point2 p4{b, a};
+      const auto result = 2 * a * b;
+
+      CHECK(dot(p1.xy, p4.xy) == Approx(result));
+
+      CHECK(dot(p1.xy, p4) == Approx(result));
+
+      CHECK(dot(p1, p4.xy) == Approx(result));
+    }
+  }
+}
+
+TEST_CASE("Vec Cross product", "[beyond.core.math.vec]")
 {
   GIVEN("Two vectors")
   {
@@ -484,7 +611,7 @@ TEST_CASE("Cross product", "[beyond.core.math.vec]")
   }
 }
 
-TEST_CASE("TVec serialization test", "[beyond.core.math.vec]")
+TEST_CASE("Vec serialization test", "[beyond.core.math.vec]")
 {
   SECTION("Output TVec2 to a stream")
   {
@@ -511,7 +638,7 @@ TEST_CASE("TVec serialization test", "[beyond.core.math.vec]")
   }
 }
 
-TEST_CASE("TPoint serialization test", "[beyond.core.math.vec]")
+TEST_CASE("Point serialization test", "[beyond.core.math.vec]")
 {
   SECTION("Output TPoint2 to a stream")
   {

@@ -18,6 +18,7 @@ add_library(core
         ../include/beyond/math/angle.hpp
         ../include/beyond/math/constants.hpp
         ../include/beyond/math/vector.hpp
+        ../include/beyond/math/detail/swizzle.hpp
         ../include/beyond/math/serial.hpp
         ../include/beyond/math/matrix.hpp
         ../include/beyond/math/math.hpp
