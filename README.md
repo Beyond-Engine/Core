@@ -20,6 +20,8 @@ It forms the core utilities of the [Beyond Game Engine](https://github.com/Beyon
 * [`types`](include/beyond/types/)
   <br /> contains non-container utility types, like an
   `optional` type with monadic extensions.
+* [`random`](include/beyond/random/)
+  <br />  contains random number generators and distributions with a standard `<random>`-like interface.
 * [`utils`](include/beyond/utils/)
   <br />  contains utility and helper code.
 

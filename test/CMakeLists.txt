@@ -24,7 +24,7 @@ add_executable(${TEST_TARGET_NAME}
         utils/handle_test.cpp
         utils/named_type_test.cpp
         serial_test_util.hpp
-        types/optional_test.cpp)
+        types/optional_test.cpp random/xorshift32_test.cpp)
 
 target_link_libraries(${TEST_TARGET_NAME}
         PRIVATE

@@ -11,6 +11,8 @@ Checks:          '*,
 -llvm-header-guard,
 -cppcoreguidelines-pro-type-union-access,
 -fuchsia-*,
+-*-uppercase-literal-suffix,
+-*-magic-numbers,
 -google-runtime-references,
 -google-build-using-namespace
 '
