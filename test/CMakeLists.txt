@@ -49,4 +49,7 @@ if (BEYOND_CORE_ENABLE_PCH)
             )
 endif ()
 
-add_test(${TEST_TARGET_NAME} "${CMAKE_BINARY_DIR}/bin/${TEST_TARGET_NAME}")
+add_test(NAME beyond_core_unit_test
+        COMMAND "${CMAKE_BINARY_DIR}/bin/${TEST_TARGET_NAME}")
+add_test(NAME beyond_core_integration_test
+        COMMAND "${CMAKE_BINARY_DIR}/bin/${TEST_TARGET_NAME}" "[integration]")
