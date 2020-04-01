@@ -207,7 +207,7 @@ TEST_CASE("Point serialization test", "[beyond.core.math.vec]")
   SECTION("Output TPoint2 to a stream")
   {
     const beyond::Point2 p{1, 2};
-    const auto expected = "point(1, 2)";
+    const auto expected = "point(1.0, 2.0)";
 
     REQUIRE_TO_STRING_EQ(p, expected);
   }
@@ -215,7 +215,7 @@ TEST_CASE("Point serialization test", "[beyond.core.math.vec]")
   SECTION("Output TPoint3 to a stream")
   {
     const beyond::Point3 p{1, 2, 3};
-    const auto expected = "point(1, 2, 3)";
+    const auto expected = "point(1.0, 2.0, 3.0)";
 
     REQUIRE_TO_STRING_EQ(p, expected);
   }

@@ -310,7 +310,7 @@ TEST_CASE("Angle serialization test", "[beyond.core.math.angle]")
   SECTION("Output TRadian to a stream")
   {
     const TRadian<float> r{1};
-    const auto expected = "1_radian";
+    const auto expected = "1.0_radian";
 
     REQUIRE_TO_STRING_EQ(r, expected);
   }
@@ -318,7 +318,7 @@ TEST_CASE("Angle serialization test", "[beyond.core.math.angle]")
   SECTION("Output TDegree to a stream")
   {
     const TDegree<float> d{90};
-    const auto expected = "90_degree";
+    const auto expected = "90.0_degree";
 
     REQUIRE_TO_STRING_EQ(d, expected);
   }

@@ -26,6 +26,10 @@ add_library(core
         ../include/beyond/math/transform.hpp
         ../include/beyond/math/point.hpp
 
+        ../include/beyond/geometry/ray.hpp
+        ../include/beyond/geometry/aabb3.hpp
+        geometry/aabb3.cpp
+
         ../include/beyond/random/generators/xorshift32.hpp
         )
 
