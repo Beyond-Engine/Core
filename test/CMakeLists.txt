@@ -29,7 +29,7 @@ add_executable(${TEST_TARGET_NAME}
         geometry/ray_test.cpp
         geometry/aabb_test.cpp
 
-        random/xorshift32_test.cpp)
+        random/xorshift32_test.cpp utils/make_array_test.cpp)
 
 target_link_libraries(${TEST_TARGET_NAME}
         PRIVATE
