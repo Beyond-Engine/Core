@@ -70,6 +70,7 @@ if (BEYOND_CORE_ENABLE_PCH)
             <string_view>
             <cmath>
             <cstddef>
+            <cstdint>
             <type_traits>
             )
 endif ()

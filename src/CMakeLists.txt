@@ -31,7 +31,7 @@ add_library(core
         geometry/aabb3.cpp
 
         ../include/beyond/random/generators/xorshift32.hpp
-        ../include/beyond/utils/make_array.hpp)
+        ../include/beyond/utils/make_array.hpp ../include/beyond/utils/numeric_aliases.hpp)
 
 set(BEYOND_CORE_ASSERT_POLICY AUTO CACHE STRING "The policy of enabling
     assertion or not in beyond game engine core.
