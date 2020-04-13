@@ -21,14 +21,14 @@ namespace beyond {
  * @{
  */
 
-template <class T, std::size_t N> class static_vector {
+template <class T, std::uint32_t N> class static_vector {
 public:
   using value_type = T;
   using pointer = T*;
   using const_pointer = const T*;
   using reference = T&;
   using const_reference = const T&;
-  using size_type = std::size_t;
+  using size_type = std::uint32_t;
   using difference_type = std::make_signed_t<size_type>;
 
   static_vector() noexcept = default;
@@ -80,7 +80,7 @@ public:
   }
 
   constexpr static_vector(std::initializer_list<value_type> il)
-      : size_{il.size()}
+      : size_{static_cast<size_type>(il.size())}
   {
     BEYOND_ASSERT(size_ <= capacity());
     std::uninitialized_copy(std::begin(il), std::end(il),
@@ -230,14 +230,14 @@ public:
    *
    * Complexity: O(1)
    */
-  [[nodiscard]] constexpr auto operator[](std::size_t pos) const
+  [[nodiscard]] constexpr auto operator[](size_type pos) const
       -> const_reference
   {
     return reinterpret_cast<const T*>(data_)[pos];
   }
 
   /// @overload
-  [[nodiscard]] constexpr auto operator[](std::size_t pos) -> reference
+  [[nodiscard]] constexpr auto operator[](size_type pos) -> reference
   {
     return reinterpret_cast<T*>(data_)[pos];
   }
@@ -298,7 +298,7 @@ public:
    *
    * Complexity: O(1)
    */
-  [[nodiscard]] constexpr auto at(std::size_t pos) const -> const_reference
+  [[nodiscard]] constexpr auto at(size_type pos) const -> const_reference
   {
     if (pos >= size()) {
       throw std::out_of_range{fmt::format(
@@ -309,7 +309,7 @@ public:
   }
 
   /// @overload
-  [[nodiscard]] constexpr auto at(std::size_t pos) -> reference
+  [[nodiscard]] constexpr auto at(size_type pos) -> reference
   {
     if (pos >= size()) {
       throw std::out_of_range{fmt::format(
@@ -482,11 +482,11 @@ public:
   }
 
 private:
-  std::size_t size_ = 0;
+  size_type size_ = 0;
   alignas(T) std::byte data_[sizeof(T) * N];
 };
 
-template <typename T, std::size_t N>
+template <typename T, std::uint32_t N>
 constexpr auto
 swap(static_vector<T, N>& lhs,
      static_vector<T, N>& rhs) noexcept(std::is_nothrow_swappable_v<T>) -> void
