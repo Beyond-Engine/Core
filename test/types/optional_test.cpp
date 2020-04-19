@@ -356,7 +356,7 @@ TEST_CASE("optional Monadic operations", "[beyond.core.types.optional]")
     auto o7r = o7.map(f7);
     STATIC_REQUIRE(
         (std::is_same<decltype(o7r),
-                      beyond::optional<beyond::monostate_t>>::value));
+                      beyond::optional<beyond::monostate>>::value));
     REQUIRE(o7r.has_value());
 
     // test each overload in turn
@@ -503,7 +503,7 @@ TEST_CASE("optional Monadic operations", "[beyond.core.types.optional]")
     auto o7r = o7.transform(f7);
     STATIC_REQUIRE(
         (std::is_same<decltype(o7r),
-                      beyond::optional<beyond::monostate_t>>::value));
+                      beyond::optional<beyond::monostate>>::value));
     REQUIRE(o7r.has_value());
 
     // test each overload in turn

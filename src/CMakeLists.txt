@@ -10,10 +10,11 @@ add_library(core
         ../include/beyond/utils/functional.hpp
         ../include/beyond/utils/function_ref.hpp
         ../include/beyond/utils/handle.hpp
+        ../include/beyond/utils/make_array.hpp
+        ../include/beyond/utils/numeric_aliases.hpp
         ../include/beyond/utils/named_type.hpp
         ../include/beyond/utils/panic.hpp
         utils/panic.cpp
-        ../include/beyond/types/optional.hpp
         ../include/beyond/utils/type_traits.hpp
         ../include/beyond/math/angle.hpp
         ../include/beyond/math/constants.hpp
@@ -31,7 +32,9 @@ add_library(core
         geometry/aabb3.cpp
 
         ../include/beyond/random/generators/xorshift32.hpp
-        ../include/beyond/utils/make_array.hpp ../include/beyond/utils/numeric_aliases.hpp)
+
+        ../include/beyond/types/optional.hpp
+        ../include/beyond/types/expected.hpp ../include/beyond/types/in_place.hpp ../include/beyond/types/monostate.hpp)
 
 set(BEYOND_CORE_ASSERT_POLICY AUTO CACHE STRING "The policy of enabling
     assertion or not in beyond game engine core.

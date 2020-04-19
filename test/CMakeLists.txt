@@ -24,12 +24,15 @@ add_executable(${TEST_TARGET_NAME}
         utils/handle_test.cpp
         utils/named_type_test.cpp
         serial_test_util.hpp
+
         types/optional_test.cpp
+        types/expected_test.cpp
 
         geometry/ray_test.cpp
         geometry/aabb_test.cpp
 
-        random/xorshift32_test.cpp utils/make_array_test.cpp)
+        random/xorshift32_test.cpp
+        utils/make_array_test.cpp)
 
 target_link_libraries(${TEST_TARGET_NAME}
         PRIVATE

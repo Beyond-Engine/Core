@@ -14,12 +14,8 @@
 #include <type_traits>
 #include <utility>
 
-#define BEYOND_OPTIONAL_IS_TRIVIALLY_COPY_CONSTRUCTIBLE(T)                     \
-  std::is_trivially_copy_constructible<T>::value
-#define BEYOND_OPTIONAL_IS_TRIVIALLY_COPY_ASSIGNABLE(T)                        \
-  std::is_trivially_copy_assignable<T>::value
-#define BEYOND_OPTIONAL_IS_TRIVIALLY_DESTRUCTIBLE(T)                           \
-  std::is_trivially_destructible<T>::value
+#include "in_place.hpp"
+#include "monostate.hpp"
 
 namespace beyond {
 
@@ -29,20 +25,6 @@ namespace beyond {
  * @addtogroup types
  * @{
  */
-
-#ifndef BEYOND_MONOSTATE_INPLACE_MUTEX
-#define BEYOND_MONOSTATE_INPLACE_MUTEX
-/// @brief Used to represent an optional with no data; essentially a bool
-class monostate_t {
-};
-
-/// @brief A tag type to tell optional to construct its value in-place
-struct in_place_t {
-  explicit in_place_t() = default;
-};
-/// @brief A tag to tell optional to construct its value in-place
-static constexpr in_place_t in_place{};
-#endif
 
 template <class T> class optional;
 
@@ -54,9 +36,9 @@ template <class T> struct is_optional_impl<optional<T>> : std::true_type {
 };
 template <class T> using is_optional = is_optional_impl<std::decay_t<T>>;
 
-// Change void to beyond::monostate_t
+// Change void to beyond::monostate
 template <class U>
-using fixup_void = std::conditional_t<std::is_void<U>::value, monostate_t, U>;
+using fixup_void = std::conditional_t<std::is_void<U>::value, monostate, U>;
 
 template <class F, class U, class = std::invoke_result_t<F, U>>
 using get_map_return = optional<fixup_void<std::invoke_result_t<F, U>>>;
@@ -229,7 +211,7 @@ template <class T> struct optional_operations_base : optional_storage_base<T> {
 
 // This class manages conditionally having a trivial copy constructor
 // This specialization is for when T is trivially copy constructible
-template <class T, bool = BEYOND_OPTIONAL_IS_TRIVIALLY_COPY_CONSTRUCTIBLE(T)>
+template <class T, bool = std::is_trivially_copy_constructible<T>::value>
 struct optional_copy_base : optional_operations_base<T> {
   using optional_operations_base<T>::optional_operations_base;
 };
@@ -284,9 +266,9 @@ template <class T> struct optional_move_base<T, false> : optional_copy_base<T> {
 };
 
 // This class manages conditionally having a trivial copy assignment operator
-template <class T, bool = BEYOND_OPTIONAL_IS_TRIVIALLY_COPY_ASSIGNABLE(T) &&
-                          BEYOND_OPTIONAL_IS_TRIVIALLY_COPY_CONSTRUCTIBLE(T) &&
-                          BEYOND_OPTIONAL_IS_TRIVIALLY_DESTRUCTIBLE(T)>
+template <class T, bool = std::is_trivially_copy_assignable<T>::value&&
+                       std::is_trivially_copy_constructible<T>::value&&
+                           std::is_trivially_destructible<T>::value>
 struct optional_copy_assign_base : optional_move_base<T> {
   using optional_move_base<T>::optional_move_base;
 };
@@ -1342,10 +1324,10 @@ auto optional_map_impl(Opt&& opt, F&& f)
 {
   if (opt.has_value()) {
     std::invoke(std::forward<F>(f), *std::forward<Opt>(opt));
-    return make_optional(monostate_t{});
+    return make_optional(monostate{});
   }
 
-  return optional<monostate_t>(nullopt);
+  return optional<monostate>(nullopt);
 }
 } // namespace detail
 
@@ -1649,7 +1631,7 @@ public:
   }
 
   /// No-op
-  ~optional() = default;
+  ~optional() noexcept = default;
 
   /// Assignment to empty.
   ///
