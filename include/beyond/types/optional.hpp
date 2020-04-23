@@ -14,6 +14,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "../utils/panic.hpp"
 #include "in_place.hpp"
 #include "monostate.hpp"
 
@@ -516,9 +517,7 @@ public:
       std::enable_if_t<std::is_convertible<const U&, T>::value>* = nullptr>
   optional(const optional<U>& rhs)
   {
-    if (rhs.has_value()) {
-      this->construct(*rhs);
-    }
+    if (rhs.has_value()) { this->construct(*rhs); }
   }
 
   /// @overload
@@ -527,9 +526,7 @@ public:
       std::enable_if_t<!std::is_convertible<const U&, T>::value>* = nullptr>
   explicit optional(const optional<U>& rhs)
   {
-    if (rhs.has_value()) {
-      this->construct(*rhs);
-    }
+    if (rhs.has_value()) { this->construct(*rhs); }
   }
 
   /// @brief Converting move constructor.
@@ -537,9 +534,7 @@ public:
             std::enable_if_t<std::is_convertible<U&&, T>::value>* = nullptr>
   optional(optional<U>&& rhs)
   {
-    if (rhs.has_value()) {
-      this->construct(std::move(*rhs));
-    }
+    if (rhs.has_value()) { this->construct(std::move(*rhs)); }
   }
 
   /// @overload
@@ -547,9 +542,7 @@ public:
             std::enable_if_t<!std::is_convertible<U&&, T>::value>* = nullptr>
   explicit optional(optional<U>&& rhs)
   {
-    if (rhs.has_value()) {
-      this->construct(std::move(*rhs));
-    }
+    if (rhs.has_value()) { this->construct(std::move(*rhs)); }
   }
 
   /// @brief Destroys the stored value if there is one.
@@ -610,9 +603,7 @@ public:
       }
     }
 
-    if (rhs.has_value()) {
-      this->construct(*rhs);
-    }
+    if (rhs.has_value()) { this->construct(*rhs); }
 
     return *this;
   }
@@ -630,9 +621,7 @@ public:
       }
     }
 
-    if (rhs.has_value()) {
-      this->construct(std::move(*rhs));
-    }
+    if (rhs.has_value()) { this->construct(std::move(*rhs)); }
 
     return *this;
   }
@@ -747,8 +736,7 @@ public:
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
   optional<T> constexpr or_else(F&& f) &
   {
-    if (has_value())
-      return *this;
+    if (has_value()) return *this;
 
     std::forward<F>(f)();
     return nullopt;
@@ -763,8 +751,7 @@ public:
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
   optional<T> or_else(F&& f) &&
   {
-    if (has_value())
-      return std::move(*this);
+    if (has_value()) return std::move(*this);
 
     std::forward<F>(f)();
     return nullopt;
@@ -779,8 +766,7 @@ public:
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
   optional<T> or_else(F&& f) const&
   {
-    if (has_value())
-      return *this;
+    if (has_value()) return *this;
 
     std::forward<F>(f)();
     return nullopt;
@@ -795,8 +781,7 @@ public:
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
   optional<T> or_else(F&& f) const&&
   {
-    if (has_value())
-      return std::move(*this);
+    if (has_value()) return std::move(*this);
 
     std::forward<F>(f)();
     return nullopt;
@@ -1050,33 +1035,29 @@ public:
   /// @{
   constexpr T& value() &
   {
-    if (has_value())
-      return this->m_value;
-    throw bad_optional_access();
+    if (has_value()) return this->m_value;
+    beyond::panic("Try to access an empty optional");
   }
 
   /// @overload
   constexpr const T& value() const&
   {
-    if (has_value())
-      return this->m_value;
-    throw bad_optional_access();
+    if (has_value()) return this->m_value;
+    beyond::panic("Try to access an empty optional");
   }
 
   /// @overload
   constexpr T&& value() &&
   {
-    if (has_value())
-      return std::move(this->m_value);
-    throw bad_optional_access();
+    if (has_value()) return std::move(this->m_value);
+    beyond::panic("Try to access an empty optional");
   }
 
   /// @overload
   constexpr const T&& value() const&&
   {
-    if (has_value())
-      return std::move(this->m_value);
-    throw bad_optional_access();
+    if (has_value()) return std::move(this->m_value);
+    beyond::panic("Try to access an empty optional");
   }
   /// @}
 
@@ -1424,8 +1405,7 @@ public:
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
   optional<T> constexpr or_else(F&& f) &
   {
-    if (has_value())
-      return *this;
+    if (has_value()) return *this;
 
     std::forward<F>(f)();
     return nullopt;
@@ -1440,8 +1420,7 @@ public:
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
   optional<T> or_else(F&& f) &&
   {
-    if (has_value())
-      return std::move(*this);
+    if (has_value()) return std::move(*this);
 
     std::forward<F>(f)();
     return nullopt;
@@ -1456,8 +1435,7 @@ public:
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
   optional<T> or_else(F&& f) const&
   {
-    if (has_value())
-      return *this;
+    if (has_value()) return *this;
 
     std::forward<F>(f)();
     return nullopt;
@@ -1472,8 +1450,7 @@ public:
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
   optional<T> or_else(F&& f) const&&
   {
-    if (has_value())
-      return std::move(*this);
+    if (has_value()) return std::move(*this);
 
     std::forward<F>(f)();
     return nullopt;
@@ -1715,19 +1692,16 @@ public:
     return m_value != nullptr;
   }
 
-  /// Returns the contained value if there is one, otherwise throws
-  /// bad_optional_access
+  /// Returns the contained value if there is one, calls panic() otherwise
   constexpr T& value()
   {
-    if (has_value())
-      return *m_value;
-    throw bad_optional_access();
+    if (has_value()) return *m_value;
+    beyond::panic("Try to access an empty optional");
   }
   constexpr const T& value() const
   {
-    if (has_value())
-      return *m_value;
-    throw bad_optional_access();
+    if (has_value()) return *m_value;
+    beyond::panic("Try to access an empty optional");
   }
 
   /// @brief Returns the stored value if there is one, otherwise returns `u`
@@ -1776,8 +1750,7 @@ namespace std {
 template <class T> struct hash<beyond::optional<T>> {
   ::std::size_t operator()(const beyond::optional<T>& o) const
   {
-    if (!o.has_value())
-      return 0;
+    if (!o.has_value()) return 0;
 
     return std::hash<std::remove_const_t<T>>()(*o);
   }
