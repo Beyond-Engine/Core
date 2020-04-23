@@ -4,6 +4,12 @@
 namespace beyond {
 
 /**
+ * @defgroup types Types
+ * @brief  contains non-container utility types.
+ * @ingroup core
+ */
+
+/**
  * @addtogroup core
  * @{
  * @addtogroup types

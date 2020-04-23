@@ -10,6 +10,12 @@
 #include <optional>
 #include <queue>
 
+/**
+ * @defgroup concurrency Concurrency
+ * @brief  contains high level constructs for concurrent programming.
+ * @ingroup core
+ */
+
 namespace beyond {
 
 /**
@@ -52,9 +58,7 @@ public:
     std::unique_lock lock{mutex_};
     ready_.wait(lock, [&]() { return !queue_.empty() || done_; });
 
-    if (done_) {
-      return std::nullopt;
-    }
+    if (done_) { return std::nullopt; }
 
     std::optional<Task> task{std::in_place, std::move(queue_.front())};
     queue_.pop();
@@ -82,9 +86,7 @@ public:
   [[nodiscard]] auto try_pop() -> std::optional<Task>
   {
     std::unique_lock lock{mutex_, std::try_to_lock};
-    if (!lock || queue_.empty()) {
-      return std::nullopt;
-    }
+    if (!lock || queue_.empty()) { return std::nullopt; }
 
     std::optional<Task> task{std::in_place, std::move(queue_.front())};
     queue_.pop();
@@ -101,9 +103,7 @@ public:
   {
     {
       std::unique_lock lock{mutex_, std::try_to_lock};
-      if (lock.owns_lock()) {
-        return false;
-      }
+      if (lock.owns_lock()) { return false; }
       queue_.emplace(std::forward<F>(f));
     }
     ready_.notify_one();
