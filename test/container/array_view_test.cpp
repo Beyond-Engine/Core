@@ -75,25 +75,41 @@ TEST_CASE("ArrayView random access", "[beyond.core.container.array_view]")
 {
   static constexpr int ca[]{1, 2, 3, 4};
   static constexpr ArrayView<const int> cv{ca};
-  STATIC_REQUIRE(cv[2]);
-  STATIC_REQUIRE(cv[2].value() == ca[2]);
-  STATIC_REQUIRE(!cv[5]);
+  STATIC_REQUIRE(cv[2] == ca[2]);
+  int a[]{1, 2, 3, 4};
+  ArrayView<int> v1{a};
+  CHECK(v1[2] == ca[2]);
+
+  ArrayView<int> v2{a};
+  CHECK(v2[2] == ca[2]);
+
+  ArrayView<const int> v3{ca};
+  CHECK(v3[2] == ca[2]);
+}
+
+TEST_CASE("ArrayView optional access", "[beyond.core.container.array_view]")
+{
+  static constexpr int ca[]{1, 2, 3, 4};
+  static constexpr ArrayView<const int> cv{ca};
+  STATIC_REQUIRE(cv.at_opt(2));
+  STATIC_REQUIRE(cv.at_opt(2).value() == ca[2]);
+  STATIC_REQUIRE(!cv.at_opt(5));
 
   int a[]{1, 2, 3, 4};
   ArrayView<int> v1{a};
-  CHECK(v1[2]);
-  CHECK(v1[2].value() == ca[2]);
-  CHECK(!v1[5]);
+  CHECK(v1.at_opt(2));
+  CHECK(v1.at_opt(2).value() == ca[2]);
+  CHECK(!v1.at_opt(5));
 
   ArrayView<int> v2{a};
-  CHECK(v2[2]);
-  CHECK(v2[2].value() == ca[2]);
-  CHECK(!v2[5]);
+  CHECK(v2.at_opt(2));
+  CHECK(v2.at_opt(2).value() == ca[2]);
+  CHECK(!v2.at_opt(5));
 
   ArrayView<const int> v3{ca};
-  CHECK(v3[2]);
-  CHECK(v3[2].value() == ca[2]);
-  CHECK(!v3[5]);
+  CHECK(v3.at_opt(2));
+  CHECK(v3.at_opt(2).value() == ca[2]);
+  CHECK(!v3.at_opt(5));
 }
 
 TEST_CASE("ArrayView iterator", "[beyond.core.container.array_view]")

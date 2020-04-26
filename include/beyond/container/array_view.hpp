@@ -143,19 +143,36 @@ public:
 
   /**
    * @name operator[]
-   * @brief Returns an optional reference to the element at index
-   * @note If you want to use unsafe random access, use `data()` directly
-   * instead
+   * @brief Returns reference to the element at index, `panic()` if out of index
    */
   /// @{
-  [[nodiscard]] constexpr auto operator[](std::size_t index) noexcept
+  [[nodiscard]] constexpr auto operator[](std::size_t index) noexcept -> T&
+  {
+    if (index >= size_) beyond::panic("Out of index accessing of ArrayView");
+    return data_[index];
+  }
+
+  [[nodiscard]] constexpr auto operator[](std::size_t index) const noexcept
+      -> const T&
+  {
+    if (index >= size_) beyond::panic("Out of index accessing of ArrayView");
+    return data_[index];
+  }
+  /// @}
+
+  /**
+   * @name at_opt
+   * @brief Returns a reference to the element at index, nullopt if out of index
+   */
+  /// @{
+  [[nodiscard]] constexpr auto at_opt(std::size_t index) noexcept
       -> optional<T&>
   {
     if (index >= size_) return beyond::nullopt;
     return data_[index];
   }
 
-  [[nodiscard]] constexpr auto operator[](std::size_t index) const noexcept
+  [[nodiscard]] constexpr auto at_opt(std::size_t index) const noexcept
       -> optional<const T&>
   {
     if (index >= size_) return beyond::nullopt;
