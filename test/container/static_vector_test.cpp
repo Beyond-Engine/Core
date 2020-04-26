@@ -167,10 +167,10 @@ TEST_CASE("StaticVector accessors", "[beyond.core.container.static_vector]")
   REQUIRE(v.data() == &v.front());
   REQUIRE(cv.data() == &cv.front());
 
-  REQUIRE(v.at(2) == 3);
-  REQUIRE_THROWS_AS(v.at(6), std::out_of_range);
-  REQUIRE(cv.at(3) == 4);
-  REQUIRE_THROWS_AS(cv.at(6), std::out_of_range);
+  REQUIRE(v.unsafe_at(2) == 3);
+  // REQUIRE_THROWS_AS(v.unsafe_at(6), std::out_of_range);
+  REQUIRE(cv.unsafe_at(3) == 4);
+  // REQUIRE_THROWS_AS(cv.unsafe_at(6), std::out_of_range);
 }
 
 TEST_CASE("StaticVector swap", "[beyond.core.container.static_vector]")

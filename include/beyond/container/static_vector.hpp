@@ -9,6 +9,7 @@
 
 #include <fmt/format.h>
 
+#include "../types/optional.hpp"
 #include "../utils/assert.hpp"
 #include "../utils/bit_cast.hpp"
 #include "../utils/panic.hpp"
@@ -235,20 +236,28 @@ public:
   }
 
   /**
-   * @brief Access an object at index `pos`
+   * @brief Access an object at index `pos` with bounds checking
    * @warning If `pos > size()`, the result is undefined
    *
    * Complexity: O(1)
    */
-  [[nodiscard]] constexpr auto operator[](size_type pos) const
+  [[nodiscard]] constexpr auto operator[](size_type pos) const noexcept
       -> const_reference
   {
+    if (pos >= size()) {
+      beyond::panic("Accessing static_vector out-of-range");
+    }
+
     return reinterpret_cast<const T*>(data_)[pos];
   }
 
   /// @overload
-  [[nodiscard]] constexpr auto operator[](size_type pos) -> reference
+  [[nodiscard]] constexpr auto operator[](size_type pos) noexcept -> reference
   {
+    if (pos >= size()) {
+      beyond::panic("Accessing static_vector out-of-range");
+    }
+
     return reinterpret_cast<T*>(data_)[pos];
   }
 
@@ -303,29 +312,20 @@ public:
   }
 
   /**
-   * @brief Access an object at index `pos` with bounds checking
-   * @throw `std::out_of_range` if `pos >= size()`
+   * @brief Access an object at index `pos` without bounds checking
+   * @warning If `pos > size()`, the result is undefined
    *
    * Complexity: O(1)
    */
-  [[nodiscard]] constexpr auto at(size_type pos) const -> const_reference
+  [[nodiscard]] constexpr auto unsafe_at(size_type pos) const noexcept
+      -> const_reference
   {
-    if (pos >= size()) {
-      throw std::out_of_range{fmt::format(
-          "StaticVector `at` out of index, at {}, size {}", pos, size_)};
-    }
-
     return reinterpret_cast<const T*>(data_)[pos];
   }
 
   /// @overload
-  [[nodiscard]] constexpr auto at(size_type pos) -> reference
+  [[nodiscard]] constexpr auto unsafe_at(size_type pos) noexcept -> reference
   {
-    if (pos >= size()) {
-      throw std::out_of_range{fmt::format(
-          "StaticVector `at` out of index, at {}, size {}", pos, size_)};
-    }
-
     return reinterpret_cast<T*>(data_)[pos];
   }
 
@@ -494,7 +494,6 @@ public:
   /**
    * @brief Swaps two `StaticVector`
    */
-  template <typename T, std::uint32_t N>
   friend constexpr auto
   swap(StaticVector<T, N>& lhs,
        StaticVector<T, N>& rhs) noexcept(std::is_nothrow_swappable_v<T>) -> void
