@@ -4,7 +4,7 @@
 
 using beyond::ArrayView;
 
-TEST_CASE("ArrayView Default constructor")
+TEST_CASE("ArrayView Default constructor", "[beyond.core.container.array_view]")
 {
   constexpr ArrayView<int> cv;
   STATIC_REQUIRE(cv == nullptr);
@@ -17,7 +17,8 @@ TEST_CASE("ArrayView Default constructor")
   CHECK(v.size() == 0);
 }
 
-TEST_CASE("ArrayView construct from a pointer and a size")
+TEST_CASE("ArrayView construct from a pointer and a size",
+          "[beyond.core.container.array_view]")
 {
   static constexpr size_t size = 42;
   static constexpr int ca[size]{};
@@ -36,7 +37,8 @@ TEST_CASE("ArrayView construct from a pointer and a size")
   CHECK(v.data() == a);
 }
 
-TEST_CASE("ArrayView construct const from none-const")
+TEST_CASE("ArrayView construct const from none-const",
+          "[beyond.core.container.array_view]")
 {
   static constexpr size_t size = 42;
 
@@ -49,7 +51,8 @@ TEST_CASE("ArrayView construct const from none-const")
   CHECK(v2.data() == v1.data());
 }
 
-TEST_CASE("ArrayView construct from c array")
+TEST_CASE("ArrayView construct from c array",
+          "[beyond.core.container.array_view]")
 {
   static constexpr size_t size = 42;
   static constexpr int ca[size]{};
@@ -68,7 +71,7 @@ TEST_CASE("ArrayView construct from c array")
   CHECK(v.data() == a);
 }
 
-TEST_CASE("ArrayView random access")
+TEST_CASE("ArrayView random access", "[beyond.core.container.array_view]")
 {
   static constexpr int ca[]{1, 2, 3, 4};
   static constexpr ArrayView<const int> cv{ca};
@@ -93,7 +96,7 @@ TEST_CASE("ArrayView random access")
   CHECK(!v3[5]);
 }
 
-TEST_CASE("ArrayView iterator")
+TEST_CASE("ArrayView iterator", "[beyond.core.container.array_view]")
 {
   static constexpr int ca[]{1, 2, 3, 4};
   static constexpr ArrayView<const int> cv{ca};

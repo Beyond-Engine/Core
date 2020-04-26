@@ -8,11 +8,11 @@
 
 using namespace beyond;
 
-TEST_CASE("static_vector", "[beyond.core.container.static_vector]")
+TEST_CASE("StaticVector", "[beyond.core.container.static_vector]")
 {
-  GIVEN("A default constructed static_vector")
+  GIVEN("A default constructed StaticVector")
   {
-    static_vector<int, 10> v1;
+    StaticVector<int, 10> v1;
     REQUIRE(v1.capacity() == 10);
     THEN("it is empty")
     {
@@ -60,18 +60,18 @@ TEST_CASE("static_vector", "[beyond.core.container.static_vector]")
   }
 }
 
-TEST_CASE("static_vector constructors", "[beyond.core.container.static_vector]")
+TEST_CASE("StaticVector constructors", "[beyond.core.container.static_vector]")
 {
   SECTION("construct by size")
   {
-    static_vector<int, 10> v(8);
+    StaticVector<int, 10> v(8);
     REQUIRE(v.size() == 8);
     REQUIRE(v[1] == int{});
   }
 
   SECTION("construct by size and a value")
   {
-    static_vector<int, 10> v(8, 42);
+    StaticVector<int, 10> v(8, 42);
     REQUIRE(v.size() == 8);
     REQUIRE(v[7] == 42);
   }
@@ -79,24 +79,24 @@ TEST_CASE("static_vector constructors", "[beyond.core.container.static_vector]")
   SECTION("construct by a pair of iterator")
   {
     std::array a{1, 2, 3, 4, 5};
-    static_vector<int, 10> v{a.begin(), a.end()};
+    StaticVector<int, 10> v{a.begin(), a.end()};
     REQUIRE(v.size() == 5);
     REQUIRE(v[3] == 4);
   }
 
   SECTION("construct by an initializer list")
   {
-    static_vector<int, 10> v{1, 2, 3, 4, 5};
+    StaticVector<int, 10> v{1, 2, 3, 4, 5};
     REQUIRE(v.size() == 5);
     REQUIRE(v[3] == 4);
   }
 }
 
-TEST_CASE("static_vector copies and moves",
+TEST_CASE("StaticVector copies and moves",
           "[beyond.core.container.static_vector]")
 {
   Counters counters;
-  static_vector<Small, 3> v{Small{counters}};
+  StaticVector<Small, 3> v{Small{counters}};
   CHECK(counters.constructor == 1);
   CHECK(counters.copy == 1);
   CHECK(counters.move == 0);
@@ -104,7 +104,7 @@ TEST_CASE("static_vector copies and moves",
 
   SECTION("Copy constructor")
   {
-    static_vector<Small, 3> v2{v};
+    StaticVector<Small, 3> v2{v};
     CHECK(counters.constructor == 1);
     CHECK(counters.copy == 2);
     CHECK(counters.move == 0);
@@ -114,7 +114,7 @@ TEST_CASE("static_vector copies and moves",
   SECTION("Copy assignment")
   {
     Counters counters2;
-    static_vector<Small, 3> v2{counters2};
+    StaticVector<Small, 3> v2{counters2};
     v2 = v;
     CHECK(counters.constructor == 1);
     CHECK(counters.copy == 2);
@@ -138,7 +138,7 @@ TEST_CASE("static_vector copies and moves",
 
   SECTION("Move constructor")
   {
-    static_vector<Small, 3> v2{std::move(v)};
+    StaticVector<Small, 3> v2{std::move(v)};
     CHECK(counters.constructor == 1);
     CHECK(counters.copy == 1);
     CHECK(counters.move == 1);
@@ -146,10 +146,10 @@ TEST_CASE("static_vector copies and moves",
   }
 }
 
-TEST_CASE("static_vector accessors", "[beyond.core.container.static_vector]")
+TEST_CASE("StaticVector accessors", "[beyond.core.container.static_vector]")
 {
-  static_vector<int, 10> v{1, 2, 3, 4, 5};
-  const static_vector<int, 10> cv{v};
+  StaticVector<int, 10> v{1, 2, 3, 4, 5};
+  const StaticVector<int, 10> cv{v};
 
   REQUIRE(v[1] == 2);
   REQUIRE(cv[4] == 5);
@@ -173,13 +173,13 @@ TEST_CASE("static_vector accessors", "[beyond.core.container.static_vector]")
   REQUIRE_THROWS_AS(cv.at(6), std::out_of_range);
 }
 
-TEST_CASE("static_vector swap", "[beyond.core.container.static_vector]")
+TEST_CASE("StaticVector swap", "[beyond.core.container.static_vector]")
 {
   const auto l1 = {1, 2, 3, 4, 5};
   const auto l2 = {2, 4, 5};
 
-  static_vector<int, 10> v1{l1.begin(), l1.end()};
-  static_vector<int, 10> v2{l2.begin(), l2.end()};
+  StaticVector<int, 10> v1{l1.begin(), l1.end()};
+  StaticVector<int, 10> v2{l2.begin(), l2.end()};
 
   SECTION(".swap() member")
   {
@@ -195,11 +195,11 @@ TEST_CASE("static_vector swap", "[beyond.core.container.static_vector]")
   REQUIRE(std::equal(v2.cbegin(), v2.cend(), l1.begin()));
 }
 
-TEST_CASE("static_vector iterators", "[beyond.core.container.static_vector]")
+TEST_CASE("StaticVector iterators", "[beyond.core.container.static_vector]")
 {
-  GIVEN("An empty static_vector")
+  GIVEN("An empty StaticVector")
   {
-    static_vector<std::string, 10> v;
+    StaticVector<std::string, 10> v;
     REQUIRE(v.begin() == v.end());
     REQUIRE(v.cbegin() == v.cend());
 
@@ -238,9 +238,9 @@ TEST_CASE("static_vector iterators", "[beyond.core.container.static_vector]")
     }
   }
 
-  GIVEN("A static_vector {1, 2, 3, 4}")
+  GIVEN("A StaticVector {1, 2, 3, 4}")
   {
-    static_vector<int, 8> v{1, 2, 3};
+    StaticVector<int, 8> v{1, 2, 3};
 
     AND_GIVEN("i1 = v.begin()")
     {

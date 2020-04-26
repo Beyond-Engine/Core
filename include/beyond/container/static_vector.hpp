@@ -11,6 +11,7 @@
 
 #include "../utils/assert.hpp"
 #include "../utils/bit_cast.hpp"
+#include "../utils/panic.hpp"
 
 namespace beyond {
 
@@ -21,7 +22,10 @@ namespace beyond {
  * @{
  */
 
-template <class T, std::uint32_t N> class static_vector {
+/**
+ * @brief A fixed-capacity dynamic-sized array
+ */
+template <class T, std::uint32_t N> class StaticVector {
 public:
   using value_type = T;
   using pointer = T*;
@@ -31,15 +35,15 @@ public:
   using size_type = std::uint32_t;
   using difference_type = std::make_signed_t<size_type>;
 
-  static_vector() noexcept = default;
+  StaticVector() noexcept = default;
 
   /**
-   * @brief constructs a static_vector with n default-inserted elements.
+   * @brief constructs a StaticVector with n default-inserted elements.
    * @pre `n <= capacity()`
    *
    * Complexity: O(n)
    */
-  constexpr explicit static_vector(size_type n) noexcept(
+  constexpr explicit StaticVector(size_type n) noexcept(
       std::is_nothrow_constructible_v<value_type>)
       : size_{n}
   {
@@ -48,12 +52,12 @@ public:
   }
 
   /**
-   * @brief Constructs a `static_vector` with `n` copies of value
+   * @brief Constructs a `StaticVector` with `n` copies of value
    * @pre `n <= capacity()`
    *
    * Complexity: O(n)
    */
-  constexpr explicit static_vector(size_type n, value_type v) noexcept(
+  constexpr explicit StaticVector(size_type n, value_type v) noexcept(
       std::is_nothrow_copy_constructible_v<value_type>)
       : size_{n}
   {
@@ -62,15 +66,19 @@ public:
   }
 
   /**
-   * @brief Constructs a `static_vector` equal to the range `[first, last)`
+   * @brief Constructs a `StaticVector` equal to the range `[first, last)`
    *
    * Complexity: Initializing distance(first, last) <= capacity() of
    * `value_type`s
    */
+#ifdef DOXYGEN_SHOULD_SKIP_THIS
+  template <class InputIterator>
+#else
   template <class InputIterator,
             typename = decltype(*std::declval<InputIterator&>(), void(),
                                 ++std::declval<InputIterator&>(), void())>
-  constexpr static_vector(InputIterator first, InputIterator last) noexcept(
+#endif
+  constexpr StaticVector(InputIterator first, InputIterator last) noexcept(
       std::is_nothrow_copy_constructible_v<value_type>)
   {
     const auto distance = static_cast<size_type>(std::distance(first, last));
@@ -79,7 +87,7 @@ public:
     std::uninitialized_copy(first, last, reinterpret_cast<T*>(data_));
   }
 
-  constexpr static_vector(std::initializer_list<value_type> il)
+  constexpr StaticVector(std::initializer_list<value_type> il)
       : size_{static_cast<size_type>(il.size())}
   {
     BEYOND_ASSERT(size_ <= capacity());
@@ -87,12 +95,12 @@ public:
                             reinterpret_cast<T*>(data_));
   }
 
-  ~static_vector() noexcept(std::is_nothrow_destructible_v<value_type>)
+  ~StaticVector() noexcept(std::is_nothrow_destructible_v<value_type>)
   {
     std::destroy_n(reinterpret_cast<T*>(data_), size_);
   }
 
-  static_vector(const static_vector& rhs) noexcept(
+  StaticVector(const StaticVector& rhs) noexcept(
       std::is_nothrow_copy_constructible_v<value_type>)
       : size_{rhs.size_}
   {
@@ -100,9 +108,9 @@ public:
                               reinterpret_cast<T*>(data_));
   }
 
-  auto operator=(const static_vector& rhs) &
+  auto operator=(const StaticVector& rhs) &
       noexcept(std::is_nothrow_copy_constructible_v<value_type>)
-          -> static_vector&
+          -> StaticVector&
   {
     if (this != &rhs) {
       std::destroy_n(reinterpret_cast<T*>(data_), size_);
@@ -113,7 +121,7 @@ public:
     return *this;
   }
 
-  static_vector(static_vector&& rhs) noexcept(
+  StaticVector(StaticVector&& rhs) noexcept(
       std::is_nothrow_move_constructible_v<value_type>)
       : size_{rhs.size_}
   {
@@ -121,8 +129,8 @@ public:
                               reinterpret_cast<T*>(data_));
   }
 
-  auto operator=(static_vector&& rhs) &
-      noexcept(std::is_nothrow_move_assignable_v<value_type>) -> static_vector&
+  auto operator=(StaticVector&& rhs) &
+      noexcept(std::is_nothrow_move_assignable_v<value_type>) -> StaticVector&
   {
     if (this != &rhs) {
       std::destroy_n(reinterpret_cast<T*>(data_), size_);
@@ -134,7 +142,7 @@ public:
   }
 
   /**
-   * @brief Gets the capacity of the `static_vector`
+   * @brief Gets the capacity of the `StaticVector`
    *
    * Complexity: O(1)
    */
@@ -144,7 +152,7 @@ public:
   }
 
   /**
-   * @brief Gets the size of the `static_vector`
+   * @brief Gets the size of the `StaticVector`
    *
    * Complexity: O(1)
    */
@@ -154,7 +162,7 @@ public:
   }
 
   /**
-   * @brief Returns if the `static_vector` is empty or not
+   * @brief Returns if the `StaticVector` is empty or not
    *
    * Complexity: O(1)
    */
@@ -164,9 +172,9 @@ public:
   }
 
   /**
-   * @brief Pushes an object into the end of the static_vector
+   * @brief Pushes an object into the end of the StaticVector
    *
-   * @warning If `size() == capacity()`, the result is undefined
+   * @warning Will `panic()` if `size() >= capacity()`
    * @return A reference to the created object
    *
    * Complexity: O(1)
@@ -184,16 +192,18 @@ public:
   }
 
   /**
-   * @brief Inplace constructs an object into the end of the static_vector
+   * @brief Inplace constructs an object into the end of the StaticVector
    *
-   * @warning If `size() == capacity()`, the result is undefined
+   * @warning Will `panic()` if `size() >= capacity()`
    * @return A reference to the created object
    *
    * Complexity: O(1)
    */
   template <typename... Args> auto emplace_back(Args&&... args) -> reference
   {
-    BEYOND_ASSERT(size_ < N);
+    if (size() >= capacity()) {
+      beyond::panic("Try to add to a to a full vector");
+    }
 
     new (reinterpret_cast<T*>(data_) + size_) T(std::forward<Args>(args)...);
     ++size_;
@@ -203,7 +213,7 @@ public:
   /**
    * @brief Removes the last element of the container
    *
-   * @warning If `size() == 0`, the result is undefined
+   * @warning Will `panic()` if `size() == 0`, the result is undefined
    *
    * Complexity: O(1)
    */
@@ -214,7 +224,7 @@ public:
   }
 
   /**
-   * @brief Clear the `static_vector`
+   * @brief Clear the `StaticVector`
    *
    * Complexity: O(n)
    */
@@ -277,7 +287,7 @@ public:
   }
 
   /**
-   * @brief Gets the underlying raw data pointer of the `static_vector`
+   * @brief Gets the underlying raw data pointer of the `StaticVector`
    *
    * Complexity: O(1)
    */
@@ -302,7 +312,7 @@ public:
   {
     if (pos >= size()) {
       throw std::out_of_range{fmt::format(
-          "static_vector `at` out of index, at {}, size {}", pos, size_)};
+          "StaticVector `at` out of index, at {}, size {}", pos, size_)};
     }
 
     return reinterpret_cast<const T*>(data_)[pos];
@@ -313,7 +323,7 @@ public:
   {
     if (pos >= size()) {
       throw std::out_of_range{fmt::format(
-          "static_vector `at` out of index, at {}, size {}", pos, size_)};
+          "StaticVector `at` out of index, at {}, size {}", pos, size_)};
     }
 
     return reinterpret_cast<T*>(data_)[pos];
@@ -469,30 +479,33 @@ public:
   }
 
   /**
-   * @brief Swap two `static_vector`s
+   * @brief Swap two `StaticVector`s
    *
    * Complexity: Linear on the size() of both vector
    */
   constexpr auto
-  swap(static_vector& other) noexcept(std::is_nothrow_swappable_v<value_type>)
+  swap(StaticVector& other) noexcept(std::is_nothrow_swappable_v<value_type>)
       -> void
   {
     std::swap(size_, other.size_);
     std::swap(data_, other.data_);
   }
 
+  /**
+   * @brief Swaps two `StaticVector`
+   */
+  template <typename T, std::uint32_t N>
+  friend constexpr auto
+  swap(StaticVector<T, N>& lhs,
+       StaticVector<T, N>& rhs) noexcept(std::is_nothrow_swappable_v<T>) -> void
+  {
+    lhs.swap(rhs);
+  }
+
 private:
   size_type size_ = 0;
   alignas(T) std::byte data_[sizeof(T) * N];
 };
-
-template <typename T, std::uint32_t N>
-constexpr auto
-swap(static_vector<T, N>& lhs,
-     static_vector<T, N>& rhs) noexcept(std::is_nothrow_swappable_v<T>) -> void
-{
-  lhs.swap(rhs);
-}
 
 /** @}@} */
 
