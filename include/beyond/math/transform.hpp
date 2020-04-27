@@ -178,8 +178,8 @@ template <typename T>
  * @brief Creates a matrix for a symetric perspective-view frustum.
  */
 template <typename T>
-[[nodiscard]] auto perspective(TRadian<T> fovy, T aspect, T z_near,
-                               T z_far) noexcept -> TMat4<T>
+[[nodiscard]] inline auto perspective(TRadian<T> fovy, T aspect, T z_near,
+                                      T z_far) noexcept -> TMat4<T>
 {
 
   const T g = 1. / tan(fovy * static_cast<T>(0.5));
@@ -203,8 +203,8 @@ template <typename T>
  * 1)
  */
 template <typename T>
-[[nodiscard]] auto look_at(const TVec3<T>& eye, const TVec3<T>& center,
-                           const TVec3<T>& up) noexcept -> TMat4<T>
+[[nodiscard]] inline auto look_at(const TVec3<T>& eye, const TVec3<T>& center,
+                                  const TVec3<T>& up) noexcept -> TMat4<T>
 {
   const TVec3<T> forward(normalize(center - eye));
   const TVec3<T> side(normalize(cross(forward, up)));
