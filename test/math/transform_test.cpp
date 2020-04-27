@@ -194,3 +194,31 @@ TEST_CASE("Perspective Projection", "[beyond.core.math.transform]")
 
   matrix_approx_match(expected, result);
 }
+
+TEST_CASE("look_at transformation matrix", "[beyond.core.math.transform]")
+{
+  constexpr beyond::Vec3 eye{0, 10, 0}, center{0, 0, 0}, up_dir{0, 0, 1};
+
+  const beyond::Vec3 forward(normalize(center - eye));
+  const beyond::Vec3 side(normalize(cross(forward, up_dir)));
+  const beyond::Vec3 up(cross(side, forward));
+
+  const auto result = beyond::look_at(eye, center, up_dir);
+
+  beyond::Mat4 expected{};
+  expected[0][0] = side.x;
+  expected[1][0] = side.y;
+  expected[2][0] = side.z;
+  expected[3][0] = -dot(side, eye);
+  expected[0][1] = up.x;
+  expected[1][1] = up.y;
+  expected[2][1] = up.z;
+  expected[3][1] = -dot(up, eye);
+  expected[0][2] = -forward.x;
+  expected[1][2] = -forward.y;
+  expected[2][2] = -forward.z;
+  expected[3][2] = dot(forward, eye);
+  expected[3][3] = -1.0f;
+
+  matrix_approx_match(result, expected);
+}

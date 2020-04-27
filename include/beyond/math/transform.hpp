@@ -161,7 +161,7 @@ template <typename T>
  */
 template <typename T>
 [[nodiscard]] constexpr auto ortho(T left, T right, T bottom, T top, T z_near,
-                                   T z_far) -> TMat4<T>
+                                   T z_far) noexcept -> TMat4<T>
 {
   TMat4<T> Result;
   Result[0][0] = static_cast<T>(2) / (right - left);
@@ -174,22 +174,50 @@ template <typename T>
   return Result;
 }
 
+/**
+ * @brief Creates a matrix for a symetric perspective-view frustum.
+ */
 template <typename T>
-[[nodiscard]] auto perspective(TRadian<T> fovy, T aspect, T z_near, T z_far)
+[[nodiscard]] auto perspective(TRadian<T> fovy, T aspect, T z_near,
+                               T z_far) noexcept -> TMat4<T>
 {
 
   const T g = 1. / tan(fovy * static_cast<T>(0.5));
   const T k = z_far / (z_near - z_far);
 
   // clang-format off
-  TMat4<T> Result{
+  return TMat4<T> {
       g / aspect, 0, 0, 0,
       0, g, 0, 0,
       0, 0, k, -z_near * k,
       0, 0, -1, 0
   };
   // clang-format on
-  return Result;
+}
+
+/**
+ * @brief Builds a look at view matrix.
+ * @param eye Position of the camera
+ * @param center Position where the camera is looking at
+ * @param up Normalized up vector, how the camera is oriented. Typically (0, 0,
+ * 1)
+ */
+template <typename T>
+[[nodiscard]] auto look_at(const TVec3<T>& eye, const TVec3<T>& center,
+                           const TVec3<T>& up) noexcept -> TMat4<T>
+{
+  const TVec3<T> forward(normalize(center - eye));
+  const TVec3<T> side(normalize(cross(forward, up)));
+  const TVec3<T> up_(cross(side, forward));
+
+  // clang-format off
+  return TMat4<T>  {
+      side.x,     side.y,     side.z,     -dot(side, eye),
+      up_.x,      up_.y,      up_.z,      -dot(up_, eye),
+      -forward.x, -forward.y, -forward.z, dot(forward, eye),
+      0,          0,          0,          -1
+  };
+  // clang-format on
 }
 
 /** @}
