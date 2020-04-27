@@ -1,5 +1,7 @@
+#include "beyond/math/function.hpp"
 #include "beyond/math/serial.hpp"
 #include "beyond/math/transform.hpp"
+
 #include "matrix_test_util.hpp"
 #include <catch2/catch.hpp>
 
@@ -157,8 +159,8 @@ TEST_CASE("Apply transformations together",
 
 TEST_CASE("Orthogonal Projection", "[beyond.core.math.transform]")
 {
-  const float left = 0, right = 800, bottom = 0, top = 600, z_near = 0,
-              z_far = 1;
+  constexpr float left = 0, right = 800, bottom = 0, top = 600, z_near = 0,
+                  z_far = 1;
 
   const auto result = beyond::ortho(left, right, bottom, top, z_near, z_far);
 
@@ -170,6 +172,25 @@ TEST_CASE("Orthogonal Projection", "[beyond.core.math.transform]")
       0,                    0,                    0,                       1
       // clang-format on
   };
+
+  matrix_approx_match(expected, result);
+}
+
+TEST_CASE("Perspective Projection", "[beyond.core.math.transform]")
+{
+  using namespace beyond::literals;
+
+  constexpr beyond::Radian fovy = 90._deg;
+  constexpr float aspect = 1.6f, z_near = 0.f, z_far = 1.f;
+
+  const auto result = beyond::perspective(fovy, aspect, z_near, z_far);
+
+  beyond::Mat4 expected{};
+  expected(0, 0) = 1.0f / aspect;
+  expected(1, 1) = 1.0f;
+  expected(3, 2) = -1.0f;
+  expected(2, 2) = -1.0f;
+  expected(2, 3) = 0.0f;
 
   matrix_approx_match(expected, result);
 }

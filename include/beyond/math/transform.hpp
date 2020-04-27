@@ -174,6 +174,24 @@ template <typename T>
   return Result;
 }
 
+template <typename T>
+[[nodiscard]] auto perspective(TRadian<T> fovy, T aspect, T z_near, T z_far)
+{
+
+  const T g = 1. / tan(fovy * static_cast<T>(0.5));
+  const T k = z_far / (z_near - z_far);
+
+  // clang-format off
+  TMat4<T> Result{
+      g / aspect, 0, 0, 0,
+      0, g, 0, 0,
+      0, 0, k, -z_near * k,
+      0, 0, -1, 0
+  };
+  // clang-format on
+  return Result;
+}
+
 /** @}
  *  @}
  *  @} */

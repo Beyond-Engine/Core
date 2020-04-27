@@ -12,7 +12,6 @@
  * @brief Mathematics and geometry codes of the beyond game engine
  * @ingroup core
  */
-
 #include "angle.hpp"
 
 #include <cmath>
