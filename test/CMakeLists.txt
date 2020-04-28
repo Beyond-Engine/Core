@@ -17,8 +17,10 @@ add_executable(${TEST_TARGET_NAME}
         math/vector_test.cpp
         math/point_test.cpp
         math/matrix_test.cpp
+        math/quat_test.cpp
         math/transform_test.cpp
         math/matrix_test_util.hpp
+
         utils/functional_test.cpp
         utils/function_ref_test.cpp
         utils/handle_test.cpp
