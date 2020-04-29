@@ -17,6 +17,7 @@
 
 #include "angle.hpp"
 #include "matrix.hpp"
+#include "quat.hpp"
 #include "vector.hpp"
 
 namespace beyond {
@@ -95,6 +96,20 @@ template <typename Derived>
   std::stringstream ss;
   ss << m;
   return ss.str();
+}
+
+template <typename T>
+[[nodiscard]] auto to_string(const TQuat<T>& quat) noexcept -> std::string
+{
+  return fmt::format("quat({}, ({}, {}, {}))", quat.w, quat.x, quat.y, quat.z);
+}
+
+template <typename T>
+auto operator<<(std::ostream& os, const TQuat<T>& quat) noexcept
+    -> std::ostream&
+{
+  os << to_string(quat);
+  return os;
 }
 
 } // namespace beyond

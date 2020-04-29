@@ -12,6 +12,13 @@
 
 namespace beyond {
 
+/**
+ * @addtogroup core
+ * @{
+ * @addtogroup math
+ * @{
+ */
+
 template <typename T> struct TPoint<T, 2> : TVec<T, 2> {
   using TVec<T, 2>::TVec;
 };
@@ -70,9 +77,9 @@ template <typename T, std::size_t size>
   return std::sqrt(distance_squared(p1, p2));
 }
 
-} // namespace beyond
-
 /** @}
  *  @} */
+
+} // namespace beyond
 
 #endif

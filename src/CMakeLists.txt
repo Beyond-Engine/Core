@@ -34,7 +34,7 @@ add_library(core
         ../include/beyond/random/generators/xorshift32.hpp
 
         ../include/beyond/types/optional.hpp
-        ../include/beyond/types/expected.hpp ../include/beyond/types/in_place.hpp ../include/beyond/types/monostate.hpp ../include/beyond/container/array_view.hpp)
+        ../include/beyond/types/expected.hpp ../include/beyond/types/in_place.hpp ../include/beyond/types/monostate.hpp ../include/beyond/container/array_view.hpp ../include/beyond/math/quat.hpp)
 
 set(BEYOND_CORE_ASSERT_POLICY AUTO CACHE STRING "The policy of enabling
     assertion or not in beyond game engine core.

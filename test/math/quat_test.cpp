@@ -1,52 +1,20 @@
-#include <beyond/math/vector.hpp>
-
-namespace beyond {
-
-/**
- * @brief A quaternion type
- */
-template <typename T> struct TQuat {
-  T x, y, z, w;
-
-  /// @brief Default constructor
-  constexpr TQuat() noexcept : x{0}, y{0}, z{0}, w{0} {}
-
-  /// @brief Component-wise constructor
-  explicit constexpr TQuat(T w_, T x_, T y_, T z_) noexcept
-      : x{x_}, y{y_}, z{z_}, w{w_}
-  {
-  }
-
-  /// @brief Creates quaternion from a scalar and a vector
-  explicit constexpr TQuat(T real, const TVec3<T>& v) noexcept
-      : x{v.elem[0]}, y{v.elem[1]}, z{v.elem[2]}, w{real}
-  {
-  }
-
-  [[nodiscard]] friend constexpr auto operator*(const TQuat<T>& lhs,
-                                                const TQuat<T>& rhs) -> TQuat<T>
-  {
-    return TQuat<T>(
-        lhs.w * rhs.x - lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y,
-        lhs.w * rhs.y - lhs.x * rhs.z + lhs.y * rhs.w + lhs.z * rhs.x,
-        lhs.w * rhs.z + lhs.x * rhs.y - lhs.y * rhs.x + lhs.z * rhs.w,
-        lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z);
-  }
-};
-
-using Quat = TQuat<float>;
-using DQuat = TQuat<double>;
-
-} // namespace beyond
-
 #include <catch2/catch.hpp>
+#include <sstream>
+#include <string>
+
+#include <beyond/math/quat.hpp>
+#include <beyond/math/serial.hpp>
+
+#include "../serial_test_util.hpp"
+#include "matrix_test_util.hpp"
 
 using beyond::DQuat;
 using beyond::Quat;
 using beyond::TQuat;
+using beyond::Vec3;
 
 template <typename T>
-void quad_match(const beyond::TQuat<T>& result,
+void quat_match(const beyond::TQuat<T>& result,
                 const beyond::TQuat<T>& expected)
 {
   CHECK(result.w == Approx(expected.w));
@@ -70,6 +38,21 @@ TEST_CASE("Quaternion default constructor", "[beyond.core.math.quaternion]")
   REQUIRE(q.w == 0);
 }
 
+TEST_CASE("Quaternion real-img constructor", "[beyond.core.math.quaternion]")
+{
+  constexpr Quat cq{1, {2, 3, 4}};
+  STATIC_REQUIRE(cq.w == 1);
+  STATIC_REQUIRE(cq.x == 2);
+  STATIC_REQUIRE(cq.y == 3);
+  STATIC_REQUIRE(cq.z == 4);
+
+  const Quat q{1, {2, 3, 4}};
+  REQUIRE(q.w == 1);
+  REQUIRE(q.x == 2);
+  REQUIRE(q.y == 3);
+  REQUIRE(q.z == 4);
+}
+
 TEST_CASE("Quaternion component-wise constructor",
           "[beyond.core.math.quaternion]")
 {
@@ -86,19 +69,19 @@ TEST_CASE("Quaternion component-wise constructor",
   REQUIRE(q.z == 4);
 }
 
-TEST_CASE("Quaternion real-img constructor", "[beyond.core.math.quaternion]")
+TEST_CASE("Quaternion equality", "[beyond.core.math.quaternion]")
 {
-  constexpr Quat cq{1, {2, 3, 4}};
-  STATIC_REQUIRE(cq.w == 1);
-  STATIC_REQUIRE(cq.x == 2);
-  STATIC_REQUIRE(cq.y == 3);
-  STATIC_REQUIRE(cq.z == 4);
+  constexpr Quat cq1{1, {2, 3, 4}};
+  constexpr Quat cq1_{1, {2, 3, 4}};
+  constexpr Quat cq2{5, {6, 7, 8}};
+  STATIC_REQUIRE(cq1 == cq1_);
+  STATIC_REQUIRE(cq1 != cq2);
 
-  const Quat q{1, {2, 3, 4}};
-  REQUIRE(q.w == 1);
-  REQUIRE(q.x == 2);
-  REQUIRE(q.y == 3);
-  REQUIRE(q.z == 4);
+  const Quat q1{1, {2, 3, 4}};
+  const Quat q1_{1, {2, 3, 4}};
+  const Quat q2{5, {6, 7, 8}};
+  REQUIRE(q1 == q1_);
+  REQUIRE(q1 != q2);
 }
 
 TEST_CASE("Quaternion product", "[beyond.core.math.quaternion]")
@@ -109,8 +92,15 @@ TEST_CASE("Quaternion product", "[beyond.core.math.quaternion]")
   constexpr Quat expected{-8, {30, 24, -60}};
 
   constexpr Quat c_result = cq1 * cq2;
-  quad_match(c_result, expected);
+  quat_match(c_result, expected);
 
   const Quat result = cq1 * cq2;
-  quad_match(result, expected);
+  quat_match(result, expected);
+}
+
+TEST_CASE("Quaternion serialization", "[beyond.core.math.quaternion]")
+{
+  constexpr Quat q{1, {2, 3, 4}};
+
+  REQUIRE_TO_STRING_EQ(q, "quat(1.0, (2.0, 3.0, 4.0))");
 }
