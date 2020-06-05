@@ -5,9 +5,10 @@
 
 #include <unique_function.hpp>
 
+#include "../types/optional.hpp"
+
 #include <condition_variable>
 #include <mutex>
-#include <optional>
 #include <queue>
 
 /**
@@ -53,14 +54,14 @@ public:
    * this function will return a `std::nullopt`.
    * @note Block if the queue is empty
    */
-  [[nodiscard]] auto pop() -> std::optional<Task>
+  [[nodiscard]] auto pop() -> beyond::optional<Task>
   {
     std::unique_lock lock{mutex_};
     ready_.wait(lock, [&]() { return !queue_.empty() || done_; });
 
-    if (done_) { return std::nullopt; }
+    if (done_) { return beyond::nullopt; }
 
-    std::optional<Task> task{std::in_place, std::move(queue_.front())};
+    beyond::optional<Task> task{beyond::in_place, std::move(queue_.front())};
     queue_.pop();
     return task;
   }
@@ -83,12 +84,12 @@ public:
    * If the queue is busy or if queue is empty, return `std::nullopt`. Otherwise
    * return the task poped from the queue.
    */
-  [[nodiscard]] auto try_pop() -> std::optional<Task>
+  [[nodiscard]] auto try_pop() -> beyond::optional<Task>
   {
     std::unique_lock lock{mutex_, std::try_to_lock};
-    if (!lock || queue_.empty()) { return std::nullopt; }
+    if (!lock || queue_.empty()) { return beyond::nullopt; }
 
-    std::optional<Task> task{std::in_place, std::move(queue_.front())};
+    beyond::optional<Task> task{beyond::in_place, std::move(queue_.front())};
     queue_.pop();
     return task;
   }

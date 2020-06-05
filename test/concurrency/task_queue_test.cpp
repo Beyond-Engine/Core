@@ -45,7 +45,7 @@ TEST_CASE("Task Queue push and pop", "[beyond.core.concurrency.task_queue]")
       while (!queue.empty()) {
         threads.emplace_back([&]() {
           auto task = queue.pop();
-          REQUIRE(task != std::nullopt);
+          REQUIRE(task != beyond::nullopt);
           return std::move(*task);
         }());
       }
@@ -64,7 +64,7 @@ TEST_CASE("Task Queue push and pop", "[beyond.core.concurrency.task_queue]")
       while (!queue.empty()) {
         threads.emplace_back([&]() {
           auto task = queue.try_pop();
-          REQUIRE(task != std::nullopt);
+          REQUIRE(task != beyond::nullopt);
           return std::move(*task);
         }());
       }
