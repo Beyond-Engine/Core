@@ -26,7 +26,7 @@ namespace beyond {
 /**
  * @brief A fixed-capacity dynamic-sized array
  */
-template <class T, std::uint32_t N> class StaticVector {
+template <class T, std::uint32_t N> class StaticVector final {
 public:
   using value_type = T;
   using pointer = T*;
@@ -109,9 +109,8 @@ public:
                               reinterpret_cast<T*>(data_));
   }
 
-  auto operator=(const StaticVector& rhs) &
-      noexcept(std::is_nothrow_copy_constructible_v<value_type>)
-          -> StaticVector&
+  auto operator=(const StaticVector& rhs) & noexcept(
+      std::is_nothrow_copy_constructible_v<value_type>) -> StaticVector&
   {
     if (this != &rhs) {
       std::destroy_n(reinterpret_cast<T*>(data_), size_);
@@ -130,8 +129,8 @@ public:
                               reinterpret_cast<T*>(data_));
   }
 
-  auto operator=(StaticVector&& rhs) &
-      noexcept(std::is_nothrow_move_assignable_v<value_type>) -> StaticVector&
+  auto operator=(StaticVector&& rhs) & noexcept(
+      std::is_nothrow_move_assignable_v<value_type>) -> StaticVector&
   {
     if (this != &rhs) {
       std::destroy_n(reinterpret_cast<T*>(data_), size_);
@@ -346,7 +345,7 @@ public:
       return *data_;
     }
 
-    [[nodiscard]] constexpr auto operator-> () const noexcept -> pointer
+    [[nodiscard]] constexpr auto operator->() const noexcept -> pointer
     {
       return data_;
     }

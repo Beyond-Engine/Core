@@ -1031,7 +1031,7 @@ public:
 
   /// @name value
   /// @brief Returns the contained value if there is one
-  /// @throw bad_optional_access if there the optional does not contain value
+  /// @warning Calls `panic()` if there the optional does not contain value
   /// @{
   constexpr T& value() &
   {
@@ -1282,7 +1282,7 @@ inline constexpr optional<T> make_optional(std::initializer_list<U> il,
   return optional<T>(in_place, il, std::forward<Args>(args)...);
 }
 
-template <class T> optional(T)->optional<T>;
+template <class T> optional(T) -> optional<T>;
 
 /// \exclude
 namespace detail {

@@ -37,7 +37,7 @@ add_library(core
         ../include/beyond/types/expected.hpp
         ../include/beyond/types/in_place.hpp
         ../include/beyond/types/monostate.hpp
-        ../include/beyond/math/quat.hpp)
+        ../include/beyond/math/quat.hpp ../include/beyond/utils/force_inline.hpp)
 
 set(BEYOND_CORE_ASSERT_POLICY AUTO CACHE STRING "The policy of enabling
     assertion or not in beyond game engine core.

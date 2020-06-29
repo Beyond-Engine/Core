@@ -7,7 +7,7 @@ target_link_libraries(catch_main PUBLIC CONAN_PKG::Catch2)
 
 add_executable(${TEST_TARGET_NAME}
         concurrency/task_queue_test.cpp
-        concurrency/task_system_test.cpp
+        concurrency/thread_pool_test.cpp
         container/slot_map_test.cpp
         container/static_vector_test.cpp
         ecs/sparse_set_test.cpp

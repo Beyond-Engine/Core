@@ -30,9 +30,9 @@ namespace beyond {
  * @brief A serial queue of tasks
  */
 class TaskQueue {
+public:
   using Task = beyond::unique_function<void() const>;
 
-public:
   TaskQueue() = default;
 
   /**
