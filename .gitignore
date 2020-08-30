@@ -1,3 +1,4 @@
 CMakeLists.txt.user
 cmake-build-*
 .idea
+test_package/build

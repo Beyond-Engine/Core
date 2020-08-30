@@ -1,9 +1,0 @@
-[requires]
-fmt/6.1.2
-gsl_microsoft/2.0.0@bincrafters/stable
-
-[build_requires]
-Catch2/2.11.1@catchorg/stable
-
-[generators]
-cmake

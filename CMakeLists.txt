@@ -30,7 +30,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(${CMAKE_BINARY_DIR}/conan.cmake)
     conan_check(VERSION 1.0.0 REQUIRED)
 
-    conan_cmake_run(CONANFILE conanfile.txt  # or relative build/conanfile.txt
+    conan_cmake_run(CONANFILE conanfile.py  # or relative build/conanfile.txt
             BASIC_SETUP CMAKE_TARGETS
             BUILD missing)
 endif ()
