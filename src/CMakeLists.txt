@@ -6,6 +6,7 @@ add_library(core
         ../include/beyond/utils/assert.hpp
         ../include/beyond/utils/arrow_proxy.hpp
         ../include/beyond/utils/bit_cast.hpp
+        ../include/beyond/utils/conversion.hpp
         ../include/beyond/utils/crtp.hpp
         ../include/beyond/utils/functional.hpp
         ../include/beyond/utils/function_ref.hpp
