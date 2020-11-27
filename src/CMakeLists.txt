@@ -73,6 +73,7 @@ target_link_libraries(core
         Threads::Threads
         CONAN_PKG::fmt
         CONAN_PKG::gsl_microsoft
+        CONAN_PKG::backward-cpp
         unique_function
         jthread
         )
