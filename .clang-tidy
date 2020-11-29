@@ -14,6 +14,7 @@ Checks: '*,
 -fuchsia-*,
 -*-uppercase-literal-suffix,
 -*-magic-numbers,
+-google-explicit-constructor,
 -google-runtime-references,
 -google-build-using-namespace
 '

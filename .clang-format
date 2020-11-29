@@ -1,10 +1,10 @@
 ﻿---
 BasedOnStyle: LLVM
-AllowShortBlocksOnASingleLine: 'true'
+AllowShortBlocksOnASingleLine: Always
 AllowShortFunctionsOnASingleLine: Empty
 AllowShortIfStatementsOnASingleLine: 'true'
 BreakBeforeBraces: WebKit
-ColumnLimit: '80'
-DerivePointerAlignment: 'false'
+ColumnLimit: 80
+DerivePointerAlignment: false
 PointerAlignment: Left
 ...

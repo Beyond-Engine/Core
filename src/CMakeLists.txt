@@ -43,7 +43,7 @@ add_library(core
 
         ../include/beyond/allocators/memory_resource.hpp
         ../include/beyond/allocators/global_resource.cpp
-        ../include/beyond/allocators/global_resource.hpp)
+        ../include/beyond/allocators/global_resource.hpp ../include/beyond/algorithm/sort_by_key.hpp)
 
 set(BEYOND_CORE_ASSERT_POLICY AUTO CACHE STRING "The policy of enabling
     assertion or not in beyond game engine core.
