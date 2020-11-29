@@ -159,6 +159,19 @@ template <typename KeyItr, typename MappedItr> struct SortByKeyIterator {
 
 } // namespace detail
 
+/**
+ * sort_by_key performs a key-value sort. That is, sort_by_key sorts the
+ elements in [keys_begin, keys_end) and [mapped_begin, mapped_begin + (keys_end
+ - keys_begin)) into ascending key order, meaning that if i and j are any two
+ valid iterators in [keys_first, keys_last) such that i precedes j, and p and q
+ are iterators in [mapped_begin, mapped_begin + (keys_end - keys_begin))
+ corresponding to i and j respectively, then *j is not less than *i.
+ * @param keys_begin The beginning of the key sequence.
+ * @param keys_end The end of the mapped sequence.
+ * @param mapped_begin The beginning of the value sequence.
+ * @pre The range [keys_begin, keys_end)) shall not overlap the range
+ [mapped_begin, mapped_begin + (keys_end - keys_begin)).
+ */
 template <std::random_access_iterator KeyItr,
           std::random_access_iterator MappedItr>
 constexpr void sort_by_key(KeyItr keys_begin, KeyItr keys_end,
