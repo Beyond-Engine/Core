@@ -27,6 +27,9 @@ add_executable(${TEST_TARGET_NAME}
         utils/function_ref_test.cpp
         utils/handle_test.cpp
         utils/named_type_test.cpp
+        utils/make_array_test.cpp
+        utils/noexcept_cast_test.cpp
+        utils/array_length_test.cpp
         serial_test_util.hpp
 
         types/optional_test.cpp
@@ -35,9 +38,7 @@ add_executable(${TEST_TARGET_NAME}
         geometry/ray_test.cpp
         geometry/aabb_test.cpp
 
-        random/xorshift32_test.cpp
-        utils/make_array_test.cpp
-        utils/noexcept_cast_test.cpp)
+        random/xorshift32_test.cpp)
 
 target_link_libraries(${TEST_TARGET_NAME}
         PRIVATE
