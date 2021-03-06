@@ -29,7 +29,7 @@ add_executable(${TEST_TARGET_NAME}
         utils/named_type_test.cpp
         utils/make_array_test.cpp
         utils/noexcept_cast_test.cpp
-        utils/array_length_test.cpp
+        utils/size_test.cpp
         serial_test_util.hpp
 
         types/optional_test.cpp

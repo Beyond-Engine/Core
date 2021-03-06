@@ -4,7 +4,7 @@ add_library(core
         ../include/beyond/ecs/sparse_map.hpp
         ../include/beyond/ecs/sparse_set.hpp
         ../include/beyond/utils/assert.hpp
-        ../include/beyond/utils/array_length.hpp
+        ../include/beyond/utils/size.hpp
         ../include/beyond/utils/arrow_proxy.hpp
         ../include/beyond/utils/bit_cast.hpp
         ../include/beyond/utils/conversion.hpp
