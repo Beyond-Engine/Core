@@ -181,7 +181,6 @@ template <typename T>
 [[nodiscard]] inline auto perspective(TRadian<T> fovy, T aspect, T z_near,
                                       T z_far) noexcept -> TMat4<T>
 {
-
   const T g = static_cast<T>(1.) / tan(fovy * static_cast<T>(0.5));
   const T k = z_far / (z_near - z_far);
 
@@ -194,6 +193,15 @@ template <typename T>
   };
   // clang-format on
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+template <typename T>
+[[nodiscard]] inline auto perspective(TDegree<T> fovy, T aspect, T z_near,
+                                      T z_far) noexcept -> TMat4<T>
+{
+  return perspective(TRadian<T>(fovy), aspect, z_near, z_far);
+}
+#endif
 
 /**
  * @brief Builds a look at view matrix.
