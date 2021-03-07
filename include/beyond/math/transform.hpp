@@ -182,7 +182,7 @@ template <typename T>
                                       T z_far) noexcept -> TMat4<T>
 {
 
-  const T g = 1. / tan(fovy * static_cast<T>(0.5));
+  const T g = static_cast<T>(1.) / tan(fovy * static_cast<T>(0.5));
   const T k = z_far / (z_near - z_far);
 
   // clang-format off
