@@ -16,6 +16,8 @@ add_library(core
         ../include/beyond/utils/numeric_aliases.hpp
         ../include/beyond/utils/named_type.hpp
         ../include/beyond/utils/panic.hpp
+        ../include/beyond/utils/to_pointer.hpp
+        ../include/beyond/utils/byte_size.hpp
         utils/panic.cpp
         ../include/beyond/utils/type_traits.hpp
         ../include/beyond/math/angle.hpp

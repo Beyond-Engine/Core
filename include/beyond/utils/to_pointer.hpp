@@ -1,6 +1,8 @@
 #ifndef BEYOND_CORE_UTILS_TO_POINTER_HPP
 #define BEYOND_CORE_UTILS_TO_POINTER_HPP
 
+#include "force_inline.hpp"
+
 namespace beyond {
 
 /**
