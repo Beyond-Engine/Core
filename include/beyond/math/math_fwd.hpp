@@ -9,6 +9,8 @@
  * @ingroup math
  */
 
+#include <cstddef>
+
 namespace beyond {
 
 /**
