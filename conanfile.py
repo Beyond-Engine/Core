@@ -14,7 +14,7 @@ class BeyondCoreConan(ConanFile):
     default_options = {"shared": False}
     generators = "cmake"
     exports_sources = ["cmake/*", "include/*", "src/*", "third-party/*", "CMakeLists.txt"]
-    requires = ["fmt/6.1.2", "gsl_microsoft/2.0.0@bincrafters/stable", "backward-cpp/1.5"]
+    requires = ["fmt/7.1.3", "backward-cpp/1.5"]
     build_requires = ["catch2/2.13.4"]
 
     def build(self):

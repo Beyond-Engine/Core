@@ -102,5 +102,5 @@ TEST_CASE("Quaternion serialization", "[beyond.core.math.quaternion]")
 {
   constexpr Quat q{1, {2, 3, 4}};
 
-  REQUIRE_TO_STRING_EQ(q, "quat(1.0, (2.0, 3.0, 4.0))");
+  REQUIRE_TO_STRING_EQ(q, "quat(1, (2, 3, 4))");
 }

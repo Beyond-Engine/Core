@@ -418,7 +418,7 @@ TEST_CASE("Vec serialization test", "[beyond.core.math.vec]")
   SECTION("Output TVec2 to a stream")
   {
     const beyond::Vec2 v{1, 2};
-    const auto expected = "vec(1.0, 2.0)";
+    const auto expected = "vec(1, 2)";
 
     REQUIRE_TO_STRING_EQ(v, expected);
   }
@@ -426,7 +426,7 @@ TEST_CASE("Vec serialization test", "[beyond.core.math.vec]")
   SECTION("Output TVec3 to a stream")
   {
     const beyond::Vec3 v{1, 2, 3};
-    const auto expected = "vec(1.0, 2.0, 3.0)";
+    const auto expected = "vec(1, 2, 3)";
 
     REQUIRE_TO_STRING_EQ(v, expected);
   }
@@ -434,7 +434,7 @@ TEST_CASE("Vec serialization test", "[beyond.core.math.vec]")
   SECTION("Output TVec4 to a stream")
   {
     const beyond::Vec4 v{1, 2, 3, 4};
-    const auto expected = "vec(1.0, 2.0, 3.0, 4.0)";
+    const auto expected = "vec(1, 2, 3, 4)";
 
     REQUIRE_TO_STRING_EQ(v, expected);
   }

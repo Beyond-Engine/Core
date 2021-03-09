@@ -91,8 +91,7 @@ TEST_CASE("AABB3 union", "[AABB3]")
 
 TEST_CASE("AABB3 Serialization", "[AABB3]")
 {
-  const auto expected =
-      "AABB3(min: point(0.0, 0.0, 0.0), max: point(1.0, 1.0, 1.0))";
+  const auto expected = "AABB3(min: point(0, 0, 0), max: point(1, 1, 1))";
 
   AABB3 box{{0, 0, 0}, {1, 1, 1}, AABB3::unchecked_tag};
   REQUIRE(to_string(box) == expected);
