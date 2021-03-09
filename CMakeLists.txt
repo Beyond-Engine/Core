@@ -21,6 +21,7 @@ include("cmake/clangformat.cmake")
 
 # Conan package manager
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    set(CONAN_SYSTEM_INCLUDES ON)
     if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
         message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
         file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/master/conan.cmake"

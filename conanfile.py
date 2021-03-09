@@ -1,4 +1,4 @@
-from conans import ConanFile, CMake, tools
+from conans import ConanFile, CMake
 
 
 class BeyondCoreConan(ConanFile):
@@ -15,7 +15,7 @@ class BeyondCoreConan(ConanFile):
     generators = "cmake"
     exports_sources = ["cmake/*", "include/*", "src/*", "third-party/*", "CMakeLists.txt"]
     requires = ["fmt/6.1.2", "gsl_microsoft/2.0.0@bincrafters/stable", "backward-cpp/1.5"]
-    build_requires = ["Catch2/2.11.1@catchorg/stable"]
+    build_requires = ["catch2/2.13.4"]
 
     def build(self):
         cmake = CMake(self)

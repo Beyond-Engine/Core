@@ -17,6 +17,17 @@ template <typename KeyItr, typename MappedItr> struct SortByKeyRef {
   KeyItr key;
   MappedItr mapped;
 
+  constexpr SortByKeyRef(KeyItr key_, MappedItr mapped_)
+      : key{key_}, mapped{mapped_}
+  {
+  }
+
+  constexpr SortByKeyRef(SortByKeyRef&& r) noexcept
+  {
+    *key = std::exchange(*r.key, {});
+    *mapped = std::exchange(*r.mapped, {});
+  }
+
   constexpr auto operator=(SortByKeyRef&& r) noexcept -> SortByKeyRef&
   {
     *key = std::exchange(*r.key, {});
@@ -153,7 +164,7 @@ template <typename KeyItr, typename MappedItr> struct SortByKeyIterator {
 
   [[nodiscard]] constexpr auto operator*() const noexcept -> reference
   {
-    return {key + index, mapped + index};
+    return reference{key + index, mapped + index};
   }
 };
 
