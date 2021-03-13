@@ -1,7 +1,9 @@
 # Beyond Core
 
-`beyond::core` is a library with a bunch of utilities that are associated with graphics and game programming.
-It forms the core utilities of the [Beyond Game Engine](https://github.com/Beyond-Engine/Beyond-Game-Engine).
+[![GCC-10 Linux](https://github.com/Beyond-Engine/Core/actions/workflows/gcc10-linux.yml/badge.svg)](https://github.com/Beyond-Engine/Core/actions/workflows/gcc10-linux.yml)
+
+`beyond::core` is a library with a bunch of utilities that are associated with graphics and game programming. It forms
+the core utilities of the [Beyond Game Engine](https://github.com/Beyond-Engine/Beyond-Game-Engine).
 
 ## Codemap
 
@@ -12,7 +14,7 @@ It forms the core utilities of the [Beyond Game Engine](https://github.com/Beyon
 * [`container`](include/beyond/container)
   <br /> contains additional STL-style containers.
 * [`ecs`](include/beyond/ecs) (incomplete and unusable)
-    <br /> contains an implementation of an entity component system.
+  <br /> contains an implementation of an entity component system.
 * [`math`](include/beyond/math/)
   <br /> contains a mathematics library with a graphics focus.
 * [`types`](include/beyond/types/)
@@ -25,9 +27,8 @@ It forms the core utilities of the [Beyond Game Engine](https://github.com/Beyon
 
 ## Usage
 
-This library is not in a usable state to the public yet.
-The features are incomplete and are coded as need.
-I will also make breaking changes frequently.
+This library is not in a usable state to the public yet. The features are incomplete and are coded as need. I will also
+make breaking changes frequently.
 
 ## License
 

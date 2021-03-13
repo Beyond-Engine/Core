@@ -1061,6 +1061,39 @@ public:
   }
   /// @}
 
+  /// @name expect
+  /// @brief Returns the contained value if there is one
+  ///
+  /// Panic with error error_msg
+  /// @{
+  constexpr T& expect(std::string_view error_msg) &
+  {
+    if (has_value()) return this->m_value;
+    beyond::panic(error_msg);
+  }
+
+  /// @overload
+  constexpr const T& expect(std::string_view error_msg) const&
+  {
+    if (has_value()) return this->m_value;
+    beyond::panic(error_msg);
+  }
+
+  /// @overload
+  constexpr T&& expect(std::string_view error_msg) &&
+  {
+    if (has_value()) return std::move(this->m_value);
+    beyond::panic(error_msg);
+  }
+
+  /// @overload
+  constexpr const T&& expect(std::string_view error_msg) const&&
+  {
+    if (has_value()) return std::move(this->m_value);
+    beyond::panic(error_msg);
+  }
+  /// @}
+
   /**
    * @name value_or
    * @brief Returns the stored value if there is one, otherwise returns `u`
@@ -1702,6 +1735,17 @@ public:
   {
     if (has_value()) return *m_value;
     beyond::panic("Try to access an empty optional");
+  }
+
+  constexpr T& expect(std::string_view error_msg)
+  {
+    if (has_value()) return *m_value;
+    beyond::panic(error_msg);
+  }
+  constexpr const T& expect(std::string_view error_msg) const
+  {
+    if (has_value()) return *m_value;
+    beyond::panic(error_msg);
   }
 
   /// @brief Returns the stored value if there is one, otherwise returns `u`

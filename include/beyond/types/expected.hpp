@@ -1670,6 +1670,39 @@ public:
   /// @}
 
   /**
+   * @name value
+   * @brief Gets the value of an expected if it has one
+   *
+   * `panic()` with the `error_msg` otherwise
+   */
+  /// @{
+  template <class U = T, std::enable_if_t<!std::is_void<U>::value>* = nullptr>
+  [[nodiscard]] constexpr const U& expect(std::string_view error_msg) const&
+  {
+    if (!has_value()) beyond::panic(error_msg);
+    return val();
+  }
+  template <class U = T, std::enable_if_t<!std::is_void<U>::value>* = nullptr>
+  [[nodiscard]] constexpr U& expect(std::string_view error_msg) &
+  {
+    if (!has_value()) beyond::panic(error_msg);
+    return val();
+  }
+  template <class U = T, std::enable_if_t<!std::is_void<U>::value>* = nullptr>
+  [[nodiscard]] constexpr const U&& expect(std::string_view error_msg) const&&
+  {
+    if (!has_value()) beyond::panic(error_msg);
+    return std::move(val());
+  }
+  template <class U = T, std::enable_if_t<!std::is_void<U>::value>* = nullptr>
+  [[nodiscard]] constexpr U&& expect(std::string_view error_msg) &&
+  {
+    if (!has_value()) beyond::panic(error_msg);
+    return std::move(val());
+  }
+  /// @}
+
+  /**
    * @name error
    * @brief Gets the error of an expected if it has one, `panic` otherwise
    */
@@ -1709,14 +1742,14 @@ public:
    * @brief Returns the stored value if there is one, otherwise returns `v`
    */
   /// @{
-  template <class U>[[nodiscard]] constexpr T value_or(U&& v) const&
+  template <class U> [[nodiscard]] constexpr T value_or(U&& v) const&
   {
     static_assert(std::is_copy_constructible<T>::value &&
                       std::is_convertible<U&&, T>::value,
                   "T must be copy-constructible and convertible to from U&&");
     return bool(*this) ? **this : static_cast<T>(std::forward<U>(v));
   }
-  template <class U>[[nodiscard]] constexpr T value_or(U&& v) &&
+  template <class U> [[nodiscard]] constexpr T value_or(U&& v) &&
   {
     static_assert(std::is_move_constructible<T>::value &&
                       std::is_convertible<U&&, T>::value,
