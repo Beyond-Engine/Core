@@ -26,7 +26,6 @@ add_executable(${TEST_TARGET_NAME}
         utils/functional_test.cpp
         utils/function_ref_test.cpp
         utils/handle_test.cpp
-        utils/named_type_test.cpp
         utils/make_array_test.cpp
         utils/noexcept_cast_test.cpp
         utils/size_test.cpp

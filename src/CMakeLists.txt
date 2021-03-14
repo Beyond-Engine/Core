@@ -14,7 +14,6 @@ add_library(core
         ../include/beyond/utils/handle.hpp
         ../include/beyond/utils/make_array.hpp
         ../include/beyond/utils/numeric_aliases.hpp
-        ../include/beyond/utils/named_type.hpp
         ../include/beyond/utils/panic.hpp
         ../include/beyond/utils/to_pointer.hpp
         ../include/beyond/utils/byte_size.hpp
@@ -41,12 +40,33 @@ add_library(core
         ../include/beyond/types/expected.hpp
         ../include/beyond/types/in_place.hpp
         ../include/beyond/types/monostate.hpp
-        ../include/beyond/math/quat.hpp ../include/beyond/utils/force_inline.hpp
+        ../include/beyond/math/quat.hpp
+        ../include/beyond/utils/force_inline.hpp
         ../include/beyond/utils/noexcept_cast.hpp
 
         ../include/beyond/allocators/memory_resource.hpp
         ../include/beyond/allocators/global_resource.cpp
-        ../include/beyond/allocators/global_resource.hpp ../include/beyond/algorithm/sort_by_key.hpp)
+        ../include/beyond/allocators/global_resource.hpp
+        ../include/beyond/algorithm/sort_by_key.hpp)
+
+if (BEYOND_CORE_ENABLE_PCH)
+    target_precompile_headers(core INTERFACE
+            ../include/beyond/math/angle.hpp
+            ../include/beyond/math/vector.hpp
+            ../include/beyond/math/serial.hpp
+            ../include/beyond/math/matrix.hpp
+            ../include/beyond/math/math.hpp
+            ../include/beyond/math/transform.hpp
+            ../include/beyond/math/point.hpp
+            ../include/beyond/geometry/ray.hpp
+            ../include/beyond/geometry/aabb3.hpp
+            ../include/beyond/types/optional.hpp
+            ../include/beyond/types/expected.hpp
+            ../include/beyond/math/quat.hpp
+            ../include/beyond/utils/function_ref.hpp
+            ../include/beyond/utils/noexcept_cast.hpp
+            )
+endif ()
 
 set(BEYOND_CORE_ASSERT_POLICY AUTO CACHE STRING "The policy of enabling
     assertion or not in beyond game engine core.

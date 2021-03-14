@@ -12,6 +12,8 @@ CMAKE_DEPENDENT_OPTION(BEYOND_CORE_BUILD_TESTS_COVERAGE
         "BEYOND_CORE_BUILD_TESTS" OFF)
 option(BEYOND_CORE_BUILD_DOCUMENTATION
         "Build the documentation for the Beyond game engine core" OFF)
+option(BEYOND_CORE_ENABLE_TIME_TRACE "Enable compilation time profiling with -ftime-trace" OFF)
+
 
 if (BEYOND_CORE_BUILD_DOCUMENTATION)
     include("cmake/doxygen.cmake")

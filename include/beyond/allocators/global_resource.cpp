@@ -12,10 +12,10 @@ struct NewDeleteResource : MemoryResource {
     return ::operator new[](bytes, std::align_val_t{alignment});
   }
 
-  void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
+  void do_deallocate(void* p, std::size_t /*bytes*/,
+                     std::size_t /*alignment*/) override
   {
-    ::operator delete[](static_cast<char*>(p), bytes,
-                        std::align_val_t{alignment});
+    ::operator delete[](p /*bytes, std::align_val_t{alignment}*/);
   }
 
   [[nodiscard]] auto do_is_equal(const MemoryResource& other) const noexcept

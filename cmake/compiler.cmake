@@ -11,6 +11,7 @@ add_library(beyond::compiler_warnings ALIAS beyond_compiler_warnings)
 add_library(beyond_compiler_options INTERFACE)
 add_library(beyond::compiler_options ALIAS beyond_compiler_options)
 
+
 option(BEYOND_CORE_WARNING_AS_ERROR "Treats compiler warnings as errors" ON)
 if (MSVC)
     target_compile_options(beyond_compiler_warnings INTERFACE /W4 "/permissive-")
@@ -52,11 +53,18 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(beyond_compiler_warnings
                 INTERFACE
                 -Wno-implicit-float-conversion
+                -Wno-ambiguous-reversed-operator
                 )
+        if (BEYOND_CORE_ENABLE_TIME_TRACE)
+            target_compile_options(beyond_compiler_options
+                    INTERFACE
+                    -ftime-trace
+                    )
+        endif ()
     endif ()
 endif ()
 
-option(BEYOND_CORE_ENABLE_PCH "Enable Precompiled Headers" OFF)
+option(BEYOND_CORE_ENABLE_PCH "Enable Precompiled Headers" ON)
 if (BEYOND_CORE_ENABLE_PCH)
     target_precompile_headers(beyond_compiler_options INTERFACE
             <algorithm>
@@ -66,8 +74,8 @@ if (BEYOND_CORE_ENABLE_PCH)
             <utility>
             <functional>
             <memory>
-            <memory_resource>
             <string_view>
+            <string>
             <cmath>
             <cstddef>
             <cstdint>
