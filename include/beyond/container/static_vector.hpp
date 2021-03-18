@@ -3,15 +3,14 @@
 #ifndef BEYOND_CORE_CONTAINER_STATIC_VECTOR_HPP
 #define BEYOND_CORE_CONTAINER_STATIC_VECTOR_HPP
 
-#include <algorithm>
 #include <iterator>
+#include <memory>
+#include <new>
 #include <type_traits>
 
-#include <fmt/format.h>
-
-#include "../types/optional.hpp"
 #include "../utils/assert.hpp"
 #include "../utils/bit_cast.hpp"
+#include "../utils/force_inline.hpp"
 #include "../utils/panic.hpp"
 
 namespace beyond {
@@ -49,7 +48,8 @@ public:
       : size_{n}
   {
     BEYOND_ASSERT(n <= capacity());
-    std::uninitialized_value_construct_n(reinterpret_cast<T*>(data_), size_);
+    std::uninitialized_value_construct_n(
+        std::launder(reinterpret_cast<T*>(data_)), size_);
   }
 
   /**
@@ -63,7 +63,8 @@ public:
       : size_{n}
   {
     BEYOND_ASSERT(n <= capacity());
-    std::uninitialized_fill_n(reinterpret_cast<T*>(data_), size_, v);
+    std::uninitialized_fill_n(std::launder(reinterpret_cast<T*>(data_)), size_,
+                              v);
   }
 
   /**
@@ -85,7 +86,8 @@ public:
     const auto distance = static_cast<size_type>(std::distance(first, last));
     BEYOND_ASSERT(distance <= capacity());
     size_ = distance;
-    std::uninitialized_copy(first, last, reinterpret_cast<T*>(data_));
+    std::uninitialized_copy(first, last,
+                            std::launder(reinterpret_cast<T*>(data_)));
   }
 
   constexpr StaticVector(std::initializer_list<value_type> il)
@@ -93,7 +95,7 @@ public:
   {
     BEYOND_ASSERT(size_ <= capacity());
     std::uninitialized_copy(std::begin(il), std::end(il),
-                            reinterpret_cast<T*>(data_));
+                            std::launder(reinterpret_cast<T*>(data_)));
   }
 
   ~StaticVector() noexcept(std::is_nothrow_destructible_v<value_type>)
@@ -106,7 +108,7 @@ public:
       : size_{rhs.size_}
   {
     std::uninitialized_copy_n(std::begin(rhs), rhs.size_,
-                              reinterpret_cast<T*>(data_));
+                              std::launder(reinterpret_cast<T*>(data_)));
   }
 
   auto operator=(const StaticVector& rhs) & noexcept(
@@ -135,7 +137,7 @@ public:
     if (this != &rhs) {
       std::destroy_n(reinterpret_cast<T*>(data_), size_);
       std::uninitialized_move_n(std::begin(rhs), rhs.size_,
-                                reinterpret_cast<T*>(data_));
+                                std::launder(reinterpret_cast<T*>(data_)));
       size_ = rhs.size_;
     }
     return *this;
@@ -146,7 +148,8 @@ public:
    *
    * Complexity: O(1)
    */
-  [[nodiscard]] constexpr auto capacity() const noexcept -> size_type
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto capacity() const noexcept
+      -> size_type
   {
     return N;
   }
@@ -156,7 +159,8 @@ public:
    *
    * Complexity: O(1)
    */
-  [[nodiscard]] constexpr auto size() const noexcept -> size_type
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto size() const noexcept
+      -> size_type
   {
     return size_;
   }
@@ -166,7 +170,8 @@ public:
    *
    * Complexity: O(1)
    */
-  [[nodiscard]] constexpr auto empty() const noexcept -> size_type
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto empty() const noexcept
+      -> size_type
   {
     return size_ == 0;
   }
@@ -180,13 +185,14 @@ public:
    * Complexity: O(1)
    */
   template <typename... Args>
-  auto push_back(const value_type& value) -> reference
+  BEYOND_FORCE_INLINE auto push_back(const value_type& value) -> reference
   {
     return emplace_back(value);
   }
 
   /// @overload
-  template <typename... Args> auto push_back(value_type&& value) -> reference
+  template <typename... Args>
+  BEYOND_FORCE_INLINE auto push_back(value_type&& value) -> reference
   {
     return emplace_back(std::move(value));
   }
@@ -199,15 +205,16 @@ public:
    *
    * Complexity: O(1)
    */
-  template <typename... Args> auto emplace_back(Args&&... args) -> reference
+  template <typename... Args>
+  BEYOND_FORCE_INLINE auto emplace_back(Args&&... args) -> reference
   {
     if (size() >= capacity()) {
       beyond::panic("Try to add to a to a full vector");
     }
 
-    new (reinterpret_cast<T*>(data_) + size_) T(std::forward<Args>(args)...);
+    new (end()) T(std::forward<Args>(args)...);
     ++size_;
-    return reinterpret_cast<T*>(data_)[size_ - 1];
+    return data()[size_ - 1];
   }
 
   /**
@@ -217,7 +224,7 @@ public:
    *
    * Complexity: O(1)
    */
-  auto pop_back() -> void
+  BEYOND_FORCE_INLINE auto pop_back() -> void
   {
     BEYOND_ASSERT(size_ != 0);
     --size_;
@@ -230,7 +237,7 @@ public:
    */
   auto clear() -> void
   {
-    std::destroy_n(reinterpret_cast<T*>(data_), size_);
+    std::destroy_n(std::launder(reinterpret_cast<T*>(data_)), size_);
     size_ = 0;
   }
 
@@ -240,24 +247,25 @@ public:
    *
    * Complexity: O(1)
    */
-  [[nodiscard]] constexpr auto operator[](size_type pos) const noexcept
-      -> const_reference
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
+  operator[](size_type pos) const noexcept -> const_reference
   {
     if (pos >= size()) {
       beyond::panic("Accessing static_vector out-of-range");
     }
 
-    return reinterpret_cast<const T*>(data_)[pos];
+    return data()[pos];
   }
 
   /// @overload
-  [[nodiscard]] constexpr auto operator[](size_type pos) noexcept -> reference
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
+  operator[](size_type pos) noexcept -> reference
   {
     if (pos >= size()) {
       beyond::panic("Accessing static_vector out-of-range");
     }
 
-    return reinterpret_cast<T*>(data_)[pos];
+    return data()[pos];
   }
 
   /**
@@ -266,15 +274,18 @@ public:
    *
    * Complexity: O(1)
    */
-  [[nodiscard]] constexpr auto front() noexcept -> reference
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto front() noexcept -> reference
   {
-    return reinterpret_cast<T*>(data_)[0];
+    BEYOND_ASSERT(size_ != 0);
+    return data()[0];
   }
 
   /// @overload
-  [[nodiscard]] constexpr auto front() const noexcept -> const_reference
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto front() const noexcept
+      -> const_reference
   {
-    return reinterpret_cast<const T*>(data_)[0];
+    BEYOND_ASSERT(size_ != 0);
+    return data()[0];
   }
 
   /**
@@ -283,15 +294,18 @@ public:
    *
    * Complexity: O(1)
    */
-  [[nodiscard]] constexpr auto back() noexcept -> reference
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto back() noexcept -> reference
   {
-    return reinterpret_cast<T*>(data_)[size_ - 1];
+    BEYOND_ASSERT(size_ != 0);
+    return data()[size_ - 1];
   }
 
   /// @overload
-  [[nodiscard]] constexpr auto back() const noexcept -> const_reference
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto back() const noexcept
+      -> const_reference
   {
-    return reinterpret_cast<const T*>(data_)[size_ - 1];
+    BEYOND_ASSERT(size_ != 0);
+    return data()[size_ - 1];
   }
 
   /**
@@ -299,15 +313,16 @@ public:
    *
    * Complexity: O(1)
    */
-  [[nodiscard]] constexpr auto data() noexcept -> pointer
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto data() noexcept -> pointer
   {
-    return reinterpret_cast<T*>(data_);
+    return std::launder(reinterpret_cast<T*>(data_));
   }
 
   /// @overload
-  [[nodiscard]] constexpr auto data() const noexcept -> const_pointer
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto data() const noexcept
+      -> const_pointer
   {
-    return reinterpret_cast<const T*>(data_);
+    return std::launder(reinterpret_cast<const T*>(data_));
   }
 
   /**
@@ -316,165 +331,45 @@ public:
    *
    * Complexity: O(1)
    */
-  [[nodiscard]] constexpr auto unsafe_at(size_type pos) const noexcept
-      -> const_reference
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
+  unsafe_at(size_type pos) const noexcept -> const_reference
   {
-    return reinterpret_cast<const T*>(data_)[pos];
+    return std::launder(reinterpret_cast<const T*>(data_))[pos];
   }
 
   /// @overload
-  [[nodiscard]] constexpr auto unsafe_at(size_type pos) noexcept -> reference
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
+  unsafe_at(size_type pos) noexcept -> reference
   {
-    return reinterpret_cast<T*>(data_)[pos];
+    return std::launder(reinterpret_cast<T*>(data_))[pos];
   }
 
   // TODO(lesley): erase, insert, resize, asign
 
-  template <bool is_const = false> class Itr {
-  public:
-    using iterator_category = std::random_access_iterator_tag;
-    using value_type = T;
-    using difference_type = std::ptrdiff_t;
-    using reference = std::conditional_t<is_const, const T&, T&>;
-    using pointer = std::conditional_t<is_const, const T*, T*>;
-
-    explicit constexpr Itr(pointer data = nullptr) : data_{data} {}
-
-    [[nodiscard]] constexpr auto operator*() const noexcept -> reference
-    {
-      return *data_;
-    }
-
-    [[nodiscard]] constexpr auto operator->() const noexcept -> pointer
-    {
-      return data_;
-    }
-
-    constexpr auto operator+=(difference_type n) noexcept -> Itr&
-    {
-      data_ += n;
-      return *this;
-    }
-
-    constexpr auto operator-=(difference_type n) noexcept -> Itr&
-    {
-      data_ -= n;
-      return *this;
-    }
-
-    constexpr auto operator++() noexcept -> Itr&
-    {
-      ++data_;
-      return *this;
-    }
-
-    constexpr auto operator--() noexcept -> Itr&
-    {
-      --data_;
-      return *this;
-    }
-
-    constexpr auto operator++(int) noexcept -> Itr
-    {
-      return Itr{data_++};
-    }
-
-    constexpr auto operator--(int) noexcept -> Itr
-    {
-      return Itr{data_--};
-    }
-
-    [[nodiscard]] friend constexpr auto operator==(Itr lhs, Itr rhs) noexcept
-        -> bool
-    {
-      return lhs.data_ == rhs.data_;
-    }
-
-    [[nodiscard]] friend constexpr auto operator!=(Itr lhs, Itr rhs) noexcept
-        -> bool
-    {
-      return !(lhs == rhs);
-    }
-
-    [[nodiscard]] friend constexpr auto operator<(Itr lhs, Itr rhs) noexcept
-        -> bool
-    {
-      return lhs.data_ < rhs.data_;
-    }
-
-    [[nodiscard]] friend constexpr auto operator<=(Itr lhs, Itr rhs) noexcept
-        -> bool
-    {
-      return lhs.data_ <= rhs.data_;
-    }
-
-    [[nodiscard]] friend constexpr auto operator>(Itr lhs, Itr rhs) noexcept
-        -> bool
-    {
-      return lhs.data_ > rhs.data_;
-    }
-
-    [[nodiscard]] friend constexpr auto operator>=(Itr lhs, Itr rhs) noexcept
-        -> bool
-    {
-      return lhs.data_ >= rhs.data_;
-    }
-
-    [[nodiscard]] friend constexpr auto operator-(Itr lhs, Itr rhs) noexcept
-        -> difference_type
-    {
-      return lhs.data_ - rhs.data_;
-    }
-
-    [[nodiscard]] friend constexpr auto operator+(Itr lhs,
-                                                  difference_type rhs) noexcept
-        -> Itr
-    {
-      return Itr{lhs.data_ + rhs};
-    }
-
-    [[nodiscard]] friend constexpr auto operator+(difference_type lhs,
-                                                  Itr rhs) noexcept -> Itr
-    {
-      return Itr{lhs + rhs.data_};
-    }
-
-  private:
-    pointer data_ = nullptr;
-  };
-
-  using iterator = Itr<false>;
-  using const_iterator = Itr<true>;
+  using iterator = T*;
+  using const_iterator = const T*;
 
   // TODO(lesley): reverse iterators
-  [[nodiscard]] constexpr auto begin() noexcept -> iterator
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto begin() noexcept -> iterator
   {
     return iterator{reinterpret_cast<T*>(data_)};
   }
 
-  [[nodiscard]] constexpr auto end() noexcept -> iterator
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto end() noexcept -> iterator
   {
-    return iterator{reinterpret_cast<T*>(data_) + size_};
+    return begin() + size_;
   }
 
-  [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto begin() const noexcept
+      -> const_iterator
   {
     return const_iterator{reinterpret_cast<const T*>(data_)};
   }
 
-  [[nodiscard]] constexpr auto end() const noexcept -> const_iterator
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto end() const noexcept
+      -> const_iterator
   {
-    return const_iterator{reinterpret_cast<const T*>(data_) + size_};
-  }
-
-  [[nodiscard]] constexpr auto cbegin() const noexcept -> const_iterator
-  {
-    return const_iterator{reinterpret_cast<const T*>(data_)};
-  }
-
-  [[nodiscard]] constexpr auto cend() const noexcept -> const_iterator
-  {
-    return const_iterator{reinterpret_cast<const T*>(data_) + size_};
+    return begin() + size_;
   }
 
   /**

@@ -80,6 +80,9 @@ if (BEYOND_CORE_ENABLE_PCH)
             <cstddef>
             <cstdint>
             <type_traits>
+            <concepts>
+            <ranges>
+            <filesystem>
             )
 endif ()
 

@@ -191,8 +191,8 @@ TEST_CASE("StaticVector swap", "[beyond.core.container.static_vector]")
     swap(v1, v2);
   }
 
-  REQUIRE(std::equal(v1.cbegin(), v1.cend(), l2.begin()));
-  REQUIRE(std::equal(v2.cbegin(), v2.cend(), l1.begin()));
+  REQUIRE(std::equal(v1.begin(), v1.end(), l2.begin()));
+  REQUIRE(std::equal(v2.begin(), v2.end(), l1.begin()));
 }
 
 TEST_CASE("StaticVector iterators", "[beyond.core.container.static_vector]")
@@ -201,12 +201,10 @@ TEST_CASE("StaticVector iterators", "[beyond.core.container.static_vector]")
   {
     StaticVector<std::string, 10> v;
     REQUIRE(v.begin() == v.end());
-    REQUIRE(v.cbegin() == v.cend());
 
     const std::string first{"hello"};
     v.push_back(first);
     REQUIRE(v.begin() != v.end());
-    REQUIRE(v.cbegin() != v.cend());
 
     SECTION("Elements access")
     {

@@ -24,20 +24,16 @@
 #define BEYOND_ASSERT(condition)                                               \
   do {                                                                         \
     if (!(condition)) {                                                        \
-      []() {                                                                   \
-        ::beyond::panic(fmt::format("[{}:{}] Assert failed in {}\n", __FILE__, \
-                                    __LINE__, __func__));                      \
-      }();                                                                     \
+      ::beyond::panic(fmt::format("[{}:{}] Assert failed in {}\n", __FILE__,   \
+                                  __LINE__, __func__));                        \
     }                                                                          \
   } while (0)
 
 #define BEYOND_ASSERT_MSG(condition, message)                                  \
   do {                                                                         \
     if (!(condition)) {                                                        \
-      []() {                                                                   \
-        ::beyond::panic(fmt::format("[{}:{}] Assert failed in {}: {}\n",       \
-                                    __FILE__, __LINE__, __func__, message));   \
-      }();                                                                     \
+      ::beyond::panic(fmt::format("[{}:{}] Assert failed in {}: {}\n",         \
+                                  __FILE__, __LINE__, __func__, message));     \
     }                                                                          \
   } while (0)
 
