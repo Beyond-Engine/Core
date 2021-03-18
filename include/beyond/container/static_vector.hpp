@@ -43,7 +43,7 @@ public:
    *
    * Complexity: O(n)
    */
-  constexpr explicit StaticVector(size_type n) noexcept(
+  explicit StaticVector(size_type n) noexcept(
       std::is_nothrow_constructible_v<value_type>)
       : size_{n}
   {
@@ -57,7 +57,7 @@ public:
    *
    * Complexity: O(n)
    */
-  constexpr explicit StaticVector(size_type n, value_type v) noexcept(
+  explicit StaticVector(size_type n, value_type v) noexcept(
       std::is_nothrow_copy_constructible_v<value_type>)
       : size_{n}
   {
@@ -78,7 +78,7 @@ public:
             typename = decltype(*std::declval<InputIterator&>(), void(),
                                 ++std::declval<InputIterator&>(), void())>
 #endif
-  constexpr StaticVector(InputIterator first, InputIterator last) noexcept(
+  StaticVector(InputIterator first, InputIterator last) noexcept(
       std::is_nothrow_copy_constructible_v<value_type>)
   {
     const auto distance = static_cast<size_type>(std::distance(first, last));
@@ -87,7 +87,7 @@ public:
     std::uninitialized_copy(first, last, data());
   }
 
-  constexpr StaticVector(std::initializer_list<value_type> il)
+  StaticVector(std::initializer_list<value_type> il)
       : size_{static_cast<size_type>(il.size())}
   {
     BEYOND_ENSURE(size_ <= capacity());
