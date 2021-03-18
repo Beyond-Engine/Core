@@ -47,9 +47,8 @@ public:
       std::is_nothrow_constructible_v<value_type>)
       : size_{n}
   {
-    BEYOND_ASSERT(n <= capacity());
-    std::uninitialized_value_construct_n(
-        std::launder(reinterpret_cast<T*>(data_)), size_);
+    BEYOND_ENSURE(n <= capacity());
+    std::uninitialized_value_construct_n(data(), size_);
   }
 
   /**
@@ -62,9 +61,8 @@ public:
       std::is_nothrow_copy_constructible_v<value_type>)
       : size_{n}
   {
-    BEYOND_ASSERT(n <= capacity());
-    std::uninitialized_fill_n(std::launder(reinterpret_cast<T*>(data_)), size_,
-                              v);
+    BEYOND_ENSURE(n <= capacity());
+    std::uninitialized_fill_n(data(), size_, v);
   }
 
   /**
@@ -84,40 +82,36 @@ public:
       std::is_nothrow_copy_constructible_v<value_type>)
   {
     const auto distance = static_cast<size_type>(std::distance(first, last));
-    BEYOND_ASSERT(distance <= capacity());
+    BEYOND_ENSURE(distance <= capacity());
     size_ = distance;
-    std::uninitialized_copy(first, last,
-                            std::launder(reinterpret_cast<T*>(data_)));
+    std::uninitialized_copy(first, last, data());
   }
 
   constexpr StaticVector(std::initializer_list<value_type> il)
       : size_{static_cast<size_type>(il.size())}
   {
-    BEYOND_ASSERT(size_ <= capacity());
-    std::uninitialized_copy(std::begin(il), std::end(il),
-                            std::launder(reinterpret_cast<T*>(data_)));
+    BEYOND_ENSURE(size_ <= capacity());
+    std::uninitialized_copy(std::begin(il), std::end(il), data());
   }
 
   ~StaticVector() noexcept(std::is_nothrow_destructible_v<value_type>)
   {
-    std::destroy_n(reinterpret_cast<T*>(data_), size_);
+    std::destroy_n(data(), size_);
   }
 
   StaticVector(const StaticVector& rhs) noexcept(
       std::is_nothrow_copy_constructible_v<value_type>)
       : size_{rhs.size_}
   {
-    std::uninitialized_copy_n(std::begin(rhs), rhs.size_,
-                              std::launder(reinterpret_cast<T*>(data_)));
+    std::uninitialized_copy_n(std::begin(rhs), rhs.size_, data());
   }
 
   auto operator=(const StaticVector& rhs) & noexcept(
       std::is_nothrow_copy_constructible_v<value_type>) -> StaticVector&
   {
     if (this != &rhs) {
-      std::destroy_n(reinterpret_cast<T*>(data_), size_);
-      std::uninitialized_copy_n(std::begin(rhs), rhs.size_,
-                                reinterpret_cast<T*>(data_));
+      std::destroy_n(data(), size_);
+      std::uninitialized_copy_n(std::begin(rhs), rhs.size_, data());
       size_ = rhs.size_;
     }
     return *this;
@@ -127,18 +121,17 @@ public:
       std::is_nothrow_move_constructible_v<value_type>)
       : size_{rhs.size_}
   {
-    std::uninitialized_move_n(std::begin(rhs), rhs.size_,
-                              reinterpret_cast<T*>(data_));
+    std::uninitialized_move_n(std::begin(rhs), rhs.size_, data());
+    rhs.size_ = 0;
   }
 
   auto operator=(StaticVector&& rhs) & noexcept(
       std::is_nothrow_move_assignable_v<value_type>) -> StaticVector&
   {
     if (this != &rhs) {
-      std::destroy_n(reinterpret_cast<T*>(data_), size_);
-      std::uninitialized_move_n(std::begin(rhs), rhs.size_,
-                                std::launder(reinterpret_cast<T*>(data_)));
-      size_ = rhs.size_;
+      std::destroy_n(data(), size_);
+      std::uninitialized_move_n(std::begin(rhs), rhs.size_, data());
+      size_ = std::exchange(rhs.size_, 0);
     }
     return *this;
   }
@@ -208,9 +201,7 @@ public:
   template <typename... Args>
   BEYOND_FORCE_INLINE auto emplace_back(Args&&... args) -> reference
   {
-    if (size() >= capacity()) {
-      beyond::panic("Try to add to a to a full vector");
-    }
+    BEYOND_ENSURE(size_ < capacity());
 
     new (end()) T(std::forward<Args>(args)...);
     ++size_;
@@ -220,13 +211,13 @@ public:
   /**
    * @brief Removes the last element of the container
    *
-   * @warning Will `panic()` if `size() == 0`, the result is undefined
+   * @warning Will `panic()` if `size() == 0`
    *
    * Complexity: O(1)
    */
   BEYOND_FORCE_INLINE auto pop_back() -> void
   {
-    BEYOND_ASSERT(size_ != 0);
+    BEYOND_ENSURE(size_ != 0);
     --size_;
   }
 
@@ -237,23 +228,20 @@ public:
    */
   auto clear() -> void
   {
-    std::destroy_n(std::launder(reinterpret_cast<T*>(data_)), size_);
+    std::destroy_n(data(), size_);
     size_ = 0;
   }
 
   /**
    * @brief Access an object at index `pos` with bounds checking
-   * @warning If `pos > size()`, the result is undefined
+   * @warning Will `panic` if `pos >= size()`
    *
    * Complexity: O(1)
    */
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
   operator[](size_type pos) const noexcept -> const_reference
   {
-    if (pos >= size()) {
-      beyond::panic("Accessing static_vector out-of-range");
-    }
-
+    BEYOND_ENSURE(pos < size_);
     return data()[pos];
   }
 
@@ -261,22 +249,19 @@ public:
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
   operator[](size_type pos) noexcept -> reference
   {
-    if (pos >= size()) {
-      beyond::panic("Accessing static_vector out-of-range");
-    }
-
+    BEYOND_ENSURE(pos < size_);
     return data()[pos];
   }
 
   /**
    * @brief access the first element
-   * @warning Calling `front` on an empty container is undefined.
+   * @warning Will `panic` if call `front` on an empty container
    *
    * Complexity: O(1)
    */
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto front() noexcept -> reference
   {
-    BEYOND_ASSERT(size_ != 0);
+    BEYOND_ENSURE(size_ != 0);
     return data()[0];
   }
 
@@ -284,19 +269,19 @@ public:
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto front() const noexcept
       -> const_reference
   {
-    BEYOND_ASSERT(size_ != 0);
+    BEYOND_ENSURE(size_ != 0);
     return data()[0];
   }
 
   /**
    * @brief access the last element
-   * @warning Calling `back` on an empty container is undefined.
+   * @warning Will `panic` if call `back` on an empty container
    *
    * Complexity: O(1)
    */
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto back() noexcept -> reference
   {
-    BEYOND_ASSERT(size_ != 0);
+    BEYOND_ENSURE(size_ != 0);
     return data()[size_ - 1];
   }
 
@@ -304,7 +289,7 @@ public:
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto back() const noexcept
       -> const_reference
   {
-    BEYOND_ASSERT(size_ != 0);
+    BEYOND_ENSURE(size_ != 0);
     return data()[size_ - 1];
   }
 
@@ -334,14 +319,16 @@ public:
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
   unsafe_at(size_type pos) const noexcept -> const_reference
   {
-    return std::launder(reinterpret_cast<const T*>(data_))[pos];
+    BEYOND_ASSERT(pos < size_);
+    return data()[pos];
   }
 
   /// @overload
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
   unsafe_at(size_type pos) noexcept -> reference
   {
-    return std::launder(reinterpret_cast<T*>(data_))[pos];
+    BEYOND_ASSERT(pos < size_);
+    return data()[pos];
   }
 
   // TODO(lesley): erase, insert, resize, asign
@@ -352,7 +339,7 @@ public:
   // TODO(lesley): reverse iterators
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto begin() noexcept -> iterator
   {
-    return iterator{reinterpret_cast<T*>(data_)};
+    return iterator{data()};
   }
 
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto end() noexcept -> iterator
@@ -363,7 +350,7 @@ public:
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto begin() const noexcept
       -> const_iterator
   {
-    return const_iterator{reinterpret_cast<const T*>(data_)};
+    return const_iterator{data()};
   }
 
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto end() const noexcept
@@ -403,7 +390,6 @@ private:
 /** @}@} */
 
 // TODO(lesley): lexicographically compares
-// Free functions TODO(lesley): erase, erase_if
 
 } // namespace beyond
 

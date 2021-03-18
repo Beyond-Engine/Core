@@ -68,6 +68,24 @@
 #endif
 #endif
 
+// Like BEYOND_ASSERT, but will always check the condition
+#define BEYOND_ENSURE(condition)                                               \
+  do {                                                                         \
+    if (!(condition)) {                                                        \
+      ::beyond::panic(fmt::format("[{}:{}] Condition not satisfied in {}\n",   \
+                                  __FILE__, __LINE__, __func__));              \
+    }                                                                          \
+  } while (0)
+
+#define BEYOND_ENSURE_MSG(condition, message)                                  \
+  do {                                                                         \
+    if (!(condition)) {                                                        \
+      ::beyond::panic(                                                         \
+          fmt::format("[{}:{}] Condition not satisfied in {}: {}\n", __FILE__, \
+                      __LINE__, __func__, message));                           \
+    }                                                                          \
+  } while (0)
+
 /** @}
  *  @} */
 
