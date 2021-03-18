@@ -14,11 +14,9 @@
  * @{
  */
 
-#ifdef BEYOND_GAME_ENGINE_CORE_ENABLE_ASSERT
 #include "panic.hpp"
 #include <fmt/format.h>
 #include <string_view>
-#endif
 
 #ifdef BEYOND_GAME_ENGINE_CORE_ENABLE_ASSERT
 #define BEYOND_ASSERT(condition)                                               \
