@@ -25,9 +25,9 @@ namespace beyond {
  * @{
  */
 
-template <class T, class E> class expected;
+template <class T, class E> class [[nodiscard]] expected;
 
-template <class E> class unexpected {
+template <class E> class [[nodiscard]] unexpected {
 public:
   static_assert(!std::is_same<E, void>::value, "E must not be void");
 
@@ -972,10 +972,11 @@ template <class T, class E> struct expected_default_ctor_base<T, E, false> {
 /// has been destroyed. The initialization state of the contained object is
 /// tracked by the expected object.
 template <class T, class E>
-class expected : private detail::expected_move_assign_base<T, E>,
-                 private detail::expected_delete_ctor_base<T, E>,
-                 private detail::expected_delete_assign_base<T, E>,
-                 private detail::expected_default_ctor_base<T, E> {
+class [[nodiscard]] expected
+    : private detail::expected_move_assign_base<T, E>,
+      private detail::expected_delete_ctor_base<T, E>,
+      private detail::expected_delete_assign_base<T, E>,
+      private detail::expected_default_ctor_base<T, E> {
   static_assert(!std::is_reference<T>::value, "T must not be a reference");
   static_assert(!std::is_same<T, std::remove_cv<in_place_t>>::value,
                 "T must not be in_place_t");
