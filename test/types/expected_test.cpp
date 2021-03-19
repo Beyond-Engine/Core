@@ -1218,3 +1218,21 @@ TEST_CASE("expected moving of nested type", "[beyond.core.types.expected]")
   beyond::expected<std::vector<foo>, int> ov = std::move(v);
   REQUIRE(ov->size() == 1);
 }
+
+TEST_CASE("expected macro", "[beyond.core.types.expected]")
+{
+  constexpr auto good_res =
+      [good = beyond::expected<int, int>{1}]() -> beyond::expected<int, int> {
+    BEYOND_EXPECTED_ASSIGN(int, i, good);
+    return i;
+  }();
+  STATIC_REQUIRE(good_res.value() == 1);
+
+  constexpr auto bad_res =
+      [bad = beyond::expected<int, int>{beyond::unexpect,
+                                        42}]() -> beyond::expected<int, int> {
+    BEYOND_EXPECTED_ASSIGN(int, i, bad);
+    return i;
+  }();
+  STATIC_REQUIRE(bad_res.error() == 42);
+}
