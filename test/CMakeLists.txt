@@ -2,12 +2,13 @@ set(TEST_TARGET_NAME ${PROJECT_NAME}_test)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+find_package(Catch2)
+
 add_library(catch_main STATIC main.cpp)
-target_link_libraries(catch_main PUBLIC CONAN_PKG::catch2)
+target_link_libraries(catch_main PUBLIC Catch2::Catch2)
 
 add_executable(${TEST_TARGET_NAME}
         algorithms/sort_by_key_test.cpp
-
         concurrency/task_queue_test.cpp
         concurrency/thread_pool_test.cpp
         container/slot_map_test.cpp

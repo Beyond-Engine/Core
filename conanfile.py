@@ -6,13 +6,13 @@ class BeyondCoreConan(ConanFile):
     version = "0.0.2"
     license = "MIT"
     author = "Lesley Lai lesley@lesleylai.info"
-    url = "<Package recipe repository url here, for issues about the package>"
+    url = "https://github.com/Beyond-Engine/Core"
     description = "<Description of BeyondCore here>"
     topics = ("<Put some tag here>", "<here>", "<and here>")
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
     default_options = {"shared": False}
-    generators = "cmake"
+    generators = "cmake_find_package"
     exports_sources = ["cmake/*", "include/*", "src/*", "third-party/*", "CMakeLists.txt"]
     requires = ["fmt/7.1.3", "backward-cpp/1.5"]
     build_requires = ["catch2/2.13.4"]

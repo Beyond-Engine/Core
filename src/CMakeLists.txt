@@ -88,14 +88,17 @@ target_include_directories(core
         )
 
 find_package(Threads)
+find_package(fmt)
+find_package(Backward)
+
 target_link_libraries(core
         PRIVATE
         beyond::compiler_options
         beyond::compiler_warnings
         PUBLIC
         Threads::Threads
-        CONAN_PKG::fmt
-        CONAN_PKG::backward-cpp
+        fmt::fmt
+        Backward::Backward
         unique_function
         jthread
         )

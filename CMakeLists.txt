@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 project(beyond_core VERSION 0.0.2 LANGUAGES CXX)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_BINARY_DIR}")
 include("cmake/StandardProjectSettings.cmake")
 include("CMakeDependentOption")
 
@@ -34,7 +34,8 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     conan_check(VERSION 1.0.0 REQUIRED)
 
     conan_cmake_run(CONANFILE conanfile.py  # or relative build/conanfile.txt
-            BASIC_SETUP CMAKE_TARGETS
+            BASIC_SETUP
+            GENERATORS cmake_find_package
             BUILD missing)
 endif ()
 
