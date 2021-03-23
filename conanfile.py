@@ -2,13 +2,13 @@ from conans import ConanFile, CMake
 
 
 class BeyondCoreConan(ConanFile):
-    name = "beyond_core"
+    name = "beyond-core"
     version = "0.0.2"
     license = "MIT"
-    author = "Lesley Lai lesley@lesleylai.info"
+    author = "Lesley Lai <lesley@lesleylai.info>"
     url = "https://github.com/Beyond-Engine/Core"
-    description = "<Description of BeyondCore here>"
-    topics = ("<Put some tag here>", "<here>", "<and here>")
+    description = "Utility library for graphics and game programming"
+    topics = ("graphics programming", "gamedev", "math")
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
     default_options = {"shared": False}

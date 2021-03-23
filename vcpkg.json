@@ -1,0 +1,11 @@
+{
+  "name": "beyond-core",
+  "version-string": "0.0.2",
+  "homepage": "https://github.com/Beyond-Engine/Core",
+  "license": "MIT",
+  "description": "Utility library for graphics and game programming",
+  "dependencies": [
+    "fmt",
+    "catch2"
+  ]
+}

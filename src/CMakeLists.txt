@@ -93,7 +93,7 @@ target_include_directories(core
 
 find_package(Threads)
 find_package(fmt REQUIRED)
-find_package(Backward REQUIRED)
+#find_package(Backward)
 
 target_link_libraries(core
         PRIVATE
@@ -102,8 +102,12 @@ target_link_libraries(core
         PUBLIC
         Threads::Threads
         fmt::fmt
-        Backward::Backward
-        unique_function
         jthread
         )
+#if (TARGET Backward::Backward)
+#    target_link_libraries(core
+#            PRIVATE
+#            Backward::Backward)
+#endif ()
+
 add_library(beyond::core ALIAS core)
