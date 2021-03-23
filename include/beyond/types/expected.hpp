@@ -36,19 +36,19 @@ public:
 
   constexpr explicit unexpected(E&& e) : m_val(std::move(e)) {}
 
-  constexpr const E& value() const&
+  [[nodiscard]] constexpr const E& value() const&
   {
     return m_val;
   }
-  constexpr E& value() &
+  [[nodiscard]] constexpr E& value() &
   {
     return m_val;
   }
-  constexpr E&& value() &&
+  [[nodiscard]] constexpr E&& value() &&
   {
     return std::move(m_val);
   }
-  constexpr const E&& value() const&&
+  [[nodiscard]] constexpr const E&& value() const&&
   {
     return std::move(m_val);
   }

@@ -88,8 +88,8 @@ target_include_directories(core
         )
 
 find_package(Threads)
-find_package(fmt)
-find_package(Backward)
+find_package(fmt REQUIRED)
+find_package(Backward REQUIRED)
 
 target_link_libraries(core
         PRIVATE
