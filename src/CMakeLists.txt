@@ -1,5 +1,6 @@
 add_library(core
         ../include/beyond/concurrency/task_queue.hpp
+        ../include/beyond/container/array.hpp
         ../include/beyond/container/static_vector.hpp
         ../include/beyond/ecs/sparse_map.hpp
         ../include/beyond/ecs/sparse_set.hpp
@@ -47,10 +48,13 @@ add_library(core
         ../include/beyond/allocators/memory_resource.hpp
         ../include/beyond/allocators/global_resource.cpp
         ../include/beyond/allocators/global_resource.hpp
-        ../include/beyond/algorithm/sort_by_key.hpp)
+        ../include/beyond/algorithm/sort_by_key.hpp
+        )
 
 if (BEYOND_CORE_ENABLE_PCH)
     target_precompile_headers(core INTERFACE
+            ../include/beyond/container/array.hpp
+            ../include/beyond/container/static_vector.hpp
             ../include/beyond/math/angle.hpp
             ../include/beyond/math/vector.hpp
             ../include/beyond/math/serial.hpp

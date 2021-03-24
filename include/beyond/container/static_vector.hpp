@@ -25,14 +25,14 @@ namespace beyond {
 /**
  * @brief A fixed-capacity dynamic-sized array
  */
-template <class T, std::uint32_t N> class StaticVector final {
+template <class T, unsigned int N> class StaticVector final {
 public:
   using value_type = T;
   using pointer = T*;
   using const_pointer = const T*;
   using reference = T&;
   using const_reference = const T&;
-  using size_type = std::uint32_t;
+  using size_type = decltype(N);
   using difference_type = std::make_signed_t<size_type>;
 
   StaticVector() noexcept = default;
