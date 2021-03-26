@@ -182,9 +182,9 @@ template <class T, class E> struct expected_storage_base {
   }
 
   // If both T and E are trivially destructible, the destructor can be trivial
-  ~expected_storage_base() requires(
-      std::is_trivially_destructible_v<T>&&
-          std::is_trivially_destructible_v<E>) = default;
+  ~expected_storage_base() noexcept
+      requires(std::is_trivially_destructible_v<T>&&
+                   std::is_trivially_destructible_v<E>) = default;
 
   union {
     T m_val;
