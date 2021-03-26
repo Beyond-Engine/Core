@@ -36,6 +36,9 @@ add_library(core
         geometry/aabb3.cpp
 
         ../include/beyond/random/generators/xorshift32.hpp
+        ../include/beyond/random/generators/pcg_random.hpp
+        ../include/beyond/random/generators/pcg_uint128.hpp
+        ../include/beyond/random/generators/pcg_extras.hpp
 
         ../include/beyond/types/optional.hpp
         ../include/beyond/types/expected.hpp

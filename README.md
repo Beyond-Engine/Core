@@ -30,6 +30,14 @@ the core utilities of the [Beyond Game Engine](https://github.com/Beyond-Engine/
 This library is not in a usable state to the public yet. The features are incomplete and are coded as need. I will also
 make breaking changes frequently.
 
+## Acknowledgements
+
+- The PCG library vendored in [`random`](include/beyond/random/) belongs to Melissa O'Neill. 
+  See [its website](https://www.pcg-random.org/index.html) for more information.
+- The `optional` and `expected` types are modified from [Sy Brand](https://twitter.com/TartanLlama)'s 
+  [tl::optional](https://github.com/TartanLlama/optional) 
+  and [tl::expected](https://github.com/TartanLlama/expected) libraries
+
 ## License
 
 This repository is released under Mit License. See [License](file:License) for more information.
