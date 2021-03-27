@@ -133,44 +133,50 @@ static constexpr no_init_t no_init{};
 // Implements the storage of the values, and ensures that the destructor is
 // trivial if it can be.
 template <class T, class E> struct expected_storage_base {
+  union {
+    T m_val;
+    unexpected<E> m_unexpect;
+    char m_no_init;
+  };
+  bool m_has_val;
+
   constexpr expected_storage_base() : m_val(T{}), m_has_val(true) {}
   constexpr expected_storage_base(no_init_t) : m_no_init(), m_has_val(false) {}
 
-  template <
-      class... Args,
-      std::enable_if_t<std::is_constructible<T, Args&&...>::value>* = nullptr>
-  constexpr expected_storage_base(in_place_t, Args&&... args)
+  template <class... Args>
+  constexpr expected_storage_base(in_place_t, Args&&... args) requires(
+      std::is_constructible_v<T, Args&&...>)
       : m_val(std::forward<Args>(args)...), m_has_val(true)
   {
   }
 
-  template <class U, class... Args,
-            std::enable_if_t<std::is_constructible<
-                T, std::initializer_list<U>&, Args&&...>::value>* = nullptr>
-  constexpr expected_storage_base(in_place_t, std::initializer_list<U> il,
-                                  Args&&... args)
+  template <class U, class... Args>
+  constexpr expected_storage_base(
+      in_place_t, std::initializer_list<U> il,
+      Args&&... args) requires(std::
+                                   is_constructible_v<
+                                       T, std::initializer_list<U>&, Args&&...>)
       : m_val(il, std::forward<Args>(args)...), m_has_val(true)
   {
   }
-  template <
-      class... Args,
-      std::enable_if_t<std::is_constructible<E, Args&&...>::value>* = nullptr>
-  constexpr explicit expected_storage_base(unexpect_t, Args&&... args)
+  template <class... Args>
+  constexpr explicit expected_storage_base(unexpect_t, Args&&... args) requires(
+      std::is_constructible_v<E, Args&&...>)
       : m_unexpect(std::forward<Args>(args)...), m_has_val(false)
   {
   }
 
-  template <class U, class... Args,
-            std::enable_if_t<std::is_constructible<
-                E, std::initializer_list<U>&, Args&&...>::value>* = nullptr>
-  constexpr explicit expected_storage_base(unexpect_t,
-                                           std::initializer_list<U> il,
-                                           Args&&... args)
+  template <class U, class... Args>
+  constexpr explicit expected_storage_base(
+      unexpect_t, std::initializer_list<U> il,
+      Args&&... args) requires(std::
+                                   is_constructible_v<
+                                       E, std::initializer_list<U>&, Args&&...>)
       : m_unexpect(il, std::forward<Args>(args)...), m_has_val(false)
   {
   }
 
-  ~expected_storage_base()
+  constexpr ~expected_storage_base()
   {
     if (m_has_val) {
       if constexpr (!std::is_trivially_destructible_v<T>) { m_val.~T(); }
@@ -182,49 +188,13 @@ template <class T, class E> struct expected_storage_base {
   }
 
   // If both T and E are trivially destructible, the destructor can be trivial
-  ~expected_storage_base() noexcept
+  constexpr ~expected_storage_base() noexcept
       requires(std::is_trivially_destructible_v<T>&&
                    std::is_trivially_destructible_v<E>) = default;
-
-  union {
-    T m_val;
-    unexpected<E> m_unexpect;
-    char m_no_init;
-  };
-  bool m_has_val;
 };
 
 // `T` is `void`
 template <class E> struct expected_storage_base<void, E> {
-  constexpr expected_storage_base() : m_has_val(true) {}
-  constexpr expected_storage_base(no_init_t) : m_val(), m_has_val(false) {}
-
-  constexpr expected_storage_base(in_place_t) : m_has_val(true) {}
-
-  template <
-      class... Args,
-      std::enable_if_t<std::is_constructible<E, Args&&...>::value>* = nullptr>
-  constexpr explicit expected_storage_base(unexpect_t, Args&&... args)
-      : m_unexpect(std::forward<Args>(args)...), m_has_val(false)
-  {
-  }
-
-  template <class U, class... Args,
-            std::enable_if_t<std::is_constructible<
-                E, std::initializer_list<U>&, Args&&...>::value>* = nullptr>
-  constexpr explicit expected_storage_base(unexpect_t,
-                                           std::initializer_list<U> il,
-                                           Args&&... args)
-      : m_unexpect(il, std::forward<Args>(args)...), m_has_val(false)
-  {
-  }
-
-  ~expected_storage_base()
-  {
-    if (!m_has_val) { m_unexpect.~unexpected<E>(); }
-  }
-  ~expected_storage_base() requires(std::is_trivially_destructible_v<E>) =
-      default;
   struct dummy {
   };
   union {
@@ -232,6 +202,35 @@ template <class E> struct expected_storage_base<void, E> {
     dummy m_val;
   };
   bool m_has_val;
+
+  constexpr expected_storage_base() : m_has_val(true) {}
+  constexpr expected_storage_base(no_init_t) : m_val(), m_has_val(false) {}
+  constexpr expected_storage_base(in_place_t) : m_has_val(true) {}
+
+  template <class... Args>
+  constexpr explicit expected_storage_base(unexpect_t, Args&&... args) requires(
+      std::is_constructible_v<E, Args&&...>)
+      : m_unexpect(std::forward<Args>(args)...), m_has_val(false)
+  {
+  }
+
+  template <class U, class... Args>
+  constexpr explicit expected_storage_base(
+      unexpect_t, std::initializer_list<U> il,
+      Args&&... args) requires(std::
+                                   is_constructible_v<
+                                       E, std::initializer_list<U>&, Args&&...>)
+      : m_unexpect(il, std::forward<Args>(args)...), m_has_val(false)
+  {
+  }
+
+  constexpr ~expected_storage_base()
+  {
+    if (!m_has_val) { m_unexpect.~unexpected<E>(); }
+  }
+
+  constexpr ~expected_storage_base() requires(
+      std::is_trivially_destructible_v<E>) = default;
 };
 
 // This base class provides some handy member functions which can be used in
@@ -240,19 +239,20 @@ template <class T, class E>
 struct expected_operations_base : expected_storage_base<T, E> {
   using expected_storage_base<T, E>::expected_storage_base;
 
-  template <class... Args> void construct(Args&&... args) noexcept
+  template <class... Args> constexpr void construct(Args&&... args) noexcept
   {
     new (std::addressof(this->m_val)) T(std::forward<Args>(args)...);
     this->m_has_val = true;
   }
 
-  template <class Rhs> void construct_with(Rhs&& rhs) noexcept
+  template <class Rhs> constexpr void construct_with(Rhs&& rhs) noexcept
   {
     new (std::addressof(this->m_val)) T(std::forward<Rhs>(rhs).get());
     this->m_has_val = true;
   }
 
-  template <class... Args> void construct_error(Args&&... args) noexcept
+  template <class... Args>
+  constexpr void construct_error(Args&&... args) noexcept
   {
     new (std::addressof(this->m_unexpect))
         unexpected<E>(std::forward<Args>(args)...);
@@ -265,10 +265,9 @@ struct expected_operations_base : expected_storage_base<T, E> {
   //
   // This overload handles the case where we can just copy-construct `T`
   // directly into place without throwing.
-  template <
-      class U = T,
-      std::enable_if_t<std::is_nothrow_copy_constructible<U>::value>* = nullptr>
-  void assign(const expected_operations_base& rhs) noexcept
+  template <class U = T>
+  constexpr void assign(const expected_operations_base& rhs) noexcept
+      requires(std::is_nothrow_copy_constructible_v<U>)
   {
     if (!this->m_has_val && rhs.m_has_val) {
       geterr().~unexpected<E>();
@@ -280,11 +279,10 @@ struct expected_operations_base : expected_storage_base<T, E> {
 
   // This overload handles the case where we can attempt to create a copy of
   // `T`, then no-throw move it into place if the copy was successful.
-  template <
-      class U = T,
-      std::enable_if_t<!std::is_nothrow_copy_constructible<U>::value &&
-                       std::is_nothrow_move_constructible<U>::value>* = nullptr>
-  void assign(const expected_operations_base& rhs) noexcept
+  template <class U = T>
+  constexpr void assign(const expected_operations_base& rhs) noexcept
+      requires(!std::is_nothrow_copy_constructible_v<U> &&
+               std::is_nothrow_move_constructible_v<U>)
   {
     if (!this->m_has_val && rhs.m_has_val) {
       T tmp = rhs.get();
@@ -300,11 +298,10 @@ struct expected_operations_base : expected_storage_base<T, E> {
   // If the construction succeeds, then everything is fine, but if it throws,
   // then we move the old unexpected value back into place before rethrowing the
   // exception.
-  template <class U = T,
-            std::enable_if_t<!std::is_nothrow_copy_constructible<U>::value &&
-                             !std::is_nothrow_move_constructible<U>::value>* =
-                nullptr>
-  void assign(const expected_operations_base& rhs)
+  template <class U = T>
+  constexpr void assign(const expected_operations_base& rhs) requires(
+      !std::is_nothrow_copy_constructible_v<U> &&
+      !std::is_nothrow_move_constructible_v<U>)
   {
     if (!this->m_has_val && rhs.m_has_val) {
       auto tmp = std::move(geterr());
@@ -321,10 +318,9 @@ struct expected_operations_base : expected_storage_base<T, E> {
   }
 
   // These overloads do the same as above, but for rvalues
-  template <
-      class U = T,
-      std::enable_if_t<std::is_nothrow_move_constructible<U>::value>* = nullptr>
-  void assign(expected_operations_base&& rhs) noexcept
+  template <class U = T>
+  constexpr void assign(expected_operations_base&& rhs) noexcept
+      requires(std::is_nothrow_move_constructible_v<U>)
   {
     if (!this->m_has_val && rhs.m_has_val) {
       geterr().~unexpected<E>();
@@ -334,10 +330,9 @@ struct expected_operations_base : expected_storage_base<T, E> {
     }
   }
 
-  template <class U = T,
-            std::enable_if_t<!std::is_nothrow_move_constructible<U>::value>* =
-                nullptr>
-  void assign(expected_operations_base&& rhs)
+  template <class U = T>
+  constexpr void assign(expected_operations_base&& rhs) requires(
+      !std::is_nothrow_move_constructible_v<U>)
   {
     if (!this->m_has_val && rhs.m_has_val) {
       auto tmp = std::move(geterr());
@@ -354,7 +349,7 @@ struct expected_operations_base : expected_storage_base<T, E> {
   }
 
   // The common part of move/copy assigning
-  template <class Rhs> void assign_common(Rhs&& rhs)
+  template <class Rhs> constexpr void assign_common(Rhs&& rhs)
   {
     if (this->m_has_val) {
       if (rhs.m_has_val) {
@@ -368,41 +363,41 @@ struct expected_operations_base : expected_storage_base<T, E> {
     }
   }
 
-  bool has_value() const
+  [[nodiscard]] constexpr auto has_value() const -> bool
   {
     return this->m_has_val;
   }
 
-  constexpr T& get() &
+  [[nodiscard]] constexpr auto get() & -> T&
   {
     return this->m_val;
   }
-  constexpr const T& get() const&
+  [[nodiscard]] constexpr auto get() const& -> const T&
   {
     return this->m_val;
   }
-  constexpr T&& get() &&
+  [[nodiscard]] constexpr auto get() && -> T&&
   {
     return std::move(this->m_val);
   }
-  constexpr const T&& get() const&&
+  [[nodiscard]] constexpr auto get() const&& -> const T&&
   {
     return std::move(this->m_val);
   }
 
-  constexpr unexpected<E>& geterr() &
+  [[nodiscard]] constexpr auto geterr() & -> unexpected<E>&
   {
     return this->m_unexpect;
   }
-  constexpr const unexpected<E>& geterr() const&
+  [[nodiscard]] constexpr auto geterr() const& -> const unexpected<E>&
   {
     return this->m_unexpect;
   }
-  constexpr unexpected<E>&& geterr() &&
+  [[nodiscard]] constexpr auto geterr() && -> unexpected<E>&&
   {
     return std::move(this->m_unexpect);
   }
-  constexpr const unexpected<E>&& geterr() const&&
+  [[nodiscard]] constexpr auto geterr() const&& -> const unexpected<E>&&
   {
     return std::move(this->m_unexpect);
   }
@@ -419,26 +414,27 @@ template <class E>
 struct expected_operations_base<void, E> : expected_storage_base<void, E> {
   using expected_storage_base<void, E>::expected_storage_base;
 
-  template <class... Args> void construct() noexcept
+  template <class... Args> constexpr void construct() noexcept
   {
     this->m_has_val = true;
   }
 
   // This function doesn't use its argument, but needs it so that code in
   // levels above this can work independently of whether T is void
-  template <class Rhs> void construct_with(Rhs&&) noexcept
+  template <class Rhs> constexpr void construct_with(Rhs&&) noexcept
   {
     this->m_has_val = true;
   }
 
-  template <class... Args> void construct_error(Args&&... args) noexcept
+  template <class... Args>
+  constexpr void construct_error(Args&&... args) noexcept
   {
     new (std::addressof(this->m_unexpect))
         unexpected<E>(std::forward<Args>(args)...);
     this->m_has_val = false;
   }
 
-  template <class Rhs> void assign(Rhs&& rhs) noexcept
+  template <class Rhs> constexpr void assign(Rhs&& rhs) noexcept
   {
     if (!this->m_has_val) {
       if (rhs.m_has_val) {
@@ -452,24 +448,24 @@ struct expected_operations_base<void, E> : expected_storage_base<void, E> {
     }
   }
 
-  bool has_value() const
+  [[nodiscard]] constexpr auto has_value() const -> bool
   {
     return this->m_has_val;
   }
 
-  constexpr unexpected<E>& geterr() &
+  [[nodiscard]] constexpr auto geterr() & -> unexpected<E>&
   {
     return this->m_unexpect;
   }
-  constexpr const unexpected<E>& geterr() const&
+  [[nodiscard]] constexpr auto geterr() const& -> const unexpected<E>&
   {
     return this->m_unexpect;
   }
-  constexpr unexpected<E>&& geterr() &&
+  [[nodiscard]] constexpr auto geterr() && -> unexpected<E>&&
   {
     return std::move(this->m_unexpect);
   }
-  constexpr const unexpected<E>&& geterr() const&&
+  [[nodiscard]] constexpr auto geterr() const&& -> const unexpected<E>&&
   {
     return std::move(this->m_unexpect);
   }
