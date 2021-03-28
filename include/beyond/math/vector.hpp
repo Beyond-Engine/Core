@@ -543,6 +543,30 @@ template <typename T>
 /** @}
  *  @} */
 
+namespace detail {
+[[nodiscard]] constexpr auto hash_combine(std::size_t seed, std::size_t hash)
+    -> std::size_t
+{
+  return hash + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+}
+} // namespace detail
+
 } // namespace beyond
+
+namespace std {
+
+template <typename T, std::size_t N> struct hash<beyond::TVec<T, N>> {
+  [[nodiscard]] constexpr auto
+  operator()(const beyond::TVec<T, N>& vec) const noexcept -> std::size_t
+  {
+    std::size_t seed = 0;
+    for (std::size_t i = 0; i < N; ++i) {
+      seed ^= beyond::detail::hash_combine(seed, std::hash<T>{}(vec[i]));
+    }
+    return seed;
+  }
+};
+
+} // namespace std
 
 #endif // BEYOND_CORE_MATH_VECTOR_HPP
