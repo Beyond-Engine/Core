@@ -124,16 +124,24 @@ template <class T>
 using is_move_assignable_or_void = is_void_or<T, std::is_move_assignable<T>>;
 
 template <class T>
-concept support_trivial_copy_assignment =
+concept support_expected_trivial_copy_assignment =
     std::is_trivially_copy_assignable_v<T>&&
         std::is_trivially_copy_constructible_v<T>&&
             std::is_trivially_destructible_v<T>;
 
 template <class T>
-concept support_trivial_move_assignment =
+concept support_expected_trivial_move_assignment =
     std::is_trivially_move_assignable_v<T>&&
         std::is_trivially_move_constructible_v<T>&&
             std::is_trivially_destructible_v<T>;
+
+template <class T>
+concept support_expected_copy_assignment =
+    std::is_copy_constructible_v<T>&& std::is_copy_assignable_v<T>;
+
+template <class T>
+concept support_expected_move_assignment =
+    std::is_move_constructible_v<T>&& std::is_move_assignable_v<T>;
 
 } // namespace detail
 
@@ -153,6 +161,9 @@ template <class T, class E> struct expected_storage_base {
   bool m_has_val;
 
   constexpr expected_storage_base() : m_val(T{}), m_has_val(true) {}
+  constexpr expected_storage_base() requires(
+      !std::is_default_constructible_v<T>) = delete;
+
   constexpr expected_storage_base(no_init_t) : m_no_init(), m_has_val(false) {}
 
   template <class... Args>
@@ -493,6 +504,9 @@ template <class T, class E> struct expected_base : expected_storage_base<T, E> {
       (std::is_void_v<T> ||
        std::is_trivially_copy_constructible_v<
            T>)&&std::is_trivially_copy_constructible_v<E>) = default;
+  constexpr expected_base(const expected_base&) requires(
+      !(std::is_void_v<T> || std::is_copy_constructible_v<T>) ||
+      !std::is_copy_constructible_v<E>) = delete;
 
   // Move constrcutor
   constexpr expected_base(expected_base&& rhs) noexcept
@@ -510,6 +524,9 @@ template <class T, class E> struct expected_base : expected_storage_base<T, E> {
       requires((std::is_void_v<T> ||
                 std::is_trivially_move_constructible_v<
                     T>)&&std::is_trivially_move_constructible_v<E>) = default;
+  constexpr expected_base(expected_base&&) noexcept
+      requires(!(std::is_void_v<T> || std::is_move_constructible_v<T>) ||
+               !std::is_move_constructible_v<E>) = delete;
 
   // Copy assignment
   constexpr auto operator=(const expected_base& rhs) -> expected_base&
@@ -517,11 +534,14 @@ template <class T, class E> struct expected_base : expected_storage_base<T, E> {
     this->assign(rhs);
     return *this;
   }
-  constexpr auto
-  operator=(const expected_base& rhs) -> expected_base& requires((
-      std::is_void_v<T> ||
-      support_trivial_copy_assignment<T>)&&support_trivial_copy_assignment<E>) =
-      default;
+  constexpr auto operator=(const expected_base& rhs) -> expected_base& requires(
+      (std::is_void_v<T> ||
+       support_expected_trivial_copy_assignment<
+           T>)&&support_expected_trivial_copy_assignment<E>) = default;
+  constexpr auto operator=(const expected_base& rhs)
+      -> expected_base& requires(!(std::is_void_v<T> ||
+                                   support_expected_copy_assignment<T>) ||
+                                 !support_expected_copy_assignment<E>) = delete;
 
   // Move assignment
   constexpr auto operator=(expected_base&& rhs) noexcept -> expected_base&
@@ -531,158 +551,17 @@ template <class T, class E> struct expected_base : expected_storage_base<T, E> {
     this->assign(std::move(rhs));
     return *this;
   }
-  constexpr auto
-  operator=(expected_base&& rhs) noexcept -> expected_base& requires((
-      std::is_void_v<T> ||
-      support_trivial_move_assignment<T>)&&support_trivial_move_assignment<E>) =
-      default;
+  constexpr auto operator=(expected_base&& rhs) noexcept
+      -> expected_base& requires(
+          (std::is_void_v<T> ||
+           support_expected_trivial_move_assignment<
+               T>)&&support_expected_trivial_move_assignment<E>) = default;
+  constexpr auto operator=(expected_base&& rhs) noexcept
+      -> expected_base& requires(!(std::is_void_v<T> ||
+                                   support_expected_move_assignment<T>) ||
+                                 !support_expected_move_assignment<E>) = delete;
 };
 
-// expected_delete_ctor_base will conditionally delete copy and move
-// constructors depending on whether T is copy/move constructible
-template <class T, class E,
-          bool EnableCopy = (is_copy_constructible_or_void<T>::value &&
-                             std::is_copy_constructible<E>::value),
-          bool EnableMove = (is_move_constructible_or_void<T>::value &&
-                             std::is_move_constructible<E>::value)>
-struct expected_delete_ctor_base {
-  expected_delete_ctor_base() = default;
-  expected_delete_ctor_base(const expected_delete_ctor_base&) = default;
-  expected_delete_ctor_base(expected_delete_ctor_base&&) noexcept = default;
-  expected_delete_ctor_base&
-  operator=(const expected_delete_ctor_base&) = default;
-  expected_delete_ctor_base&
-  operator=(expected_delete_ctor_base&&) noexcept = default;
-};
-
-template <class T, class E>
-struct expected_delete_ctor_base<T, E, true, false> {
-  expected_delete_ctor_base() = default;
-  expected_delete_ctor_base(const expected_delete_ctor_base&) = default;
-  expected_delete_ctor_base(expected_delete_ctor_base&&) noexcept = delete;
-  expected_delete_ctor_base&
-  operator=(const expected_delete_ctor_base&) = default;
-  expected_delete_ctor_base&
-  operator=(expected_delete_ctor_base&&) noexcept = default;
-};
-
-template <class T, class E>
-struct expected_delete_ctor_base<T, E, false, true> {
-  expected_delete_ctor_base() = default;
-  expected_delete_ctor_base(const expected_delete_ctor_base&) = delete;
-  expected_delete_ctor_base(expected_delete_ctor_base&&) noexcept = default;
-  expected_delete_ctor_base&
-  operator=(const expected_delete_ctor_base&) = default;
-  expected_delete_ctor_base&
-  operator=(expected_delete_ctor_base&&) noexcept = default;
-};
-
-template <class T, class E>
-struct expected_delete_ctor_base<T, E, false, false> {
-  expected_delete_ctor_base() = default;
-  expected_delete_ctor_base(const expected_delete_ctor_base&) = delete;
-  expected_delete_ctor_base(expected_delete_ctor_base&&) noexcept = delete;
-  expected_delete_ctor_base&
-  operator=(const expected_delete_ctor_base&) = default;
-  expected_delete_ctor_base&
-  operator=(expected_delete_ctor_base&&) noexcept = default;
-};
-
-// expected_delete_assign_base will conditionally delete copy and move
-// constructors depending on whether T and E are copy/move constructible +
-// assignable
-template <class T, class E,
-          bool EnableCopy = (is_copy_constructible_or_void<T>::value &&
-                             std::is_copy_constructible<E>::value &&
-                             is_copy_assignable_or_void<T>::value &&
-                             std::is_copy_assignable<E>::value),
-          bool EnableMove = (is_move_constructible_or_void<T>::value &&
-                             std::is_move_constructible<E>::value &&
-                             is_move_assignable_or_void<T>::value &&
-                             std::is_move_assignable<E>::value)>
-struct expected_delete_assign_base {
-  expected_delete_assign_base() = default;
-  expected_delete_assign_base(const expected_delete_assign_base&) = default;
-  expected_delete_assign_base(expected_delete_assign_base&&) noexcept = default;
-  expected_delete_assign_base&
-  operator=(const expected_delete_assign_base&) = default;
-  expected_delete_assign_base&
-  operator=(expected_delete_assign_base&&) noexcept = default;
-};
-
-template <class T, class E>
-struct expected_delete_assign_base<T, E, true, false> {
-  expected_delete_assign_base() = default;
-  expected_delete_assign_base(const expected_delete_assign_base&) = default;
-  expected_delete_assign_base(expected_delete_assign_base&&) noexcept = default;
-  expected_delete_assign_base&
-  operator=(const expected_delete_assign_base&) = default;
-  expected_delete_assign_base&
-  operator=(expected_delete_assign_base&&) noexcept = delete;
-};
-
-template <class T, class E>
-struct expected_delete_assign_base<T, E, false, true> {
-  expected_delete_assign_base() = default;
-  expected_delete_assign_base(const expected_delete_assign_base&) = default;
-  expected_delete_assign_base(expected_delete_assign_base&&) noexcept = default;
-  expected_delete_assign_base&
-  operator=(const expected_delete_assign_base&) = delete;
-  expected_delete_assign_base&
-  operator=(expected_delete_assign_base&&) noexcept = default;
-};
-
-template <class T, class E>
-struct expected_delete_assign_base<T, E, false, false> {
-  expected_delete_assign_base() = default;
-  expected_delete_assign_base(const expected_delete_assign_base&) = default;
-  expected_delete_assign_base(expected_delete_assign_base&&) noexcept = default;
-  expected_delete_assign_base&
-  operator=(const expected_delete_assign_base&) = delete;
-  expected_delete_assign_base&
-  operator=(expected_delete_assign_base&&) noexcept = delete;
-};
-
-// This is needed to be able to construct the expected_default_ctor_base which
-// follows, while still conditionally deleting the default constructor.
-struct default_constructor_tag {
-  explicit constexpr default_constructor_tag() = default;
-};
-
-// expected_default_ctor_base will ensure that expected has a deleted default
-// consturctor if T is not default constructible.
-// This specialization is for when T is default constructible
-template <class T, class E,
-          bool Enable =
-              std::is_default_constructible<T>::value || std::is_void<T>::value>
-struct expected_default_ctor_base {
-  constexpr expected_default_ctor_base() noexcept = default;
-  constexpr expected_default_ctor_base(
-      expected_default_ctor_base const&) noexcept = default;
-  constexpr expected_default_ctor_base(expected_default_ctor_base&&) noexcept =
-      default;
-  expected_default_ctor_base&
-  operator=(expected_default_ctor_base const&) noexcept = default;
-  expected_default_ctor_base&
-  operator=(expected_default_ctor_base&&) noexcept = default;
-
-  constexpr explicit expected_default_ctor_base(default_constructor_tag) {}
-};
-
-// This specialization is for when T is not default constructible
-template <class T, class E> struct expected_default_ctor_base<T, E, false> {
-  constexpr expected_default_ctor_base() noexcept = delete;
-  constexpr expected_default_ctor_base(
-      expected_default_ctor_base const&) noexcept = default;
-  constexpr expected_default_ctor_base(expected_default_ctor_base&&) noexcept =
-      default;
-  expected_default_ctor_base&
-  operator=(expected_default_ctor_base const&) noexcept = default;
-  expected_default_ctor_base&
-  operator=(expected_default_ctor_base&&) noexcept = default;
-
-  constexpr explicit expected_default_ctor_base(default_constructor_tag) {}
-};
 } // namespace detail
 
 /// An `expected<T, E>` object is an object that contains the storage for
@@ -693,10 +572,7 @@ template <class T, class E> struct expected_default_ctor_base<T, E, false> {
 /// has been destroyed. The initialization state of the contained object is
 /// tracked by the expected object.
 template <class T, class E>
-class expected : private detail::expected_base<T, E>,
-                 private detail::expected_delete_ctor_base<T, E>,
-                 private detail::expected_delete_assign_base<T, E>,
-                 private detail::expected_default_ctor_base<T, E> {
+class expected : private detail::expected_base<T, E> {
   static_assert(!std::is_reference<T>::value, "T must not be a reference");
   static_assert(!std::is_same<T, std::remove_cv<in_place_t>>::value,
                 "T must not be in_place_t");
@@ -723,8 +599,7 @@ class expected : private detail::expected_base<T, E>,
     return std::addressof(this->m_unexpect);
   }
 
-  template <class U = T, std::enable_if_t<!std::is_void<U>::value>* = nullptr>
-  constexpr U& val()
+  template <class U = T> constexpr U& val() requires(!std::is_void_v<U>)
   {
     return this->m_val;
   }
@@ -733,8 +608,8 @@ class expected : private detail::expected_base<T, E>,
     return this->m_unexpect;
   }
 
-  template <class U = T, std::enable_if_t<!std::is_void<U>::value>* = nullptr>
-  constexpr const U& val() const
+  template <class U = T>
+  constexpr const U& val() const requires(!std::is_void_v<U>)
   {
     return this->m_val;
   }
@@ -744,7 +619,6 @@ class expected : private detail::expected_base<T, E>,
   }
 
   using impl_base = detail::expected_base<T, E>;
-  using ctor_base = detail::expected_default_ctor_base<T, E>;
 
 public:
   typedef T value_type;
@@ -888,8 +762,7 @@ public:
       class... Args,
       std::enable_if_t<std::is_constructible<T, Args&&...>::value>* = nullptr>
   constexpr expected(in_place_t, Args&&... args)
-      : impl_base(in_place, std::forward<Args>(args)...),
-        ctor_base(detail::default_constructor_tag{})
+      : impl_base(in_place, std::forward<Args>(args)...)
   {
   }
 
@@ -897,8 +770,7 @@ public:
             std::enable_if_t<std::is_constructible<
                 T, std::initializer_list<U>&, Args&&...>::value>* = nullptr>
   constexpr expected(in_place_t, std::initializer_list<U> il, Args&&... args)
-      : impl_base(in_place, il, std::forward<Args>(args)...),
-        ctor_base(detail::default_constructor_tag{})
+      : impl_base(in_place, il, std::forward<Args>(args)...)
   {
   }
 
@@ -907,8 +779,7 @@ public:
       std::enable_if_t<std::is_constructible<E, const G&>::value>* = nullptr,
       std::enable_if_t<!std::is_convertible<const G&, E>::value>* = nullptr>
   explicit constexpr expected(const unexpected<G>& e)
-      : impl_base(unexpect, e.value()),
-        ctor_base(detail::default_constructor_tag{})
+      : impl_base(unexpect, e.value())
   {
   }
 
@@ -916,9 +787,7 @@ public:
       class G = E,
       std::enable_if_t<std::is_constructible<E, const G&>::value>* = nullptr,
       std::enable_if_t<std::is_convertible<const G&, E>::value>* = nullptr>
-  constexpr expected(unexpected<G> const& e)
-      : impl_base(unexpect, e.value()),
-        ctor_base(detail::default_constructor_tag{})
+  constexpr expected(unexpected<G> const& e) : impl_base(unexpect, e.value())
   {
   }
 
@@ -927,8 +796,7 @@ public:
             std::enable_if_t<!std::is_convertible<G&&, E>::value>* = nullptr>
   explicit constexpr expected(unexpected<G>&& e) noexcept(
       std::is_nothrow_constructible<E, G&&>::value)
-      : impl_base(unexpect, std::move(e.value())),
-        ctor_base(detail::default_constructor_tag{})
+      : impl_base(unexpect, std::move(e.value()))
   {
   }
 
@@ -937,8 +805,7 @@ public:
             std::enable_if_t<std::is_convertible<G&&, E>::value>* = nullptr>
   constexpr expected(unexpected<G>&& e) noexcept(
       std::is_nothrow_constructible<E, G&&>::value)
-      : impl_base(unexpect, std::move(e.value())),
-        ctor_base(detail::default_constructor_tag{})
+      : impl_base(unexpect, std::move(e.value()))
   {
   }
 
@@ -946,8 +813,7 @@ public:
       class... Args,
       std::enable_if_t<std::is_constructible<E, Args&&...>::value>* = nullptr>
   constexpr explicit expected(unexpect_t, Args&&... args)
-      : impl_base(unexpect, std::forward<Args>(args)...),
-        ctor_base(detail::default_constructor_tag{})
+      : impl_base(unexpect, std::forward<Args>(args)...)
   {
   }
 
@@ -956,8 +822,7 @@ public:
                 E, std::initializer_list<U>&, Args&&...>::value>* = nullptr>
   constexpr explicit expected(unexpect_t, std::initializer_list<U> il,
                               Args&&... args)
-      : impl_base(unexpect, il, std::forward<Args>(args)...),
-        ctor_base(detail::default_constructor_tag{})
+      : impl_base(unexpect, il, std::forward<Args>(args)...)
   {
   }
 
@@ -968,7 +833,6 @@ public:
       detail::expected_enable_from_other<T, E, U, G, const U&, const G&>* =
           nullptr>
   explicit constexpr expected(const expected<U, G>& rhs)
-      : ctor_base(detail::default_constructor_tag{})
   {
     if (rhs.has_value()) {
       this->construct(*rhs);
@@ -984,7 +848,6 @@ public:
       detail::expected_enable_from_other<T, E, U, G, const U&, const G&>* =
           nullptr>
   constexpr expected(const expected<U, G>& rhs)
-      : ctor_base(detail::default_constructor_tag{})
   {
     if (rhs.has_value()) {
       this->construct(*rhs);
@@ -998,7 +861,6 @@ public:
                                std::is_convertible<G&&, E>::value)>* = nullptr,
             detail::expected_enable_from_other<T, E, U, G, U&&, G&&>* = nullptr>
   explicit constexpr expected(expected<U, G>&& rhs)
-      : ctor_base(detail::default_constructor_tag{})
   {
     if (rhs.has_value()) {
       this->construct(std::move(*rhs));
@@ -1012,7 +874,6 @@ public:
                               std::is_convertible<G&&, E>::value)>* = nullptr,
             detail::expected_enable_from_other<T, E, U, G, U&&, G&&>* = nullptr>
   constexpr expected(expected<U, G>&& rhs)
-      : ctor_base(detail::default_constructor_tag{})
   {
     if (rhs.has_value()) {
       this->construct(std::move(*rhs));
