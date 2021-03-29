@@ -223,7 +223,7 @@ template <class T, class E> struct expected_storage_base {
 
   template <class Rhs> constexpr void construct_with(Rhs&& rhs) noexcept
   {
-    new (std::addressof(this->m_val)) T(std::forward<Rhs>(rhs).get());
+    new (std::addressof(this->m_val)) T(*std::forward<Rhs>(rhs));
     this->m_has_val = true;
   }
 
@@ -386,6 +386,7 @@ template <class T, class E> struct expected_storage_base {
 
 // `T` is `void`
 template <class E> struct expected_storage_base<void, E> {
+
   struct dummy {
   };
   union {
@@ -485,83 +486,6 @@ template <class E> struct expected_storage_base<void, E> {
   }
 };
 
-template <class T, class E> struct expected_base : expected_storage_base<T, E> {
-  using expected_storage_base<T, E>::expected_storage_base;
-
-  constexpr expected_base() = default;
-
-  // Copy constructor
-  constexpr expected_base(const expected_base& rhs)
-      : expected_storage_base<T, E>(no_init)
-  {
-    if (rhs.has_value()) {
-      this->construct_with(rhs);
-    } else {
-      this->construct_error(rhs.geterr());
-    }
-  }
-  constexpr expected_base(const expected_base&) requires(
-      (std::is_void_v<T> ||
-       std::is_trivially_copy_constructible_v<
-           T>)&&std::is_trivially_copy_constructible_v<E>) = default;
-  constexpr expected_base(const expected_base&) requires(
-      !(std::is_void_v<T> || std::is_copy_constructible_v<T>) ||
-      !std::is_copy_constructible_v<E>) = delete;
-
-  // Move constrcutor
-  constexpr expected_base(expected_base&& rhs) noexcept
-      : expected_base<T, E>(no_init)
-  {
-    static_assert(std::is_nothrow_move_constructible_v<T>);
-    static_assert(std::is_nothrow_move_constructible_v<E>);
-    if (rhs.has_value()) {
-      this->construct_with(std::move(rhs));
-    } else {
-      this->construct_error(std::move(rhs.geterr()));
-    }
-  }
-  constexpr expected_base(expected_base&& rhs) noexcept
-      requires((std::is_void_v<T> ||
-                std::is_trivially_move_constructible_v<
-                    T>)&&std::is_trivially_move_constructible_v<E>) = default;
-  constexpr expected_base(expected_base&&) noexcept
-      requires(!(std::is_void_v<T> || std::is_move_constructible_v<T>) ||
-               !std::is_move_constructible_v<E>) = delete;
-
-  // Copy assignment
-  constexpr auto operator=(const expected_base& rhs) -> expected_base&
-  {
-    this->assign(rhs);
-    return *this;
-  }
-  constexpr auto operator=(const expected_base& rhs) -> expected_base& requires(
-      (std::is_void_v<T> ||
-       support_expected_trivial_copy_assignment<
-           T>)&&support_expected_trivial_copy_assignment<E>) = default;
-  constexpr auto operator=(const expected_base& rhs)
-      -> expected_base& requires(!(std::is_void_v<T> ||
-                                   support_expected_copy_assignment<T>) ||
-                                 !support_expected_copy_assignment<E>) = delete;
-
-  // Move assignment
-  constexpr auto operator=(expected_base&& rhs) noexcept -> expected_base&
-  {
-    static_assert(std::is_nothrow_move_constructible_v<T> &&
-                  std::is_nothrow_move_assignable_v<T>);
-    this->assign(std::move(rhs));
-    return *this;
-  }
-  constexpr auto operator=(expected_base&& rhs) noexcept
-      -> expected_base& requires(
-          (std::is_void_v<T> ||
-           support_expected_trivial_move_assignment<
-               T>)&&support_expected_trivial_move_assignment<E>) = default;
-  constexpr auto operator=(expected_base&& rhs) noexcept
-      -> expected_base& requires(!(std::is_void_v<T> ||
-                                   support_expected_move_assignment<T>) ||
-                                 !support_expected_move_assignment<E>) = delete;
-};
-
 } // namespace detail
 
 /// An `expected<T, E>` object is an object that contains the storage for
@@ -572,7 +496,7 @@ template <class T, class E> struct expected_base : expected_storage_base<T, E> {
 /// has been destroyed. The initialization state of the contained object is
 /// tracked by the expected object.
 template <class T, class E>
-class expected : private detail::expected_base<T, E> {
+class expected : private detail::expected_storage_base<T, E> {
   static_assert(!std::is_reference<T>::value, "T must not be a reference");
   static_assert(!std::is_same<T, std::remove_cv<in_place_t>>::value,
                 "T must not be in_place_t");
@@ -581,6 +505,11 @@ class expected : private detail::expected_base<T, E> {
   static_assert(!std::is_same<T, std::remove_cv<unexpected<E>>>::value,
                 "T must not be unexpected<E>");
   static_assert(!std::is_reference<E>::value, "E must not be a reference");
+
+  constexpr auto get()
+  {
+    return detail::expected_storage_base<T, E>::get();
+  }
 
   T* valptr()
   {
@@ -618,12 +547,83 @@ class expected : private detail::expected_base<T, E> {
     return this->m_unexpect;
   }
 
-  using impl_base = detail::expected_base<T, E>;
+  using impl_base = detail::expected_storage_base<T, E>;
 
 public:
   typedef T value_type;
   typedef E error_type;
   typedef unexpected<E> unexpected_type;
+
+  using detail::expected_storage_base<T, E>::expected_storage_base;
+
+  constexpr expected() = default;
+
+  // Copy constructor
+  constexpr expected(const expected& rhs)
+      : detail::expected_storage_base<T, E>(detail::no_init)
+  {
+    if (rhs.has_value()) {
+      this->construct_with(rhs);
+    } else {
+      this->construct_error(rhs.geterr());
+    }
+  }
+  constexpr expected(const expected&) requires(
+      (std::is_void_v<T> ||
+       std::is_trivially_copy_constructible_v<
+           T>)&&std::is_trivially_copy_constructible_v<E>) = default;
+  constexpr expected(const expected&) requires(
+      !(std::is_void_v<T> || std::is_copy_constructible_v<T>) ||
+      !std::is_copy_constructible_v<E>) = delete;
+
+  // Move constrcutor
+  constexpr expected(expected&& rhs) noexcept : expected<T, E>(detail::no_init)
+  {
+    static_assert(std::is_nothrow_move_constructible_v<T>);
+    static_assert(std::is_nothrow_move_constructible_v<E>);
+    if (rhs.has_value()) {
+      this->construct_with(std::move(rhs));
+    } else {
+      this->construct_error(std::move(rhs.geterr()));
+    }
+  }
+  constexpr expected(expected&& rhs) noexcept
+      requires((std::is_void_v<T> ||
+                std::is_trivially_move_constructible_v<
+                    T>)&&std::is_trivially_move_constructible_v<E>) = default;
+  constexpr expected(expected&&) noexcept
+      requires(!(std::is_void_v<T> || std::is_move_constructible_v<T>) ||
+               !std::is_move_constructible_v<E>) = delete;
+
+  // Copy assignment
+  constexpr auto operator=(const expected& rhs) -> expected&
+  {
+    this->assign(rhs);
+    return *this;
+  }
+  constexpr auto operator=(const expected& rhs) -> expected& requires(
+      (std::is_void_v<T> ||
+       detail::support_expected_trivial_copy_assignment<
+           T>)&&detail::support_expected_trivial_copy_assignment<E>) = default;
+  constexpr auto operator=(const expected& rhs) -> expected& requires(
+      !(std::is_void_v<T> || detail::support_expected_copy_assignment<T>) ||
+      !detail::support_expected_copy_assignment<E>) = delete;
+
+  // Move assignment
+  constexpr auto operator=(expected&& rhs) noexcept -> expected&
+  {
+    static_assert(std::is_nothrow_move_constructible_v<T> &&
+                  std::is_nothrow_move_assignable_v<T>);
+    this->assign(std::move(rhs));
+    return *this;
+  }
+  constexpr auto operator=(expected&& rhs) noexcept -> expected& requires(
+      (std::is_void_v<T> ||
+       detail::support_expected_trivial_move_assignment<
+           T>)&&detail::support_expected_trivial_move_assignment<E>) = default;
+  constexpr auto operator=(expected&& rhs) noexcept -> expected& requires(
+      !(std::is_void_v<T> || detail::support_expected_move_assignment<T>) ||
+      !detail::support_expected_move_assignment<E>) = delete;
 
   /**
    * @name and_then
@@ -752,11 +752,6 @@ public:
    * @name constructors
    */
   /// @{
-  constexpr expected() = default;
-  constexpr expected(const expected& rhs) = default;
-  constexpr expected(expected&& rhs) = default;
-  expected& operator=(const expected& rhs) = default;
-  expected& operator=(expected&& rhs) = default;
 
   template <
       class... Args,
@@ -1204,10 +1199,7 @@ public:
   /// @}
 
   /// @brief Returns true if contain a value
-  constexpr bool has_value() const noexcept
-  {
-    return this->m_has_val;
-  }
+  using detail::expected_storage_base<T, E>::has_value;
 
   /// @brief Returns true if contain a value
   constexpr explicit operator bool() const noexcept
