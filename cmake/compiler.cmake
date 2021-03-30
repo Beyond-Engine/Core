@@ -93,6 +93,7 @@ if (BEYOND_CORE_ENABLE_PCH)
             <concepts>
             <ranges>
             <filesystem>
+            <exception>
             )
 endif ()
 
