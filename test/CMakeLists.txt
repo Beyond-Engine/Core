@@ -11,7 +11,6 @@ add_executable(${TEST_TARGET_NAME}
         algorithms/sort_by_key_test.cpp
         concurrency/task_queue_test.cpp
         concurrency/thread_pool_test.cpp
-        container/slot_map_test.cpp
         container/static_vector_test.cpp
         ecs/sparse_set_test.cpp
         ecs/sparse_map_test.cpp

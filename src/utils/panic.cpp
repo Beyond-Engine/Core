@@ -2,6 +2,8 @@
 
 #include <fmt/format.h>
 
+#if __has_include(<backward.hpp>)
+
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4267)
@@ -14,6 +16,8 @@
 #pragma warning(pop)
 #endif
 
+#endif
+
 #include "beyond/utils/panic.hpp"
 
 namespace beyond {
@@ -22,10 +26,12 @@ namespace beyond {
 {
   fmt::print(stderr, "beyond panic() invoked with message:\n{}\n", msg);
 
+#if __has_include(<backward.hpp>)
   backward::StackTrace st;
   st.load_here(32);
   backward::Printer p;
   p.print(st);
+#endif
 
   std::abort();
 }
