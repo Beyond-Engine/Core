@@ -61,7 +61,7 @@ jobs:
           source ~/.profile
           cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
                 -DCMAKE_CXX_STANDARD=${{matrix.std}} \
-                -DBEYOND_CORE_BUILD_TESTS=ON
+                -DBEYOND_CORE_BUILD_TESTS=ON -DBEYOND_CORE_USE_CMAKE_CONAN=ON
 
       - name: Build
         working-directory: ${{runner.workspace}}/build

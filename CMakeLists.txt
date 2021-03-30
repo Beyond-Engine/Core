@@ -14,6 +14,23 @@ option(BEYOND_CORE_BUILD_DOCUMENTATION
         "Build the documentation for the Beyond game engine core" OFF)
 option(BEYOND_CORE_ENABLE_TIME_TRACE "Enable compilation time profiling with -ftime-trace" OFF)
 
+option(BEYOND_CORE_USE_CMAKE_CONAN "Use cmake-conan to get dependencies" OFF)
+if (BEYOND_CORE_USE_CMAKE_CONAN)
+    set(CONAN_SYSTEM_INCLUDES ON)
+    if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+        message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+        file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/master/conan.cmake"
+                "${CMAKE_BINARY_DIR}/conan.cmake")
+    endif ()
+
+    include(${CMAKE_BINARY_DIR}/conan.cmake)
+    conan_check(VERSION 1.0.0 REQUIRED)
+
+    conan_cmake_run(CONANFILE conanfile.py  # or relative build/conanfile.txt
+            BASIC_SETUP
+            GENERATORS cmake_find_package
+            BUILD missing)
+endif ()
 
 if (BEYOND_CORE_BUILD_DOCUMENTATION)
     include("cmake/doxygen.cmake")
