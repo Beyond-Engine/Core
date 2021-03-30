@@ -9,6 +9,7 @@ target_link_libraries(catch_main PUBLIC Catch2::Catch2)
 
 add_executable(${TEST_TARGET_NAME}
         algorithms/sort_by_key_test.cpp
+        coroutine/generator_test.cpp
         concurrency/task_queue_test.cpp
         concurrency/thread_pool_test.cpp
         container/static_vector_test.cpp
@@ -37,7 +38,7 @@ add_executable(${TEST_TARGET_NAME}
         geometry/ray_test.cpp
         geometry/aabb_test.cpp
 
-        random/xorshift32_test.cpp container/at_opt_test.cpp ../include/beyond/container/at_opt.hpp container/array_test.cpp)
+        random/xorshift32_test.cpp container/at_opt_test.cpp ../include/beyond/container/at_opt.hpp container/array_test.cpp coroutine/generator_test.cpp)
 
 target_link_libraries(${TEST_TARGET_NAME}
         PRIVATE

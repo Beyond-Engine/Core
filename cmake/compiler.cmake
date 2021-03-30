@@ -47,6 +47,16 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
                 -Wlogical-op
                 -Wuseless-cast
                 )
+        target_compile_options(beyond_compiler_options
+                INTERFACE
+                -fconcepts-diagnostics-depth=5
+                )
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 11)
+            target_compile_options(beyond_compiler_options
+                    INTERFACE
+                    -fcoroutines
+                    )
+        endif ()
     endif ()
 
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
