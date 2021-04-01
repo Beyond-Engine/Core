@@ -36,7 +36,8 @@ template <typename Trait> struct VectorConverter<Trait, 0, 1> {
     return (*bit_cast<const VectorType*>(data));
   }
 
-  [[nodiscard]] static constexpr auto convert(ValueType* data) -> VectorType&
+  [[nodiscard]] static constexpr auto convert(ValueType* data) noexcept
+      -> VectorType&
   {
     return (*bit_cast<VectorType*>(data));
   }
@@ -52,7 +53,8 @@ template <typename Trait> struct VectorConverter<Trait, 1, 2> {
     return (*bit_cast<const VectorType*>(data + 1)); // NOLINT
   }
 
-  [[nodiscard]] static constexpr auto convert(ValueType* data) -> VectorType&
+  [[nodiscard]] static constexpr auto convert(ValueType* data) noexcept
+      -> VectorType&
   {
     return (bit_cast<VectorType>(data + 1)); // NOLINT
   }
@@ -68,7 +70,8 @@ template <typename Trait> struct VectorConverter<Trait, 2, 3> {
     return (*bit_cast<const VectorType*>(data + 2)); // NOLINT
   }
 
-  [[nodiscard]] static constexpr auto convert(ValueType* data) -> VectorType&
+  [[nodiscard]] static constexpr auto convert(ValueType* data) noexcept
+      -> VectorType&
   {
     return (bit_cast<VectorType>(data + 2)); // NOLINT
   }
@@ -97,7 +100,8 @@ template <typename Trait> struct VectorConverter<Trait, 0, 1, 2> {
     return (*bit_cast<const VectorType*>(data));
   }
 
-  [[nodiscard]] static constexpr auto convert(ValueType* data) -> VectorType&
+  [[nodiscard]] static constexpr auto convert(ValueType* data) noexcept
+      -> VectorType&
   {
     return (*bit_cast<VectorType*>(data));
   }
@@ -113,7 +117,8 @@ template <typename Trait> struct VectorConverter<Trait, 1, 2, 3> {
     return (*bit_cast<const VectorType*>(data + 1));
   }
 
-  [[nodiscard]] static constexpr auto convert(ValueType* data) -> VectorType&
+  [[nodiscard]] static constexpr auto convert(ValueType* data) noexcept
+      -> VectorType&
   {
     return (*bit_cast<VectorType*>(data + 1));
   }
@@ -143,7 +148,8 @@ template <typename Trait> struct VectorConverter<Trait, 0, 1, 2, 3> {
     return (*bit_cast<const VectorType*>(data));
   }
 
-  [[nodiscard]] static constexpr auto convert(ValueType* data) -> VectorType&
+  [[nodiscard]] static constexpr auto convert(ValueType* data) noexcept
+      -> VectorType&
   {
     return (*bit_cast<VectorType*>(data));
   }
@@ -173,7 +179,8 @@ struct Subvector {
 
   [[nodiscard]] constexpr operator PointType() noexcept
   {
-    return (detail::VectorConverter<Trait, indices...>::convert(elem.data()));
+    return beyond::bit_cast<PointType>(
+        detail::VectorConverter<Trait, indices...>::convert(elem.data()));
   }
 
   constexpr auto operator=(VectorType v) noexcept -> Subvector&
@@ -309,11 +316,29 @@ operator+(const Subvector<Trait, dimensions, indices1...>& v1,
 
 template <typename Trait, std::size_t dimensions, std::size_t... indices1>
 [[nodiscard]] constexpr auto
+operator+(const Subvector<Trait, dimensions, indices1...>& v1,
+          const typename Trait::PointType& v2) noexcept
+{
+  std::size_t i = 0;
+  return typename Trait::PointType{(v1.elem[indices1] + v2.elem[i++])...};
+}
+
+template <typename Trait, std::size_t dimensions, std::size_t... indices1>
+[[nodiscard]] constexpr auto
 operator+(const typename Trait::VectorType& v2,
           const Subvector<Trait, dimensions, indices1...>& v1) noexcept
 {
   std::size_t i = 0;
   return typename Trait::VectorType{(v1.elem[indices1] + v2.elem[i++])...};
+}
+
+template <typename Trait, std::size_t dimensions, std::size_t... indices1>
+[[nodiscard]] constexpr auto
+operator+(const typename Trait::PointType& v2,
+          const Subvector<Trait, dimensions, indices1...>& v1) noexcept
+{
+  std::size_t i = 0;
+  return typename Trait::PointType{(v1.elem[indices1] + v2.elem[i++])...};
 }
 
 template <typename Trait, std::size_t dimensions, std::size_t... indices1,
@@ -341,6 +366,15 @@ operator-(const typename Trait::VectorType& v2,
 {
   std::size_t i = 0;
   return typename Trait::VectorType{(v2.elem[i++] - v1.elem[indices1])...};
+}
+
+template <typename Trait, std::size_t dimensions, std::size_t... indices1>
+[[nodiscard]] constexpr auto
+operator-(const typename Trait::PointType& v2,
+          const Subvector<Trait, dimensions, indices1...>& v1) noexcept
+{
+  std::size_t i = 0;
+  return typename Trait::PointType{(v2.elem[i++] - v1.elem[indices1])...};
 }
 
 template <typename Trait, std::size_t dimensions, std::size_t... indices1,

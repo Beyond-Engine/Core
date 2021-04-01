@@ -4,6 +4,8 @@
 #include "math_fwd.hpp"
 #include "vector.hpp"
 
+#include <concepts>
+
 /**
  * @file point.hpp
  * @brief Provides TPoint classes
@@ -12,6 +14,8 @@
 
 namespace beyond {
 
+template <class T> concept Number = std::integral<T> || std::floating_point<T>;
+
 /**
  * @addtogroup core
  * @{
@@ -19,48 +23,98 @@ namespace beyond {
  * @{
  */
 
-template <typename T> struct TPoint<T, 2> : TVec<T, 2> {
-  using TVec<T, 2>::TVec;
-};
+template <typename T, std::size_t N> struct TPoint : TVec<T, N> {
+  using TVec<T, N>::TVec;
 
-template <typename T> struct TPoint<T, 3> : TVec<T, 3> {
-  using TVec<T, 3>::TVec;
-
-  constexpr TPoint(const TPoint<T, 2>& p, T zz) noexcept : TPoint{p.x, p.y, zz}
+  /**
+   * @brief TPoint + TVec = TPoint
+   */
+  [[nodiscard]] friend constexpr auto operator+(TPoint p,
+                                                const TVec<T, N>& v) noexcept
+      -> TPoint
   {
+    return [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      ((p[I] += v[I]), ...);
+      return p;
+    }
+    (std::make_index_sequence<N>());
   }
+
+  /**
+   * @brief TVec + TPoint = TPoint
+   */
+  [[nodiscard]] friend constexpr auto operator+(const TVec<T, N>& v,
+                                                TPoint p) noexcept -> TPoint
+  {
+    return p + v;
+  }
+
+  /**
+   * @brief TPoint - TVec = TPoint
+   */
+  [[nodiscard]] friend constexpr auto operator-(TPoint p,
+                                                const TVec<T, N>& v) noexcept
+      -> TPoint
+  {
+    return [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      ((p[I] -= v[I]), ...);
+      return p;
+    }
+    (std::make_index_sequence<N>());
+  }
+
+  /**
+   * @brief TPoint - TPoint = TVec
+   */
+  [[nodiscard]] friend constexpr auto operator-(const TPoint& p1,
+                                                const TPoint& p2) noexcept
+      -> TVec<T, N>
+  {
+    return [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      TVec v = p1;
+      ((v[I] -= p2[I]), ...);
+      return v;
+    }
+    (std::make_index_sequence<N>());
+  }
+
+  /**
+   * @brief TPoint + TPoint is not allowed
+   */
+  friend constexpr auto operator+(TPoint p1, TPoint p2) noexcept = delete;
 };
 
-/**
- * @brief TPoint + TVec = TPoint
- * @related TPoint
- */
-template <typename T, std::size_t size>
-[[nodiscard]] constexpr auto operator+(const TPoint<T, size>& p,
-                                       const TVec<T, size>& v) noexcept
-    -> TPoint<T, size>
-{
-  return static_cast<TPoint<T, size>>((static_cast<TVec<T, size>>(p) + v));
-}
+template <typename T, std::size_t N, typename U>
+auto dot(TPoint<T, N> p1, TVec<U, N> p2) = delete;
 
-/**
- * @brief TVec + TPoint = TPoint
- * @related TPoint
- */
-template <typename T, std::size_t size>
-[[nodiscard]] constexpr auto operator+(const TVec<T, size>& v,
-                                       const TPoint<T, size>& p) noexcept
-    -> TPoint<T, size>
-{
-  return static_cast<TPoint<T, size>>((static_cast<TVec<T, size>>(p) + v));
-}
+template <typename T, std::size_t N, typename U>
+auto dot(TVec<T, N> p1, TPoint<U, N> p2) = delete;
+
+template <typename T, typename U>
+auto cross(TPoint3<T> p1, TVec3<U> p2) = delete;
+
+template <typename T, typename U>
+auto cross(TVec3<T> p1, TPoint3<U> p2) = delete;
+
+template <typename T, std::size_t N, Number Scalar>
+auto operator*(TPoint<T, N> p, Scalar scalar) = delete;
+
+template <typename T, std::size_t N, Number Scalar>
+auto operator*(Scalar scalar, TPoint<T, N> p) = delete;
+
+template <typename T, std::size_t N> auto normalize(TPoint<T, N> p) = delete;
+
+// TODO: delete scalar division, negation?, .length()
 
 /**
  * @brief Gets the squared distance between two points
  */
-template <typename T, std::size_t size>
-[[nodiscard]] constexpr auto
-distance_squared(const TPoint<T, size>& p1, const TPoint<T, size>& p2) noexcept
+template <typename T, std::size_t N>
+[[nodiscard]] constexpr auto distance_squared(const TPoint<T, N>& p1,
+                                              const TPoint<T, N>& p2) noexcept
     -> T
 {
   const auto dx = p2 - p1;

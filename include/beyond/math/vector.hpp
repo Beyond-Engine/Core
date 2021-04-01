@@ -32,33 +32,17 @@ namespace beyond {
  */
 template <typename Vector> struct VectorTrait;
 
-template <typename Value> struct VectorTrait<TVec<Value, 2>> {
-  using ValueType = Value;
-  using VectorType = TVec<Value, 2>;
-  using PointType = TPoint<Value, 2>;
-  template <typename T> using VectorTemplate = TVec<T, 2>;
-  static constexpr std::size_t size = 2;
-};
-
-template <typename Value> struct VectorTrait<TVec<Value, 3>> {
-  using ValueType = Value;
-  using VectorType = TVec<Value, 3>;
-  using PointType = TPoint<Value, 3>;
-  template <typename T> using VectorTemplate = TVec<T, 3>;
-  static constexpr std::size_t size = 3;
-};
-
-template <typename Value> struct VectorTrait<TVec<Value, 4>> {
-  using ValueType = Value;
-  using VectorType = TVec<Value, 4>;
-  using PointType = TPoint<Value, 4>;
-  template <typename T> using VectorTemplate = TVec<T, 4>;
-  static constexpr std::size_t size = 4;
+template <typename T, std::size_t N> struct VectorTrait<TVec<T, N>> {
+  using ValueType = T;
+  using VectorType = TVec<T, N>;
+  using PointType = TPoint<T, N>;
+  template <typename U> using VectorTemplate = TVec<U, N>;
+  static constexpr std::size_t size = N;
 };
 
 /**
  * @brief Storage of a vector-like object
- * @see TVec, TPoint, VectorBase
+ * @see TVec, TPoint, TVec
  *
  * This class storage class of vector-like objects, including
  * TVec, and TPoint.
@@ -215,32 +199,56 @@ template <typename Derived> struct VectorStorage<Derived, 4> {
 #endif
 
 /**
- * @brief This class serve as base class for TVec, Bivector, and Trivectors.
+ * @brief This class serve as base class for TVec.
  *
- * This class contains all the possible operations on vectors and anti-vectors.
+ * This class contains all the possible operations on vectors.
  *
  * @see TVec, VectorStorage
  */
-template <typename T, std::size_t... Ns>
-struct VectorBase : VectorStorage<TVec<T, sizeof...(Ns)>, sizeof...(Ns)> {
+template <typename T, std::size_t N>
+struct TVec : VectorStorage<TVec<T, N>, N> {
   using ValueType = T;
-  using Storage = VectorStorage<TVec<T, sizeof...(Ns)>, sizeof...(Ns)>;
-  using VecType = TVec<T, sizeof...(Ns)>;
+  using Storage = VectorStorage<TVec<T, N>, N>;
+
+  constexpr TVec() noexcept = default;
+  constexpr TVec(T xx, T yy) noexcept requires(N == 2) : Storage{{xx, yy}} {}
+
+  constexpr TVec(const TVec<T, 2>& v, T zz) noexcept requires(N == 3)
+      : Storage{{v[0], v[1], zz}}
+  {
+  }
+  constexpr TVec(T xx, T yy, T zz) noexcept requires(N == 3)
+      : Storage{{xx, yy, zz}}
+  {
+  }
+
+  constexpr TVec(T xx, T yy, T zz, T ww) noexcept requires(N == 4)
+      : Storage{{xx, yy, zz, ww}}
+  {
+  }
+
+  constexpr TVec(const TVec<T, 2>& v, T zz, T ww) noexcept requires(N == 4)
+      : Storage{{v[0], v[1], zz, ww}}
+  {
+  }
+
+  constexpr TVec(const TVec<T, 3>& v, T ww) noexcept requires(N == 4)
+      : Storage{{v[0], v[1], v[2], ww}}
+  {
+  }
 
   /**
    * @brief Gets the dimensionality of a vector
    */
   [[nodiscard]] static constexpr auto size() noexcept -> std::size_t
   {
-    return sizeof...(Ns);
+    return N;
   }
 
-  constexpr VectorBase() noexcept = default;
-
-  template <typename A0, typename... Args>
-  explicit constexpr VectorBase(A0 a0, Args... args) noexcept
-      : Storage{{a0, args...}}
+  /// @brief Same as size()
+  [[nodiscard]] static constexpr auto dimension() noexcept -> std::size_t
   {
+    return N;
   }
 
   /**
@@ -292,35 +300,51 @@ struct VectorBase : VectorStorage<TVec<T, sizeof...(Ns)>, sizeof...(Ns)> {
   /**
    * @brief Negates this vector
    */
-  constexpr auto operator-() const noexcept -> VectorBase
+  constexpr auto operator-() const noexcept -> TVec
   {
-    return VectorBase{(-Storage::elem[Ns])...};
+    return [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      return TVec{(-Storage::elem[I])...};
+    }
+    (std::make_index_sequence<N>());
   }
 
   /**
    * @brief Adds another vector to this vector
    */
-  constexpr auto operator+=(const VectorBase& rhs) noexcept -> VectorBase&
+  constexpr auto operator+=(const TVec& rhs) noexcept -> TVec&
   {
-    ((Storage::elem[Ns] += rhs[Ns]), ...);
+    [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      ((Storage::elem[I] += rhs[I]), ...);
+    }
+    (std::make_index_sequence<N>());
     return *this;
   }
 
   /**
    * @brief Subtract another vector to this vector
    */
-  constexpr auto operator-=(const VectorBase& rhs) noexcept -> VectorBase&
+  constexpr auto operator-=(const TVec& rhs) noexcept -> TVec&
   {
-    ((Storage::elem[Ns] -= rhs[Ns]), ...);
+    [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      ((Storage::elem[I] -= rhs[I]), ...);
+    }
+    (std::make_index_sequence<N>());
     return *this;
   }
 
   /**
    * @brief Multiply a scalar to this vector
    */
-  constexpr auto operator*=(ValueType rhs) noexcept -> VectorBase&
+  constexpr auto operator*=(ValueType rhs) noexcept -> TVec&
   {
-    ((Storage::elem[Ns] *= rhs), ...);
+    [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      ((Storage::elem[I] *= rhs), ...);
+    }
+    (std::make_index_sequence<N>());
     return *this;
   }
 
@@ -328,12 +352,16 @@ struct VectorBase : VectorStorage<TVec<T, sizeof...(Ns)>, sizeof...(Ns)> {
    * @brief Divides this vector by a scalar
    */
   template <typename U = ValueType>
-  constexpr auto operator/=(U rhs) noexcept -> VectorBase&
+  constexpr auto operator/=(U rhs) noexcept -> TVec&
   {
     static_assert(std::is_floating_point_v<U>);
     BEYOND_ASSERT_MSG(rhs != 0, "Devide by zero");
     const auto inv = static_cast<ValueType>(1) / rhs;
-    ((Storage::elem[Ns] *= inv), ...);
+    [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      ((Storage::elem[I] *= inv), ...);
+    }
+    (std::make_index_sequence<N>());
     return *this;
   }
 
@@ -357,175 +385,103 @@ struct VectorBase : VectorStorage<TVec<T, sizeof...(Ns)>, sizeof...(Ns)> {
    * @warning Due to floating point inaccuracies, this might return false for
    * vectors which are essentially (but not exactly) equal.
    */
-  [[nodiscard]] constexpr auto operator==(const VectorBase& v) const noexcept
-      -> bool
+  [[nodiscard]] constexpr auto operator==(const TVec& v) const noexcept -> bool
   {
-    return ((Storage::elem[Ns] == v.elem[Ns]) && ...);
+    return [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      return ((Storage::elem[I] == v.elem[I]) && ...);
+    }
+    (std::make_index_sequence<N>());
   }
 
   /**
-   * @brief Returns false if the given vector `v` is exactly equal to this
-   * vector.
-   * @warning Due to floating point inaccuracies, this might return true for
-   * vectors which are essentially (but not exactly) equal.
+   * @brief Adds two vectors
+   * @related TVec
    */
-  [[nodiscard]] constexpr auto operator!=(const VectorBase& v) const noexcept
-      -> bool
+  [[nodiscard]] friend constexpr auto operator+(TVec lhs,
+                                                const TVec& rhs) noexcept
+      -> TVec
   {
-    return ((Storage::elem[Ns] != v.elem[Ns]) || ...);
+    lhs += rhs;
+    return lhs;
+  }
+
+  /**
+   * @brief Subtracts two vectors
+   * @related TVec
+   */
+  [[nodiscard]] friend constexpr auto operator-(TVec lhs,
+                                                const TVec& rhs) noexcept
+      -> TVec
+  {
+    lhs -= rhs;
+    return lhs;
+  }
+
+  /**
+   * @brief Divides a vector by a scalar
+   * @related TVec
+   */
+  [[nodiscard]] friend constexpr auto operator/(TVec lhs, T scalar) noexcept
+      -> TVec
+  {
+    static_assert(std::is_floating_point_v<T>);
+    lhs /= scalar;
+    return lhs;
   }
 };
-
-/**
- * @brief Adds two vectors
- * @related VectorBase
- */
-template <typename T, std::size_t... Ns>
-[[nodiscard]] constexpr auto operator+(VectorBase<T, Ns...> lhs,
-                                       const VectorBase<T, Ns...>& rhs) noexcept
-    -> typename VectorBase<T, Ns...>::VecType
-{
-  lhs += rhs;
-  return lhs;
-}
-
-/**
- * @brief Subtracts two vectors
- * @related VectorBase
- */
-template <typename T, std::size_t... Ns>
-[[nodiscard]] constexpr auto operator-(VectorBase<T, Ns...> lhs,
-                                       const VectorBase<T, Ns...>& rhs) noexcept
-    -> typename VectorBase<T, Ns...>::VecType
-{
-  lhs -= rhs;
-  return lhs;
-}
-
-/**
- * @brief Divides a vector by a scalar
- * @related VectorBase
- */
-template <typename T, std::size_t... Ns>
-[[nodiscard]] constexpr auto operator/(VectorBase<T, Ns...> lhs,
-                                       T scalar) noexcept ->
-    typename VectorBase<T, Ns...>::VecType
-{
-  static_assert(std::is_floating_point_v<T>);
-  lhs /= scalar;
-  return lhs;
-}
 
 /// @brief Normalizes a vector into a unit vector
 /// @note Only available for floating point vectors
-template <typename T, std::size_t... Ns>
-[[nodiscard]] constexpr auto normalize(const VectorBase<T, Ns...>& v) noexcept
-    -> TVec<T, sizeof...(Ns)>
+template <typename T, std::size_t N>
+[[nodiscard]] constexpr auto normalize(const TVec<T, N>& v) noexcept
+    -> TVec<T, N> requires(std::floating_point<T>)
 {
-  static_assert(std::is_floating_point_v<T>);
   return v / v.length();
 }
 
-template <typename T> struct TVec<T, 2> : VectorBase<T, 0, 1> {
-  using ValueType = T;
-  using Base = VectorBase<T, 0, 1>;
-
-  constexpr TVec() noexcept = default;
-  constexpr TVec(T xx, T yy) noexcept : Base{xx, yy} {}
-
-  // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  constexpr TVec(const Base& base) noexcept : Base{base} {}
-  // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  constexpr TVec(Base&& base) noexcept : Base{std::forward<Base>(base)} {}
-
-  [[nodiscard]] static constexpr auto dimension() noexcept -> std::size_t
-  {
-    return 2;
-  }
-};
-
-template <typename T> struct TVec<T, 3> : VectorBase<T, 0, 1, 2> {
-  using ValueType = T;
-  using Base = VectorBase<T, 0, 1, 2>;
-
-  constexpr TVec() noexcept = default;
-  constexpr TVec(const TVec<T, 2>& v, T zz) noexcept : Base{v[0], v[1], zz} {}
-  constexpr TVec(T xx, T yy, T zz) noexcept : Base{xx, yy, zz} {}
-
-  // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  constexpr TVec(const Base& base) noexcept : Base{base} {}
-  // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  constexpr TVec(Base&& base) noexcept : Base{std::forward<Base>(base)} {}
-
-  [[nodiscard]] static constexpr auto dimension() noexcept -> std::size_t
-  {
-    return 3;
-  }
-};
-
-template <typename T> struct TVec<T, 4> : VectorBase<T, 0, 1, 2, 3> {
-  using ValueType = T;
-  using Base = VectorBase<T, 0, 1, 2, 3>;
-
-  constexpr TVec() noexcept = default;
-  constexpr TVec(T xx, T yy, T zz, T ww) noexcept : Base{xx, yy, zz, ww} {}
-
-  constexpr TVec(const TVec<T, 2>& v, T zz, T ww) noexcept
-      : Base{v[0], v[1], zz, ww}
-  {
-  }
-
-  constexpr TVec(const TVec<T, 3>& v, T ww) noexcept
-      : Base{v[0], v[1], v[2], ww}
-  {
-  }
-
-  // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  constexpr TVec(const Base& base) noexcept : Base{base} {}
-  // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
-  constexpr TVec(Base&& base) noexcept : Base{std::forward<Base>(base)} {}
-
-  [[nodiscard]] static constexpr auto dimension() noexcept -> std::size_t
-  {
-    return 4;
-  }
-};
-
 /**
  * @brief Multiplies vector `v` by a scalar
- * @related VectorBase
+ * @related TVec
  */
-template <typename T, std::size_t... Ns>
-[[nodiscard]] constexpr auto operator*(const VectorBase<T, Ns...>& v,
-                                       T scalar) noexcept
+template <typename T, std::size_t N>
+[[nodiscard]] constexpr auto operator*(const TVec<T, N>& v, T scalar) noexcept
 {
-  return VectorBase<T, Ns...>{(scalar * v.elem[Ns])...};
+  return [&]<std::size_t... I>(std::index_sequence<I...>)
+  {
+    return TVec<T, N>{(scalar * v.elem[I])...};
+  }
+  (std::make_index_sequence<N>());
 }
 
 /**
  * @brief Multiplies vector `v` by a scalar
- * @related VectorBase
+ * @related TVec
  * @overload
  */
-template <typename T, std::size_t... Ns>
-[[nodiscard]] constexpr auto operator*(T scalar,
-                                       const VectorBase<T, Ns...>& v) noexcept
+template <typename T, std::size_t N>
+[[nodiscard]] constexpr auto operator*(T scalar, const TVec<T, N>& v) noexcept
 {
-  return VectorBase<T, Ns...>{(scalar * v.elem[Ns])...};
+  return v * scalar;
 }
 
 /**
  * @brief Gets the Dot Product of two vectors
- * @related VectorBase
+ * @related TVec
  *
- * Dot product takes two vectors of the same dimensionality and sum the products
- * of the corresponding components of the vectors. The result is a scalar.
+ * Dot product takes two vectors of the same dimensionality and sum the
+ * products of the corresponding components of the vectors. The result is a
+ * scalar.
  */
-template <typename T, std::size_t... Ns>
-[[nodiscard]] constexpr auto dot(const VectorBase<T, Ns...>& v1,
-                                 const VectorBase<T, Ns...>& v2) noexcept -> T
+template <typename T, std::size_t N>
+[[nodiscard]] constexpr auto dot(const TVec<T, N>& v1,
+                                 const TVec<T, N>& v2) noexcept -> T
 {
-  return ((v1.elem[Ns] * v2.elem[Ns]) + ...);
+  return [&]<std::size_t... I>(std::index_sequence<I...>)
+  {
+    return ((v1.elem[I] * v2.elem[I]) + ...);
+  }
+  (std::make_index_sequence<N>());
 }
 
 /**
@@ -555,6 +511,9 @@ namespace detail {
 
 namespace std {
 
+/**
+ * @brief Hash support for TVec<T, N>
+ */
 template <typename T, std::size_t N> struct hash<beyond::TVec<T, N>> {
   [[nodiscard]] auto operator()(const beyond::TVec<T, N>& vec) const noexcept
       -> std::size_t

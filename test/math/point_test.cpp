@@ -4,6 +4,32 @@
 #include "beyond/math/point.hpp"
 #include "beyond/math/serial.hpp"
 
+template <typename T1, typename T2> concept Addable = requires(T1 x, T2 y)
+{
+  x + y;
+};
+
+template <typename T1, typename T2> concept Multiplicable = requires(T1 x, T2 y)
+{
+  x* y;
+};
+
+template <typename T1, typename T2> concept CanDotProduct = requires(T1 x, T2 y)
+{
+  beyond::dot(x, y);
+};
+
+template <typename T1, typename T2>
+concept CanCrossProduct = requires(T1 x, T2 y)
+{
+  beyond::cross(x, y);
+};
+
+template <typename T> concept Normalizable = requires(T x)
+{
+  beyond::normalize(x);
+};
+
 TEST_CASE("Points", "[beyond.core.math.vec]")
 {
   SECTION("Create 3d TPoint from 2d TPoint and a scalar")
@@ -73,6 +99,22 @@ TEST_CASE("Points", "[beyond.core.math.vec]")
     REQUIRE(dist2 == Approx(dot(dx, dx)));
     REQUIRE(dist == Approx(sqrt(dist2)));
   }
+
+  SECTION("Deleted point operations")
+  {
+    STATIC_REQUIRE(!Addable<beyond::Point2, beyond::Point2>);
+    STATIC_REQUIRE(!CanDotProduct<beyond::Point2, beyond::Point2>);
+    STATIC_REQUIRE(!CanDotProduct<beyond::Point2, beyond::Vec2>);
+    STATIC_REQUIRE(!CanDotProduct<beyond::Vec2, beyond::Point2>);
+    STATIC_REQUIRE(!CanCrossProduct<beyond::Point3, beyond::Point3>);
+    STATIC_REQUIRE(!CanCrossProduct<beyond::Point3, beyond::Vec3>);
+    STATIC_REQUIRE(!CanCrossProduct<beyond::Vec3, beyond::Point3>);
+    STATIC_REQUIRE(!Multiplicable<beyond::Point2, int>);
+    STATIC_REQUIRE(!Multiplicable<int, beyond::Point2>);
+    STATIC_REQUIRE(!Multiplicable<beyond::Point3, float>);
+    STATIC_REQUIRE(!Multiplicable<float, beyond::Point3>);
+    STATIC_REQUIRE(!Normalizable<beyond::Point3>);
+  }
 }
 
 TEST_CASE("Point Swizzling test", "[beyond.core.math.pec]")
@@ -107,10 +149,10 @@ TEST_CASE("Point Swizzling test", "[beyond.core.math.pec]")
 
   SECTION("Arithmetics on swizzed structures")
   {
-    SECTION("Scalar multiplication")
+    SECTION("Number multiplication")
     {
-      const beyond::Point2 result1 = p1.xy * 2.f;
-      const beyond::Point2 result2 = 2.f * p1.xy;
+      const beyond::Vec2 result1 = p1.xy * 2.f;
+      const beyond::Vec2 result2 = 2.f * p1.xy;
       CHECK(result1.x == Approx(p1.x * 2.f));
       CHECK(result1.y == Approx(p1.y * 2.f));
       CHECK(result1 == result2);
@@ -119,9 +161,9 @@ TEST_CASE("Point Swizzling test", "[beyond.core.math.pec]")
       CHECK(result1 == p1);
     }
 
-    SECTION("Scalar dipision")
+    SECTION("Number dipision")
     {
-      const beyond::Point2 result1 = p1.xy / 2.f;
+      const beyond::Vec2 result1 = p1.xy / 2.f;
       CHECK(result1.x == Approx(p1.x / 2.f));
       CHECK(result1.y == Approx(p1.y / 2.f));
 
@@ -131,7 +173,7 @@ TEST_CASE("Point Swizzling test", "[beyond.core.math.pec]")
 
     SECTION("Addition")
     {
-      const beyond::Point2 result1 = p1.xy + p1.yx;
+      const beyond::Vec2 result1 = p1.xy + p1.yx;
       SECTION("Binary additions")
       {
         CHECK(result1.x == Approx(p1.x + p1.y));
@@ -160,19 +202,16 @@ TEST_CASE("Point Swizzling test", "[beyond.core.math.pec]")
 
     SECTION("Subtraction")
     {
-      const beyond::Point2 result1 = p1.xy - p1.yx;
+      const beyond::Vec2 result1 = p1.xy - p1.yx;
 
       SECTION("Binary additions")
       {
         CHECK(result1.x == Approx(p1.x - p1.y));
         CHECK(result1.y == Approx(p1.y - p1.x));
 
-        const auto result2 = p1.xy - p1;
+        const auto result2 = p1 - p1.xy;
         CHECK(result2.x == Approx(0));
         CHECK(result2.y == Approx(0));
-
-        const auto result3 = p1 - p1.xy;
-        CHECK(result3 == result2);
       }
 
       SECTION("Self decrement")

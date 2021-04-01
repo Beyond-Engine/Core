@@ -279,7 +279,7 @@ TEST_CASE("Vec Swizzling test", "[beyond.core.math.vec]")
 
   SECTION("Arithmetics on swizzed structures")
   {
-    SECTION("Scalar multiplication")
+    SECTION("Number multiplication")
     {
       const beyond::Vec2 result1 = v1.xy * 2.f;
       const beyond::Vec2 result2 = 2.f * v1.xy;
@@ -291,7 +291,7 @@ TEST_CASE("Vec Swizzling test", "[beyond.core.math.vec]")
       CHECK(result1 == v1);
     }
 
-    SECTION("Scalar division")
+    SECTION("Number division")
     {
       const beyond::Vec2 result1 = v1.xy / 2.f;
       CHECK(result1.x == Approx(v1.x / 2.f));
