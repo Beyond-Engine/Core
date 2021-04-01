@@ -556,14 +556,17 @@ namespace detail {
 namespace std {
 
 template <typename T, std::size_t N> struct hash<beyond::TVec<T, N>> {
-  [[nodiscard]] constexpr auto
-  operator()(const beyond::TVec<T, N>& vec) const noexcept -> std::size_t
+  [[nodiscard]] auto operator()(const beyond::TVec<T, N>& vec) const noexcept
+      -> std::size_t
   {
-    std::size_t seed = 0;
-    for (std::size_t i = 0; i < N; ++i) {
-      seed ^= beyond::detail::hash_combine(seed, std::hash<T>{}(vec[i]));
+    using beyond::detail::hash_combine;
+    return [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      std::size_t seed = 0;
+      ((seed ^= hash_combine(seed, std::hash<T>{}(vec[I]))), ...);
+      return seed;
     }
-    return seed;
+    (std::make_index_sequence<N>());
   }
 };
 
