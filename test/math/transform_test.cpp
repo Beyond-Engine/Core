@@ -1,4 +1,3 @@
-#include "beyond/math/function.hpp"
 #include "beyond/math/serial.hpp"
 #include "beyond/math/transform.hpp"
 

@@ -22,6 +22,7 @@ add_library(core
         ../include/beyond/utils/type_traits.hpp
         ../include/beyond/math/angle.hpp
         ../include/beyond/math/constants.hpp
+        ../include/beyond/math/concepts.hpp
         ../include/beyond/math/vector.hpp
         ../include/beyond/math/detail/swizzle.hpp
         ../include/beyond/math/serial.hpp

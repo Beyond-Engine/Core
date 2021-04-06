@@ -1,6 +1,7 @@
 #ifndef BEYOND_CORE_MATH_ANGLE_HPP
 #define BEYOND_CORE_MATH_ANGLE_HPP
 
+#include <concepts>
 #include <type_traits>
 
 #include "constants.hpp"
@@ -26,7 +27,7 @@ template <typename Value> class TDegree;
  * @brief TRadian Radian is a number wrapper for angles
  * @see TDegree
  */
-template <typename T> class TRadian {
+template <std::floating_point T> class TRadian {
 public:
   static_assert(std::is_floating_point_v<T>);
   using ValueType = T;

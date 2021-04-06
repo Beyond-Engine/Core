@@ -13,6 +13,7 @@
  * @ingroup core
  */
 #include "angle.hpp"
+#include "concepts.hpp"
 
 #include <cmath>
 #include <type_traits>
@@ -76,7 +77,7 @@ template <typename Angle>
  * @tparam T A floating-point type
  * @see TRadian
  */
-template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+template <std::floating_point T>
 [[nodiscard]] inline auto asin(T arg) noexcept -> TRadian<T>
 {
   return beyond::TRadian<T>{std::asin(arg)};
@@ -87,7 +88,7 @@ template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
  * @tparam T An integral type
  * @see TRadian
  */
-template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+template <std::integral T>
 [[nodiscard]] inline auto asin(T arg) noexcept -> TRadian<double>
 {
   return beyond::TRadian<double>{std::asin(arg)};
@@ -98,7 +99,7 @@ template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
  * @tparam T A floating-point type
  * @see TRadian
  */
-template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+template <std::floating_point T>
 [[nodiscard]] inline auto acos(T arg) noexcept -> TRadian<T>
 {
   return beyond::TRadian<T>{std::acos(arg)};
@@ -109,7 +110,7 @@ template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
  * @tparam T An integral type
  * @see TRadian
  */
-template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+template <std::integral T>
 [[nodiscard]] inline auto acos(T arg) noexcept -> TRadian<double>
 {
   return beyond::TRadian<double>{std::acos(arg)};
@@ -120,7 +121,7 @@ template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
  * @tparam T A floating-point type
  * @see TRadian
  */
-template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+template <std::floating_point T>
 [[nodiscard]] inline auto atan(T arg) noexcept -> TRadian<T>
 {
   return beyond::TRadian<T>{std::atan(arg)};
@@ -131,7 +132,7 @@ template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
  * @tparam T An integral type
  * @see TRadian
  */
-template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+template <std::integral T>
 [[nodiscard]] inline auto atan(T arg) noexcept -> TRadian<double>
 {
   return beyond::TRadian<double>{std::atan(arg)};
@@ -144,9 +145,7 @@ template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
  * @tparam T2 A floating-point type for x
  * @see TRadian
  */
-template <typename T1, typename T2,
-          typename = std::enable_if_t<std::conjunction_v<
-              std::is_arithmetic<T1>, std::is_arithmetic<T2>>>>
+template <Arithmetic T1, Arithmetic T2>
 [[nodiscard]] inline auto atan2(T1 y, T2 x) noexcept
 {
   using PromotedType = std::common_type_t<T1, T2>;
@@ -163,8 +162,7 @@ template <typename T1, typename T2,
  * @param b Second value
  * @param t Interpolation phase (from range \f$[0, 1]\f$)
  */
-template <typename T1, typename T2, typename T3,
-          typename = std::enable_if_t<std::is_arithmetic_v<T3>>>
+template <typename T1, typename T2, Arithmetic T3>
 [[nodiscard]] constexpr auto lerp(const T1& a, const T2& b,
                                   const T3& t) noexcept
     -> std::common_type_t<T1, T2, T3>

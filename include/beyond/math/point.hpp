@@ -1,10 +1,9 @@
 #ifndef BEYOND_CORE_MATH_POINT_HPP
 #define BEYOND_CORE_MATH_POINT_HPP
 
+#include "concepts.hpp"
 #include "math_fwd.hpp"
 #include "vector.hpp"
-
-#include <concepts>
 
 /**
  * @file point.hpp
@@ -13,8 +12,6 @@
  */
 
 namespace beyond {
-
-template <class T> concept Number = std::integral<T> || std::floating_point<T>;
 
 /**
  * @addtogroup core
@@ -99,10 +96,10 @@ auto cross(TPoint3<T> p1, TVec3<U> p2) = delete;
 template <typename T, typename U>
 auto cross(TVec3<T> p1, TPoint3<U> p2) = delete;
 
-template <typename T, std::size_t N, Number Scalar>
+template <typename T, std::size_t N, Arithmetic Scalar>
 auto operator*(TPoint<T, N> p, Scalar scalar) = delete;
 
-template <typename T, std::size_t N, Number Scalar>
+template <typename T, std::size_t N, Arithmetic Scalar>
 auto operator*(Scalar scalar, TPoint<T, N> p) = delete;
 
 template <typename T, std::size_t N> auto normalize(TPoint<T, N> p) = delete;

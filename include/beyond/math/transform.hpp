@@ -4,7 +4,7 @@
 #define BEYOND_CORE_MATH_TRANSFORM_HPP
 
 #include "angle.hpp"
-#include "function.hpp"
+#include "math.hpp"
 #include "matrix.hpp"
 
 namespace beyond {
