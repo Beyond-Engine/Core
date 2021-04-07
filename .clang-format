@@ -7,4 +7,5 @@ BreakBeforeBraces: WebKit
 ColumnLimit: 80
 DerivePointerAlignment: false
 PointerAlignment: Left
+AlignAfterOpenBracket: AlwaysBreak
 ...

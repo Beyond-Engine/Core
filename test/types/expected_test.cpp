@@ -1223,7 +1223,7 @@ TEST_CASE("expected macro", "[beyond.core.types.expected]")
 {
   constexpr auto good_res =
       [good = beyond::expected<int, int>{1}]() -> beyond::expected<int, int> {
-    BEYOND_EXPECTED_ASSIGN(int, i, good);
+    BEYOND_EXPECTED_LET(int, i, good);
     return i;
   }();
   STATIC_REQUIRE(good_res.value() == 1);
@@ -1231,7 +1231,7 @@ TEST_CASE("expected macro", "[beyond.core.types.expected]")
   constexpr auto bad_res =
       [bad = beyond::expected<int, int>{beyond::unexpect,
                                         42}]() -> beyond::expected<int, int> {
-    BEYOND_EXPECTED_ASSIGN(int, i, bad);
+    BEYOND_EXPECTED_LET(int, i, bad);
     return i;
   }();
   STATIC_REQUIRE(bad_res.error() == 42);

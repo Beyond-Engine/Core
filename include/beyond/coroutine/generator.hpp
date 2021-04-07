@@ -27,6 +27,12 @@ public:
     {
       return {};
     }
+
+    void return_void() const noexcept
+    {
+      return;
+    }
+
     auto yield_value(reference_type v) noexcept -> std::suspend_always
     {
       value_ = std::addressof(v);
