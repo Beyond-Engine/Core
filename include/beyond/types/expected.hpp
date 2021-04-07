@@ -838,7 +838,9 @@ public:
    */
   /// @{
   template <detail::NotVoid U = T, class G = T>
-  auto operator=(U&& v) noexcept -> expected& //
+  auto operator=(U&& v)                                 //
+      noexcept(std::is_nothrow_constructible_v<T, U&&>) //
+      -> expected&                                      //
       requires(
           !std::is_same_v<expected<T, E>, std::decay_t<U>> &&
           !std::conjunction_v<
@@ -988,54 +990,39 @@ private:
 
   void swap_where_only_one_has_value(expected& rhs, t_is_not_void)
   {
-    swap_where_only_one_has_value_and_t_is_not_void(
-        rhs, typename std::is_nothrow_move_constructible<T>::type{},
-        typename std::is_nothrow_move_constructible<E>::type{});
-  }
-
-  void swap_where_only_one_has_value_and_t_is_not_void(
-      expected& rhs, t_is_nothrow_move_constructible,
-      e_is_nothrow_move_constructible) noexcept
-  {
-    auto temp = std::move(val());
-    val().~T();
-    ::new (errptr()) unexpected_type(std::move(rhs.err()));
-    rhs.err().~unexpected_type();
-    ::new (rhs.valptr()) T(std::move(temp));
-    std::swap(this->m_has_val, rhs.m_has_val);
-  }
-
-  void swap_where_only_one_has_value_and_t_is_not_void(
-      expected& rhs, t_is_nothrow_move_constructible,
-      move_constructing_e_can_throw)
-  {
-    auto temp = std::move(val());
-    val().~T();
-    try {
-      ::new (errptr()) unexpected_type(std::move(rhs.err()));
+    if constexpr (std::is_nothrow_move_constructible_v<T>) {
+      if constexpr (std::is_nothrow_move_constructible_v<E>) {
+        auto temp = std::move(val());
+        val().~T();
+        ::new (errptr()) unexpected_type(std::move(rhs.err()));
+        rhs.err().~unexpected_type();
+        ::new (rhs.valptr()) T(std::move(temp));
+        std::swap(this->m_has_val, rhs.m_has_val);
+      } else {
+        auto temp = std::move(val());
+        val().~T();
+        try {
+          ::new (errptr()) unexpected_type(std::move(rhs.err()));
+          rhs.err().~unexpected_type();
+          ::new (rhs.valptr()) T(std::move(temp));
+          std::swap(this->m_has_val, rhs.m_has_val);
+        } catch (...) {
+          val() = std::move(temp);
+          throw;
+        }
+      }
+    } else {
+      auto temp = std::move(rhs.err());
       rhs.err().~unexpected_type();
-      ::new (rhs.valptr()) T(std::move(temp));
-      std::swap(this->m_has_val, rhs.m_has_val);
-    } catch (...) {
-      val() = std::move(temp);
-      throw;
-    }
-  }
-
-  void swap_where_only_one_has_value_and_t_is_not_void(
-      expected& rhs, move_constructing_t_can_throw,
-      t_is_nothrow_move_constructible)
-  {
-    auto temp = std::move(rhs.err());
-    rhs.err().~unexpected_type();
-    try {
-      ::new (rhs.valptr()) T(val());
-      val().~T();
-      ::new (errptr()) unexpected_type(std::move(temp));
-      std::swap(this->m_has_val, rhs.m_has_val);
-    } catch (...) {
-      rhs.err() = std::move(temp);
-      throw;
+      try {
+        ::new (rhs.valptr()) T(val());
+        val().~T();
+        ::new (errptr()) unexpected_type(std::move(temp));
+        std::swap(this->m_has_val, rhs.m_has_val);
+      } catch (...) {
+        rhs.err() = std::move(temp);
+        throw;
+      }
     }
   }
 
