@@ -89,42 +89,23 @@ struct is_expected_impl<expected<T, E>> : std::true_type {
 template <class T> using is_expected = is_expected_impl<std::decay_t<T>>;
 
 template <class T, class E, class U>
-using expected_enable_forward_value = std::enable_if_t<
-    std::is_constructible<T, U&&>::value &&
-    !std::is_same<std::decay_t<U>, in_place_t>::value &&
-    !std::is_same<expected<T, E>, std::decay_t<U>>::value &&
-    !std::is_same<unexpected<E>, std::decay_t<U>>::value>;
+concept support_expected_forward_value =
+    std::is_constructible_v<T, U&&> &&
+    !std::is_same_v<std::decay_t<U>, in_place_t> &&
+    !std::is_same_v<expected<T, E>, std::decay_t<U>> &&
+    !std::is_same_v<unexpected<E>, std::decay_t<U>>;
 
 template <class T, class E, class U, class G, class UR, class GR>
-using expected_enable_from_other = std::enable_if_t<
-    std::is_constructible<T, UR>::value &&
-    std::is_constructible<E, GR>::value &&
-    !std::is_constructible<T, expected<U, G>&>::value &&
-    !std::is_constructible<T, expected<U, G>&&>::value &&
-    !std::is_constructible<T, const expected<U, G>&>::value &&
-    !std::is_constructible<T, const expected<U, G>&&>::value &&
-    !std::is_convertible<expected<U, G>&, T>::value &&
-    !std::is_convertible<expected<U, G>&&, T>::value &&
-    !std::is_convertible<const expected<U, G>&, T>::value &&
-    !std::is_convertible<const expected<U, G>&&, T>::value>;
-
-template <class T, class U>
-using is_void_or =
-    std::conditional_t<std::is_void<T>::value, std::true_type, U>;
-
-template <class T>
-using is_copy_constructible_or_void =
-    is_void_or<T, std::is_copy_constructible<T>>;
-
-template <class T>
-using is_move_constructible_or_void =
-    is_void_or<T, std::is_move_constructible<T>>;
-
-template <class T>
-using is_copy_assignable_or_void = is_void_or<T, std::is_copy_assignable<T>>;
-
-template <class T>
-using is_move_assignable_or_void = is_void_or<T, std::is_move_assignable<T>>;
+concept support_expected_from_other =
+    std::is_constructible_v<T, UR>&& std::is_constructible_v<E, GR> &&
+    !std::is_constructible_v<T, expected<U, G>&> &&
+    !std::is_constructible_v<T, expected<U, G>&&> &&
+    !std::is_constructible_v<T, const expected<U, G>&> &&
+    !std::is_constructible_v<T, const expected<U, G>&&> &&
+    !std::is_convertible_v<expected<U, G>&, T> &&
+    !std::is_convertible_v<expected<U, G>&&, T> &&
+    !std::is_convertible_v<const expected<U, G>&, T> &&
+    !std::is_convertible_v<const expected<U, G>&&, T>;
 
 template <class T>
 concept support_expected_trivial_copy_assignment =
@@ -815,13 +796,12 @@ public:
   {
   }
 
-  template <
-      class U, class G,
-      detail::expected_enable_from_other<T, E, U, G, const U&, const G&>* =
-          nullptr>
-  explicit(
-      !(std::is_convertible_v<U const&, T> &&
-        std::is_convertible_v<G const&, E>)) //
+  template <class U, class G>
+  requires(
+      detail::support_expected_from_other<T, E, U, G, const U&, const G&>) //
+      explicit(
+          !(std::is_convertible_v<U const&, T> &&
+            std::is_convertible_v<G const&, E>)) //
       constexpr expected(const expected<U, G>& rhs)
   {
     if (rhs.has_value()) {
@@ -831,10 +811,10 @@ public:
     }
   }
 
-  template <
-      class U, class G,
-      detail::expected_enable_from_other<T, E, U, G, U&&, G&&>* = nullptr>
-  explicit(!(std::is_convertible_v<U&&, T> && std::is_convertible_v<G&&, E>)) //
+  template <class U, class G>
+  requires(detail::support_expected_from_other<T, E, U, G, U&&, G&&>) //
+      explicit(
+          !(std::is_convertible_v<U&&, T> && std::is_convertible_v<G&&, E>)) //
       constexpr expected(expected<U, G>&& rhs)
   {
     if (rhs.has_value()) {
@@ -844,9 +824,9 @@ public:
     }
   }
 
-  template <
-      class U = T, detail::expected_enable_forward_value<T, E, U>* = nullptr>
-  explicit(!std::is_convertible_v<U&&, T>) //
+  template <class U = T>
+  requires(detail::support_expected_forward_value<T, E, U>) //
+      explicit(!std::is_convertible_v<U&&, T>)              //
       constexpr expected(U&& v)
       : expected(in_place, std::forward<U>(v))
   {
@@ -857,56 +837,33 @@ public:
    * @name assignment
    */
   /// @{
-  template <
-      class U = T, class G = T,
-      std::enable_if_t<std::is_nothrow_constructible<T, U&&>::value>* = nullptr,
-      std::enable_if_t<!std::is_void<G>::value>* = nullptr,
-      std::enable_if_t<
-          (!std::is_same<expected<T, E>, std::decay_t<U>>::value &&
-           !std::conjunction<
-               std::is_scalar<T>, std::is_same<T, std::decay_t<U>>>::value &&
-           std::is_constructible<T, U>::value &&
-           std::is_assignable<G&, U>::value &&
-           std::is_nothrow_move_constructible<E>::value)>* = nullptr>
-  expected& operator=(U&& v)
+  template <detail::NotVoid U = T, class G = T>
+  auto operator=(U&& v) noexcept -> expected& //
+      requires(
+          !std::is_same_v<expected<T, E>, std::decay_t<U>> &&
+          !std::conjunction_v<
+              std::is_scalar<T>, std::is_same<T, std::decay_t<U>>> &&
+          std::is_constructible_v<T, U> && std::is_assignable_v<G&, U> &&
+          std::is_nothrow_move_constructible_v<E>) //
   {
     if (has_value()) {
       val() = std::forward<U>(v);
     } else {
-      err().~unexpected<E>();
-      ::new (valptr()) T(std::forward<U>(v));
-      this->m_has_val = true;
-    }
-
-    return *this;
-  }
-
-  template <
-      class U = T, class G = T,
-      std::enable_if_t<!std::is_nothrow_constructible<T, U&&>::value>* =
-          nullptr,
-      std::enable_if_t<!std::is_void<U>::value>* = nullptr,
-      std::enable_if_t<
-          (!std::is_same<expected<T, E>, std::decay_t<U>>::value &&
-           !std::conjunction<
-               std::is_scalar<T>, std::is_same<T, std::decay_t<U>>>::value &&
-           std::is_constructible<T, U>::value &&
-           std::is_assignable<G&, U>::value &&
-           std::is_nothrow_move_constructible<E>::value)>* = nullptr>
-  expected& operator=(U&& v)
-  {
-    if (has_value()) {
-      val() = std::forward<U>(v);
-    } else {
-      auto tmp = std::move(err());
-      err().~unexpected<E>();
-
-      try {
+      if constexpr (std::is_nothrow_constructible_v<T, U&&>) {
+        err().~unexpected<E>();
         ::new (valptr()) T(std::forward<U>(v));
         this->m_has_val = true;
-      } catch (...) {
-        err() = std::move(tmp);
-        throw;
+      } else {
+        auto tmp = std::move(err());
+        err().~unexpected<E>();
+
+        try {
+          ::new (valptr()) T(std::forward<U>(v));
+          this->m_has_val = true;
+        } catch (...) {
+          err() = std::move(tmp);
+          throw;
+        }
       }
     }
 
