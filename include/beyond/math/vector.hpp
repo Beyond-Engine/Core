@@ -30,9 +30,9 @@ namespace beyond {
  * @brief Traits for vector like entities that holds information about
  components and subparts
  */
-template <typename Vector> struct VectorTrait;
+template <typename Vector> struct VecTrait;
 
-template <typename T, std::size_t N> struct VectorTrait<TVec<T, N>> {
+template <typename T, std::size_t N> struct VecTrait<TVec<T, N>> {
   using ValueType = T;
   using VectorType = TVec<T, N>;
   using PointType = TPoint<T, N>;
@@ -50,7 +50,7 @@ template <typename T, std::size_t N> struct VectorTrait<TVec<T, N>> {
 template <typename Derived, std::size_t size> struct VectorStorage;
 
 template <typename Derived> struct VectorStorage<Derived, 2> {
-  using Trait = VectorTrait<Derived>;
+  using Trait = VecTrait<Derived>;
   using ValueType = typename Trait::ValueType;
 
   constexpr VectorStorage() noexcept : elem{{}} {}
@@ -72,9 +72,9 @@ template <typename Derived> struct VectorStorage<Derived, 2> {
 };
 
 template <typename Derived> struct VectorStorage<Derived, 3> {
-  using Trait = VectorTrait<Derived>;
+  using Trait = VecTrait<Derived>;
   using ValueType = typename Trait::ValueType;
-  using Trait2 = VectorTrait<TVec<ValueType, 2>>;
+  using Trait2 = VecTrait<TVec<ValueType, 2>>;
 
   constexpr VectorStorage() noexcept : elem{{}} {}
   explicit constexpr VectorStorage(
@@ -106,10 +106,10 @@ template <typename Derived> struct VectorStorage<Derived, 3> {
 };
 
 template <typename Derived> struct VectorStorage<Derived, 4> {
-  using Trait = VectorTrait<Derived>;
+  using Trait = VecTrait<Derived>;
   using ValueType = typename Trait::ValueType;
-  using Trait2 = VectorTrait<TVec<ValueType, 2>>;
-  using Trait3 = VectorTrait<TVec<ValueType, 3>>;
+  using Trait2 = VecTrait<TVec<ValueType, 2>>;
+  using Trait3 = VecTrait<TVec<ValueType, 3>>;
 
   constexpr VectorStorage() noexcept : elem{{}} {}
   explicit constexpr VectorStorage(
@@ -435,7 +435,8 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
 /// @note Only available for floating point vectors
 template <typename T, std::size_t N>
 [[nodiscard]] constexpr auto normalize(const TVec<T, N>& v) noexcept
-    -> TVec<T, N> requires(std::floating_point<T>)
+    -> TVec<T, N>
+requires(std::floating_point<T>)
 {
   return v / v.length();
 }
