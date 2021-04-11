@@ -26,6 +26,8 @@ template <class Derived> struct VectorInterface {
   using const_reference = typename Trait::const_reference;
   using iterator = typename Trait::iterator;
   using const_iterator = typename Trait::const_iterator;
+  using reverse_iterator = typename Trait::reverse_iterator;
+  using reverse_const_iterator = typename Trait::reverse_const_iterator;
 
   /**
    * @brief Returns if the vector is empty or not
@@ -129,6 +131,30 @@ template <class Derived> struct VectorInterface {
       -> const_iterator
   {
     return underlying().begin() + underlying().size();
+  }
+
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto rbegin() noexcept
+      -> reverse_iterator
+  {
+    return std::make_reverse_iterator(end());
+  }
+
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto rbegin() const noexcept
+      -> reverse_const_iterator
+  {
+    return std::make_reverse_iterator(end());
+  }
+
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto rend() noexcept
+      -> reverse_iterator
+  {
+    return std::make_reverse_iterator(underlying().begin());
+  }
+
+  [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto rend() const noexcept
+      -> reverse_const_iterator
+  {
+    return std::make_reverse_iterator(underlying().begin());
   }
 
   // TODO(lesley): reverse iterators

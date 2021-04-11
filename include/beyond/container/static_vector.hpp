@@ -34,6 +34,8 @@ template <class T, std::uint32_t N> struct ContainerTrait<StaticVector<T, N>> {
   using difference_type = std::make_signed_t<size_type>;
   using iterator = T*;
   using const_iterator = const T*;
+  using reverse_iterator = std::reverse_iterator<iterator>;
+  using reverse_const_iterator = std::reverse_iterator<const_iterator>;
 };
 
 /**
@@ -55,6 +57,8 @@ public:
   using difference_type = typename Trait::difference_type;
   using iterator = typename Trait::iterator;
   using const_iterator = typename Trait::const_iterator;
+  using reverse_iterator = typename Trait::reverse_iterator;
+  using reverse_const_iterator = typename Trait::reverse_const_iterator;
 
   constexpr StaticVector() noexcept = default;
 

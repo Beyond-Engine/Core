@@ -236,7 +236,7 @@ TEST_CASE("StaticVector iterators", "[beyond.core.container.static_vector]")
     }
   }
 
-  GIVEN("A StaticVector {1, 2, 3, 4}")
+  GIVEN("A StaticVector {1, 2, 3}")
   {
     StaticVector<int, 8> v{1, 2, 3};
 
@@ -259,6 +259,26 @@ TEST_CASE("StaticVector iterators", "[beyond.core.container.static_vector]")
             REQUIRE(*i1 == 2);
           }
         }
+      }
+    }
+
+    AND_GIVEN("ri1 == v.rbegin()")
+    {
+      auto ri1 = v.rbegin();
+      AND_THEN("It points to the last element")
+      {
+        REQUIRE(*ri1 == 3);
+      }
+
+      AND_THEN("You can advance it to rend")
+      {
+        REQUIRE(ri1 + 3 == v.rend());
+      }
+
+      AND_THEN("Can modify the second last element with it")
+      {
+        *(ri1 + 1) += 42;
+        REQUIRE(v[v.size() - 2] == 44);
       }
     }
 
