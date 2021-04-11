@@ -10,7 +10,7 @@
 
 #include "../utils/assert.hpp"
 #include "../utils/bit_cast.hpp"
-#include "vector_adapter.hpp"
+#include "vector_interface.hpp"
 
 /**
  * @addtogroup core
