@@ -15,6 +15,11 @@ public:
     using reference_type = const value_type&;
     using pointer_type = const value_type*;
 
+    auto return_void() -> std::suspend_always
+    {
+      return {};
+    }
+
     [[nodiscard]] auto get_return_object() -> Generator
     {
       return Generator{Handle::from_promise(*this)};
