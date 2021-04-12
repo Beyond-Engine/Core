@@ -193,7 +193,8 @@ template <class T> struct optional_base {
 
   template <class... Args> constexpr void construct(Args&&... args) noexcept
   {
-    std::construct_at(std::addressof(this->m_value), std::forward<Args>(args)...);
+    std::construct_at(
+        std::addressof(this->m_value), std::forward<Args>(args)...);
     this->m_has_value = true;
   }
 
@@ -838,28 +839,30 @@ public:
   ///
   /// Panic with error error_msg
   /// @{
-  constexpr T& expect(std::string_view error_msg) &
+  [[nodiscard]] constexpr auto expect(std::string_view error_msg) & -> T&
   {
     if (has_value()) return this->m_value;
     beyond::panic(error_msg);
   }
 
   /// @overload
-  constexpr const T& expect(std::string_view error_msg) const&
+  [[nodiscard]] constexpr auto
+  expect(std::string_view error_msg) const& -> const T&
   {
     if (has_value()) return this->m_value;
     beyond::panic(error_msg);
   }
 
   /// @overload
-  constexpr T&& expect(std::string_view error_msg) &&
+  [[nodiscard]] constexpr auto expect(std::string_view error_msg) && -> T&&
   {
     if (has_value()) return std::move(this->m_value);
     beyond::panic(error_msg);
   }
 
   /// @overload
-  constexpr const T&& expect(std::string_view error_msg) const&&
+  [[nodiscard]] constexpr auto
+  expect(std::string_view error_msg) const&& -> const T&&
   {
     if (has_value()) return std::move(this->m_value);
     beyond::panic(error_msg);
@@ -871,21 +874,19 @@ public:
    * @brief Returns the stored value if there is one, otherwise returns `u`
    */
   /// @{
-  template <class U> constexpr T value_or(U&& u) const&
+  template <class U> [[nodiscard]] constexpr auto value_or(U&& u) const& -> T
   {
     static_assert(
-        std::is_copy_constructible<T>::value &&
-            std::is_convertible<U&&, T>::value,
+        std::is_copy_constructible_v<T> && std::is_convertible_v<U&&, T>,
         "T must be copy constructible and convertible from U");
     return has_value() ? **this : static_cast<T>(std::forward<U>(u));
   }
 
   /// @overload
-  template <class U> constexpr T value_or(U&& u) &&
+  template <class U> [[nodiscard]] constexpr auto value_or(U&& u) && -> T
   {
     static_assert(
-        std::is_move_constructible<T>::value &&
-            std::is_convertible<U&&, T>::value,
+        std::is_move_constructible_v<T> && std::is_convertible_v<U&&, T>,
         "T must be move constructible and convertible from U");
     return has_value() ? **this : static_cast<T>(std::forward<U>(u));
   }
@@ -903,11 +904,13 @@ public:
 
 /// Compares two optional objects
 template <class T, class U>
-inline constexpr bool operator==(const optional<T>& lhs, const optional<U>& rhs)
+[[nodiscard]] inline constexpr auto
+operator==(const optional<T>& lhs, const optional<U>& rhs) -> bool
 {
   return lhs.has_value() == rhs.has_value() &&
          (!lhs.has_value() || *lhs == *rhs);
 }
+
 template <class T, class U>
 inline constexpr bool operator<(const optional<T>& lhs, const optional<U>& rhs)
 {
@@ -937,44 +940,10 @@ inline constexpr bool operator==(const optional<T>& lhs, nullopt_t) noexcept
 }
 
 template <class T>
-inline constexpr bool operator<(const optional<T>&, nullopt_t) noexcept
+inline constexpr auto operator<=>(const optional<T>& lhs, nullopt_t) noexcept
+    -> std::strong_ordering
 {
-  return false;
-}
-template <class T>
-inline constexpr bool operator<(nullopt_t, const optional<T>& rhs) noexcept
-{
-  return rhs.has_value();
-}
-template <class T>
-inline constexpr bool operator<=(const optional<T>& lhs, nullopt_t) noexcept
-{
-  return !lhs.has_value();
-}
-template <class T>
-inline constexpr bool operator<=(nullopt_t, const optional<T>&) noexcept
-{
-  return true;
-}
-template <class T>
-inline constexpr bool operator>(const optional<T>& lhs, nullopt_t) noexcept
-{
-  return lhs.has_value();
-}
-template <class T>
-inline constexpr bool operator>(nullopt_t, const optional<T>&) noexcept
-{
-  return false;
-}
-template <class T>
-inline constexpr bool operator>=(const optional<T>&, nullopt_t) noexcept
-{
-  return true;
-}
-template <class T>
-inline constexpr bool operator>=(nullopt_t, const optional<T>& rhs) noexcept
-{
-  return !rhs.has_value();
+  return lhs.has_value() <=> false;
 }
 
 /// Compares the optional with a value.
@@ -983,6 +952,14 @@ inline constexpr bool operator==(const optional<T>& lhs, const U& rhs)
 {
   return lhs.has_value() ? *lhs == rhs : false;
 }
+
+template <class T, std::three_way_comparable_with<T> U>
+inline constexpr auto operator<=>(const optional<T>& opt, const U& value)
+    -> std::compare_three_way_result_t<T, U>
+{
+  return opt.has_value() ? *opt <=> value : std::strong_ordering::less;
+}
+
 template <class T, class U>
 inline constexpr bool operator<(const optional<T>& lhs, const U& rhs)
 {
