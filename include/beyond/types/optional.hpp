@@ -193,7 +193,7 @@ template <class T> struct optional_base {
 
   template <class... Args> constexpr void construct(Args&&... args) noexcept
   {
-    new (std::addressof(this->m_value)) T(std::forward<Args>(args)...);
+    std::construct_at(std::addressof(this->m_value), std::forward<Args>(args)...);
     this->m_has_value = true;
   }
 

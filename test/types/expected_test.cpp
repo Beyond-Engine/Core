@@ -51,12 +51,12 @@ TEST_CASE("expected Triviality", "[beyond.core.types.expected]")
   {
     struct T {
       T(const T&) {}
-      T(T&&){};
+      T(T&&) noexcept {};
       T& operator=(const T&)
       {
         return *this;
       }
-      T& operator=(T&&)
+      T& operator=(T&&) noexcept
       {
         return *this;
       };
@@ -270,16 +270,6 @@ TEST_CASE("expected Assignment deletion", "[beyond.core.types.expected]")
   beyond::expected<has_all, has_all> e1 = {};
   beyond::expected<has_all, has_all> e2 = {};
   e1 = e2;
-
-  struct except_move {
-    except_move() = default;
-    except_move(const except_move&) = default;
-    except_move(except_move&&) noexcept(false){};
-    except_move& operator=(const except_move&) = default;
-  };
-  beyond::expected<except_move, except_move> e3 = {};
-  beyond::expected<except_move, except_move> e4 = {};
-  // e3 = e4; should not compile
 }
 
 struct takes_init_and_variadic {
@@ -333,8 +323,8 @@ TEST_CASE("expected Constructors", "[beyond.core.types.expected]")
   }
 
   {
-    beyond::expected<takes_init_and_variadic, int> e(beyond::in_place, {0, 1},
-                                                     2, 3);
+    beyond::expected<takes_init_and_variadic, int> e(
+        beyond::in_place, {0, 1}, 2, 3);
     REQUIRE(e);
     REQUIRE(e->v[0] == 0);
     REQUIRE(e->v[1] == 1);
@@ -1050,7 +1040,7 @@ TEST_CASE("expected or_else()", "[beyond.core.types.expected]")
 
 struct move_detector {
   move_detector() = default;
-  move_detector(move_detector&& rhs)
+  move_detector(move_detector&& rhs) noexcept
   {
     rhs.been_moved = true;
   }
@@ -1088,25 +1078,6 @@ TEST_CASE("expected Observers", "[beyond.core.types.expected]")
 
 struct no_throw {
   no_throw(std::string i) : i(i) {}
-  std::string i;
-};
-struct canthrow_move {
-  canthrow_move(std::string i) : i(i) {}
-  canthrow_move(canthrow_move const&) = default;
-  canthrow_move(canthrow_move&& other) noexcept(false) : i(other.i) {}
-  canthrow_move& operator=(canthrow_move&&) = default;
-  std::string i;
-};
-
-bool should_throw = false;
-struct willthrow_move {
-  willthrow_move(std::string i) : i(i) {}
-  willthrow_move(willthrow_move const&) = default;
-  willthrow_move(willthrow_move&& other) : i(other.i)
-  {
-    if (should_throw) throw 0;
-  }
-  willthrow_move& operator=(willthrow_move&&) = default;
   std::string i;
 };
 
@@ -1166,24 +1137,9 @@ template <class T1, class T2> void swap_test()
 
 TEST_CASE("expected swap", "[beyond.core.types.expected]")
 {
-
   swap_test<no_throw, no_throw>();
-  swap_test<no_throw, canthrow_move>();
-  swap_test<canthrow_move, no_throw>();
-
   std::string s1 = "abcdefghijklmnopqrstuvwxyz";
   std::string s2 = "zyxwvutsrqponmlkjihgfedcbaxxx";
-  beyond::expected<no_throw, willthrow_move> a{s1};
-  beyond::expected<no_throw, willthrow_move> b{beyond::unexpect, s2};
-  should_throw = 1;
-
-#ifdef _MSC_VER
-  // this seems to break catch on GCC and Clang
-  REQUIRE_THROWS(swap(a, b));
-#endif
-
-  REQUIRE(a->i == s1);
-  REQUIRE(b.error().i == s2);
 }
 
 struct a {
@@ -1210,7 +1166,7 @@ TEST_CASE("expected moving of nested type", "[beyond.core.types.expected]")
   struct foo {
     foo() = default;
     foo(foo&) = delete;
-    foo(foo&&){};
+    foo(foo&&) noexcept {};
   };
 
   std::vector<foo> v;
@@ -1229,8 +1185,8 @@ TEST_CASE("expected macro", "[beyond.core.types.expected]")
   STATIC_REQUIRE(good_res.value() == 1);
 
   constexpr auto bad_res =
-      [bad = beyond::expected<int, int>{beyond::unexpect,
-                                        42}]() -> beyond::expected<int, int> {
+      [bad = beyond::expected<int, int>{
+           beyond::unexpect, 42}]() -> beyond::expected<int, int> {
     BEYOND_EXPECTED_LET(int, i, bad);
     return i;
   }();

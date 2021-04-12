@@ -159,8 +159,7 @@ template <class T, class E> struct expected_storage_base {
 
   template <class U, class... Args>
   constexpr expected_storage_base(
-      in_place_t, std::initializer_list<U> il,
-      Args&&... args) //
+      in_place_t, std::initializer_list<U> il, Args&&... args) //
       requires(std::is_constructible_v<T, std::initializer_list<U>&, Args&&...>)
       : m_val(il, std::forward<Args>(args)...), m_has_val(true)
   {
@@ -224,7 +223,6 @@ template <class T, class E> struct expected_storage_base {
   // directly into place without throwing.
   template <class U = T>
   constexpr void assign(const expected_storage_base& rhs) noexcept
-      requires(std::is_nothrow_copy_constructible_v<U>)
   {
     if (!this->m_has_val && rhs.m_has_val) {
       geterr().~unexpected<E>();
@@ -237,9 +235,8 @@ template <class T, class E> struct expected_storage_base {
   // This overload handles the case where we can attempt to create a copy of
   // `T`, then no-throw move it into place if the copy was successful.
   template <class U = T>
-  constexpr void assign(const expected_storage_base& rhs) noexcept requires(
-      !std::is_nothrow_copy_constructible_v<U> &&
-      std::is_nothrow_move_constructible_v<U>)
+  constexpr void assign(const expected_storage_base& rhs) noexcept
+      requires(!std::is_nothrow_copy_constructible_v<U>)
   {
     if (!this->m_has_val && rhs.m_has_val) {
       T tmp = rhs.get();
@@ -250,56 +247,13 @@ template <class T, class E> struct expected_storage_base {
     }
   }
 
-  // This overload is the worst-case, where we have to move-construct the
-  // unexpected value into temporary storage, then try to copy the T into place.
-  // If the construction succeeds, then everything is fine, but if it throws,
-  // then we move the old unexpected value back into place before rethrowing the
-  // exception.
-  template <class U = T>
-  constexpr void assign(const expected_storage_base& rhs) requires(
-      !std::is_nothrow_copy_constructible_v<U> &&
-      !std::is_nothrow_move_constructible_v<U>)
-  {
-    if (!this->m_has_val && rhs.m_has_val) {
-      auto tmp = std::move(geterr());
-      geterr().~unexpected<E>();
-      try {
-        construct(rhs.get());
-      } catch (...) {
-        geterr() = std::move(tmp);
-        throw;
-      }
-    } else {
-      assign_common(rhs);
-    }
-  }
-
   // These overloads do the same as above, but for rvalues
   template <class U = T>
   constexpr void assign(expected_storage_base&& rhs) noexcept
-      requires(std::is_nothrow_move_constructible_v<U>)
   {
     if (!this->m_has_val && rhs.m_has_val) {
       geterr().~unexpected<E>();
       construct(std::move(rhs).get());
-    } else {
-      assign_common(std::move(rhs));
-    }
-  }
-
-  template <class U = T>
-  constexpr void assign(expected_storage_base&& rhs) //
-      requires(!std::is_nothrow_move_constructible_v<U>)
-  {
-    if (!this->m_has_val && rhs.m_has_val) {
-      auto tmp = std::move(geterr());
-      geterr().~unexpected<E>();
-      try {
-        construct(std::move(rhs).get());
-      } catch (...) {
-        geterr() = std::move(tmp);
-        throw;
-      }
     } else {
       assign_common(std::move(rhs));
     }
@@ -479,34 +433,49 @@ template <class T, class E>
 class expected : private detail::expected_storage_base<T, E> {
   static_assert(!std::is_reference<T>::value, "T must not be a reference");
   static_assert(
-      !std::is_same<T, std::remove_cv<in_place_t>>::value,
+      !std::is_same_v<T, std::remove_cv<in_place_t>>,
       "T must not be in_place_t");
   static_assert(
-      !std::is_same<T, std::remove_cv<unexpect_t>>::value,
+      !std::is_same_v<T, std::remove_cv<unexpect_t>>,
       "T must not be unexpect_t");
   static_assert(
-      !std::is_same<T, std::remove_cv<unexpected<E>>>::value,
+      !std::is_same_v<T, std::remove_cv<unexpected<E>>>,
       "T must not be unexpected<E>");
-  static_assert(!std::is_reference<E>::value, "E must not be a reference");
+  static_assert(!std::is_reference_v<E>, "E must not be a reference");
+
+  static_assert(
+      !std::is_move_constructible_v<T> ||
+          std::is_nothrow_move_constructible_v<T>,
+      "The move constructor of T must not throw");
+  static_assert(
+      !std::is_move_constructible_v<E> ||
+          std::is_nothrow_move_constructible_v<E>,
+      "The move constructor of E must not throw");
+  static_assert(
+      !std::is_move_assignable_v<T> || std::is_nothrow_move_assignable_v<T>,
+      "The move assignment of T must not throw");
+  static_assert(
+      !std::is_move_assignable_v<E> || std::is_nothrow_move_assignable_v<E>,
+      "The move assignment of E must not throw");
 
   constexpr auto get()
   {
     return detail::expected_storage_base<T, E>::get();
   }
 
-  T* valptr()
+  [[nodiscard]] constexpr auto valptr() -> T*
   {
     return std::addressof(this->m_val);
   }
-  const T* valptr() const
+  [[nodiscard]] constexpr auto valptr() const -> const T*
   {
     return std::addressof(this->m_val);
   }
-  unexpected<E>* errptr()
+  [[nodiscard]] constexpr auto errptr() noexcept -> unexpected<E>*
   {
     return std::addressof(this->m_unexpect);
   }
-  const unexpected<E>* errptr() const
+  [[nodiscard]] constexpr auto errptr() const noexcept -> const unexpected<E>*
   {
     return std::addressof(this->m_unexpect);
   }
@@ -533,9 +502,9 @@ class expected : private detail::expected_storage_base<T, E> {
   using impl_base = detail::expected_storage_base<T, E>;
 
 public:
-  typedef T value_type;
-  typedef E error_type;
-  typedef unexpected<E> unexpected_type;
+  using value_type = T;
+  using error_type = E;
+  using unexpected_type = unexpected<E>;
 
   using detail::expected_storage_base<T, E>::expected_storage_base;
 
@@ -565,8 +534,7 @@ public:
   // Move constrcutor
   constexpr expected(expected&& rhs) noexcept : expected<T, E>(detail::no_init)
   {
-    static_assert(std::is_nothrow_move_constructible_v<T>);
-    static_assert(std::is_nothrow_move_constructible_v<E>);
+
     if (rhs.has_value()) {
       this->construct_with(std::move(rhs));
     } else {
@@ -602,9 +570,6 @@ public:
   // Move assignment
   constexpr auto operator=(expected&& rhs) noexcept -> expected&
   {
-    static_assert(
-        std::is_nothrow_move_constructible_v<T> &&
-        std::is_nothrow_move_assignable_v<T>);
     this->assign(std::move(rhs));
     return *this;
   }
@@ -845,23 +810,20 @@ public:
           !std::is_same_v<expected<T, E>, std::decay_t<U>> &&
           !std::conjunction_v<
               std::is_scalar<T>, std::is_same<T, std::decay_t<U>>> &&
-          std::is_constructible_v<T, U> && std::is_assignable_v<G&, U> &&
-          std::is_nothrow_move_constructible_v<E>) //
+          std::is_constructible_v<T, U> && std::is_assignable_v<G&, U>) //
   {
     if (has_value()) {
       val() = std::forward<U>(v);
     } else {
       if constexpr (std::is_nothrow_constructible_v<T, U&&>) {
         err().~unexpected<E>();
-        ::new (valptr()) T(std::forward<U>(v));
-        this->m_has_val = true;
+        this->construct(std::forward<U>(v));
       } else {
         auto tmp = std::move(err());
         err().~unexpected<E>();
 
         try {
-          ::new (valptr()) T(std::forward<U>(v));
-          this->m_has_val = true;
+          this->construct(std::forward<U>(v));
         } catch (...) {
           err() = std::move(tmp);
           throw;
@@ -881,8 +843,7 @@ public:
       err() = rhs;
     } else {
       this->destroy_val();
-      ::new (errptr()) unexpected<E>(rhs);
-      this->m_has_val = false;
+      this->construct_error(rhs.value());
     }
 
     return *this;
@@ -890,15 +851,13 @@ public:
 
   template <class G = E>
   auto operator=(unexpected<G>&& rhs) noexcept -> expected& //
-      requires(std::is_nothrow_move_constructible_v<G>&&
-                   std::is_move_assignable_v<G>)
+      requires(std::is_move_assignable_v<G>)
   {
     if (!has_value()) {
       err() = std::move(rhs);
     } else {
       this->destroy_val();
-      ::new (errptr()) unexpected<E>(std::move(rhs));
-      this->m_has_val = false;
+      this->construct_error(rhs.value());
     }
 
     return *this;
@@ -916,15 +875,13 @@ public:
     } else {
       if constexpr (std::is_nothrow_constructible_v<T, Args&&...>) {
         err().~unexpected<E>();
-        ::new (valptr()) T(std::forward<Args>(args)...);
-        this->m_has_val = true;
+        this->construct(std::forward<Args>(args)...);
       } else {
         auto tmp = std::move(err());
         err().~unexpected<E>();
 
         try {
-          ::new (valptr()) T(std::forward<Args>(args)...);
-          this->m_has_val = true;
+          this->construct(std::forward<Args>(args)...);
         } catch (...) {
           err() = std::move(tmp);
           throw;
@@ -943,14 +900,14 @@ public:
       if constexpr (std::is_nothrow_constructible_v<
                         T, std::initializer_list<U>&, Args&&...>) {
         err().~unexpected<E>();
-        ::new (valptr()) T(il, std::forward<Args>(args)...);
+        std::construct_at(valptr(), il, std::forward<Args>(args)...);
         this->m_has_val = true;
       } else {
         auto tmp = std::move(err());
         err().~unexpected<E>();
 
         try {
-          ::new (valptr()) T(il, std::forward<Args>(args)...);
+          std::construct_at(valptr(), il, std::forward<Args>(args)...);
           this->m_has_val = true;
         } catch (...) {
           err() = std::move(tmp);
@@ -962,87 +919,37 @@ public:
   /// @}
 
 private:
-  using t_is_void = std::true_type;
-  using t_is_not_void = std::false_type;
-  using t_is_nothrow_move_constructible = std::true_type;
-  using move_constructing_t_can_throw = std::false_type;
-  using e_is_nothrow_move_constructible = std::true_type;
-  using move_constructing_e_can_throw = std::false_type;
-
-  void swap_where_both_have_value(expected& /*rhs*/, t_is_void) noexcept
+  void swap_where_this_has_value(expected& rhs) noexcept
   {
-    // swapping void is a no-op
-  }
-
-  void swap_where_both_have_value(expected& rhs, t_is_not_void)
-  {
-    using std::swap;
-    swap(val(), rhs.val());
-  }
-
-  void swap_where_only_one_has_value(expected& rhs, t_is_void) //
-      noexcept(std::is_nothrow_move_constructible<E>::value)
-  {
-    ::new (errptr()) unexpected_type(std::move(rhs.err()));
-    rhs.err().~unexpected_type();
-    std::swap(this->m_has_val, rhs.m_has_val);
-  }
-
-  void swap_where_only_one_has_value(expected& rhs, t_is_not_void)
-  {
-    if constexpr (std::is_nothrow_move_constructible_v<T>) {
-      if constexpr (std::is_nothrow_move_constructible_v<E>) {
-        auto temp = std::move(val());
-        val().~T();
-        ::new (errptr()) unexpected_type(std::move(rhs.err()));
-        rhs.err().~unexpected_type();
-        ::new (rhs.valptr()) T(std::move(temp));
-        std::swap(this->m_has_val, rhs.m_has_val);
-      } else {
-        auto temp = std::move(val());
-        val().~T();
-        try {
-          ::new (errptr()) unexpected_type(std::move(rhs.err()));
-          rhs.err().~unexpected_type();
-          ::new (rhs.valptr()) T(std::move(temp));
-          std::swap(this->m_has_val, rhs.m_has_val);
-        } catch (...) {
-          val() = std::move(temp);
-          throw;
-        }
-      }
-    } else {
-      auto temp = std::move(rhs.err());
+    if constexpr (std::is_void_v<T>) {
+      std::construct_at(errptr(), unexpected_type(std::move(rhs.err())));
       rhs.err().~unexpected_type();
-      try {
-        ::new (rhs.valptr()) T(val());
-        val().~T();
-        ::new (errptr()) unexpected_type(std::move(temp));
-        std::swap(this->m_has_val, rhs.m_has_val);
-      } catch (...) {
-        rhs.err() = std::move(temp);
-        throw;
-      }
+      std::swap(this->m_has_val, rhs.m_has_val);
+      return;
     }
+
+    auto temp = std::move(val());
+    val().~T();
+    std::construct_at(errptr(), unexpected_type(std::move(rhs.err())));
+    rhs.err().~unexpected_type();
+    std::construct_at(rhs.valptr(), std::move(temp));
+    std::swap(this->m_has_val, rhs.m_has_val);
   }
 
 public:
   template <std::swappable OT = T, std::swappable OE = E>
-  constexpr void swap(expected& rhs) //
-      noexcept(std::is_nothrow_move_constructible_v<T>&&
-                   std::is_nothrow_swappable_v<T>&&
-                       std::is_nothrow_move_constructible_v<E>&&
-                           std::is_nothrow_swappable_v<E>) //
-      requires(
-          std::is_nothrow_move_constructible_v<OT> ||
-          std::is_nothrow_move_constructible_v<OE>)
+  constexpr void swap(expected& rhs) noexcept(
+      std::is_nothrow_swappable_v<T>&& std::is_nothrow_swappable_v<E>)
   {
     if (has_value() && rhs.has_value()) {
-      swap_where_both_have_value(rhs, typename std::is_void<T>::type{});
+      if constexpr (!std::is_void_v<T>) {
+        using std::swap;
+        swap(val(), rhs.val());
+      }
     } else if (!has_value() && rhs.has_value()) {
       rhs.swap(*this);
     } else if (has_value()) {
-      swap_where_only_one_has_value(rhs, typename std::is_void<T>::type{});
+      swap_where_this_has_value(rhs);
     } else {
       using std::swap;
       swap(err(), rhs.err());
