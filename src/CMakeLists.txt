@@ -53,7 +53,7 @@ add_library(core
         ../include/beyond/allocators/global_resource.cpp
         ../include/beyond/allocators/global_resource.hpp
         ../include/beyond/algorithm/sort_by_key.hpp
-        ../include/beyond/coroutine/generator.hpp ../include/beyond/container/vector_interface.hpp ../include/beyond/utils/ref.hpp)
+        ../include/beyond/coroutine/generator.hpp ../include/beyond/container/vector_interface.hpp ../include/beyond/utils/ref.hpp ../include/beyond/types/unique_ptr.hpp)
 
 if (BEYOND_CORE_ENABLE_PCH)
     target_precompile_headers(core INTERFACE
