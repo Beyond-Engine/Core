@@ -33,4 +33,27 @@ TEST_CASE("Ref Test", "[beyond.core.utils.ref]")
     std::sort(v.begin(), v.end());
     REQUIRE(std::equal(v.begin(), v.end(), expected));
   }
+
+  SECTION("ref and cref")
+  {
+    using beyond::cref;
+    using beyond::ref;
+
+    int x = 42;
+
+    auto rx = ref(x);
+    REQUIRE(rx == x);
+
+    auto crx = cref(x);
+    REQUIRE(crx == x);
+
+    auto rx2 = rx;
+    REQUIRE(rx2 == x);
+
+    auto crx2 = rx;
+    REQUIRE(crx2 == x);
+
+    auto crx3 = rx2;
+    REQUIRE(crx3 == x);
+  }
 }
