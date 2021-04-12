@@ -89,6 +89,75 @@ public:
     return TRadian<T>{constant::pi<T>};
   }
 
+  /// @brief Negates the TRadian
+  [[nodiscard]] friend constexpr auto operator-(TRadian r) noexcept -> TRadian
+  {
+    return TRadian{-r.value()};
+  }
+
+  /// @brief Adds two Radians
+  [[nodiscard]] friend constexpr auto operator+(TRadian lhs,
+                                                TRadian rhs) noexcept -> TRadian
+  {
+    return TRadian{lhs.value() + rhs.value()};
+  }
+
+  /// @brief Subtracts two Radians
+  [[nodiscard]] friend constexpr auto operator-(TRadian lhs,
+                                                TRadian rhs) noexcept -> TRadian
+  {
+    return TRadian{lhs.value() - rhs.value()};
+  }
+
+  /// @brief Multiplies TRadian with a scalar
+  [[nodiscard]] friend constexpr auto operator*(TRadian lhs, T rhs) noexcept
+      -> TRadian
+  {
+    return TRadian{lhs.value() * rhs};
+  }
+
+  /// @overload
+  [[nodiscard]] friend constexpr auto operator*(T lhs, TRadian rhs) noexcept
+      -> TRadian
+  {
+    return TRadian{lhs * rhs.value()};
+  }
+
+  /// @brief Divides this TRadian by a scalar
+  [[nodiscard]] friend constexpr auto operator/(TRadian lhs, T rhs) noexcept
+      -> TRadian
+  {
+    return TRadian{lhs.value() / rhs};
+  }
+
+  /**
+   * @brief Divides a TRadian value by another TRadian.
+   */
+  [[nodiscard]] friend constexpr auto operator/(TRadian lhs,
+                                                TRadian rhs) noexcept -> T
+  {
+    return lhs.value() / rhs.value();
+  }
+
+  /**
+   * @brief Equality comparison between two `TRadian`s
+   */
+  [[nodiscard]] friend constexpr auto operator==(TRadian lhs,
+                                                 TRadian rhs) noexcept -> bool
+  {
+    return lhs.value() == rhs.value();
+  }
+
+  /**
+   * @brief Threeway comparison between two `TRadian`s
+   */
+  [[nodiscard]] friend constexpr auto operator<=>(TRadian lhs,
+                                                  TRadian rhs) noexcept
+      -> std::partial_ordering
+  {
+    return lhs.value() <=> rhs.value();
+  }
+
 private:
   T value_ = 0;
 };
@@ -153,269 +222,78 @@ public:
     return *this;
   }
 
+  /// @brief Negates the TDegree
+  [[nodiscard]] friend constexpr auto operator-(TDegree r) noexcept -> TDegree
+  {
+    return TDegree{-r.value()};
+  }
+
+  /// @brief Adds two Degrees
+  [[nodiscard]] friend constexpr auto operator+(TDegree lhs,
+                                                TDegree rhs) noexcept -> TDegree
+  {
+    return TDegree{lhs.value() + rhs.value()};
+  }
+
+  /// @brief Subtracts two Degrees
+  [[nodiscard]] friend constexpr auto operator-(TDegree lhs,
+                                                TDegree rhs) noexcept -> TDegree
+  {
+    return TDegree{lhs.value() - rhs.value()};
+  }
+
+  /// @brief Multiplies TDegree with a scalar
+  [[nodiscard]] friend constexpr auto operator*(TDegree lhs, T rhs) noexcept
+      -> TDegree
+  {
+    return TDegree{lhs.value() * rhs};
+  }
+
+  /// @overload
+  [[nodiscard]] friend constexpr auto operator*(T lhs, TDegree rhs) noexcept
+      -> TDegree
+  {
+    return TDegree{lhs * rhs.value()};
+  }
+
+  /// @brief Divides this TDegree by a scalar
+  [[nodiscard]] friend constexpr auto operator/(TDegree lhs, T rhs) noexcept
+      -> TDegree
+  {
+    return TDegree{lhs.value() / rhs};
+  }
+
+  /**
+   * @brief Divides a TDegree value by another TDegree.
+   */
+  [[nodiscard]] friend constexpr auto operator/(TDegree lhs,
+                                                TDegree rhs) noexcept -> T
+  {
+    return lhs.value() / rhs.value();
+  }
+
+  /**
+   * @brief Equality comparison between two `TDegree`s
+   */
+  [[nodiscard]] friend constexpr auto operator==(TDegree lhs,
+                                                 TDegree rhs) noexcept -> bool
+  {
+    return lhs.value() == rhs.value();
+  }
+
+  /**
+   * @brief Three-way comparison between two `TDegree`s
+   */
+  [[nodiscard]] friend constexpr auto operator<=>(TDegree lhs,
+                                                  TDegree rhs) noexcept
+      -> std::partial_ordering
+  {
+    return lhs.value() <=> rhs.value();
+  }
+
 private:
   T value_ = 0;
 };
-
-/// @brief Negates the TRadian
-/// @related TRadian
-template <typename T>
-[[nodiscard]] constexpr auto operator-(TRadian<T> r) noexcept -> TRadian<T>
-{
-  return TRadian<T>{-r.value()};
-}
-
-/// @brief Adds two Radians
-/// @related TRadian
-template <typename T>
-[[nodiscard]] constexpr auto operator+(TRadian<T> lhs, TRadian<T> rhs) noexcept
-    -> TRadian<T>
-{
-  return TRadian<T>{lhs.value() + rhs.value()};
-}
-
-/// @brief Subtracts two Radians
-/// @related TRadian
-template <typename T>
-[[nodiscard]] constexpr auto operator-(TRadian<T> lhs, TRadian<T> rhs) noexcept
-    -> TRadian<T>
-{
-  return TRadian<T>{lhs.value() - rhs.value()};
-}
-
-/// @brief Multiplies TRadian with a scalar
-/// @related TRadian
-template <typename T>
-[[nodiscard]] constexpr auto operator*(TRadian<T> lhs, T rhs) noexcept
-    -> TRadian<T>
-{
-  return TRadian<T>{lhs.value() * rhs};
-}
-
-/// @overload
-/// @related TRadian
-template <typename T>
-[[nodiscard]] constexpr auto operator*(T lhs, TRadian<T> rhs) noexcept
-    -> TRadian<T>
-{
-  return TRadian<T>{lhs * rhs.value()};
-}
-
-/// @brief Divides this TRadian by a scalar
-/// @related TRadian
-template <typename T>
-[[nodiscard]] constexpr auto operator/(TRadian<T> lhs, T rhs) noexcept
-    -> TRadian<T>
-{
-  return TRadian<T>{lhs.value() / rhs};
-}
-
-/**
- * @brief Divides a TRadian value by another TRadian.
- * @related TRadian
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator/(TRadian<T> lhs, TRadian<T> rhs) noexcept
-    -> T
-{
-  return lhs.value() / rhs.value();
-}
-
-/**
- * @brief Equality comparison between two `TRadian`s
- * @related TRadian
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator==(TRadian<T> lhs, TRadian<T> rhs) noexcept
-    -> bool
-{
-  return lhs.value() == rhs.value();
-}
-
-/**
- * @brief Inequality comparison between two `TRadian`s
- * @related TRadian
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator!=(TRadian<T> lhs, TRadian<T> rhs) noexcept
-    -> bool
-{
-  return lhs.value() != rhs.value();
-}
-
-/**
- * @brief Less than operator between two `TRadian`s
- * @related TRadian
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator<(TRadian<T> lhs, TRadian<T> rhs) noexcept
-    -> bool
-{
-  return lhs.value() < rhs.value();
-}
-
-/**
- * @brief Greater than operator between two `TRadian`s
- * @related TRadian
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator>(TRadian<T> lhs, TRadian<T> rhs) noexcept
-    -> bool
-{
-  return lhs.value() > rhs.value();
-}
-
-/**
- * @brief Less than or equal operator between two `TRadian`s
- * @related TRadian
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator<=(TRadian<T> lhs, TRadian<T> rhs) noexcept
-    -> bool
-{
-  return lhs.value() <= rhs.value();
-}
-
-/**
- * @brief Greater than or equal operator between two `TRadian`s
- * @related TRadian
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator>=(TRadian<T> lhs, TRadian<T> rhs) noexcept
-    -> bool
-{
-  return lhs.value() >= rhs.value();
-}
-
-/// @brief Negates the TDegree
-/// @related TDegree
-template <typename T>
-[[nodiscard]] constexpr auto operator-(TDegree<T> r) noexcept -> TDegree<T>
-{
-  return TDegree<T>{-r.value()};
-}
-
-/// @brief Adds two Degrees
-/// @related TDegree
-template <typename T>
-[[nodiscard]] constexpr auto operator+(TDegree<T> lhs, TDegree<T> rhs) noexcept
-    -> TDegree<T>
-{
-  return TDegree<T>{lhs.value() + rhs.value()};
-}
-
-/// @brief Subtracts two Degrees
-/// @related TDegree
-template <typename T>
-[[nodiscard]] constexpr auto operator-(TDegree<T> lhs, TDegree<T> rhs) noexcept
-    -> TDegree<T>
-{
-  return TDegree<T>{lhs.value() - rhs.value()};
-}
-
-/// @brief Multiplies TDegree with a scalar
-/// @related TDegree
-template <typename T>
-[[nodiscard]] constexpr auto operator*(TDegree<T> lhs, T rhs) noexcept
-    -> TDegree<T>
-{
-  return TDegree<T>{lhs.value() * rhs};
-}
-
-/// @overload
-/// @related TDegree
-template <typename T>
-[[nodiscard]] constexpr auto operator*(T lhs, TDegree<T> rhs) noexcept
-    -> TDegree<T>
-{
-  return TDegree<T>{lhs * rhs.value()};
-}
-
-/// @brief Divides this TDegree by a scalar
-/// @related TDegree
-template <typename T>
-[[nodiscard]] constexpr auto operator/(TDegree<T> lhs, T rhs) noexcept
-    -> TDegree<T>
-{
-  return TDegree<T>{lhs.value() / rhs};
-}
-
-/**
- * @brief Divides a TDegree value by another TDegree.
- * @related TDegree
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator/(TDegree<T> lhs, TDegree<T> rhs) noexcept
-    -> T
-{
-  return lhs.value() / rhs.value();
-}
-
-/**
- * @brief Equality comparison between two `TDegree`s
- * @related TDegree
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator==(TDegree<T> lhs, TDegree<T> rhs) noexcept
-    -> bool
-{
-  return lhs.value() == rhs.value();
-}
-
-/**
- * @brief Inequality comparison between two `TDegree`s
- * @related TDegree
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator!=(TDegree<T> lhs, TDegree<T> rhs) noexcept
-    -> bool
-{
-  return lhs.value() != rhs.value();
-}
-
-/**
- * @brief Less than operator between two `TDegree`s
- * @related TDegree
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator<(TDegree<T> lhs, TDegree<T> rhs) noexcept
-    -> bool
-{
-  return lhs.value() < rhs.value();
-}
-
-/**
- * @brief Greater than operator between two `TDegree`s
- * @related TDegree
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator>(TDegree<T> lhs, TDegree<T> rhs) noexcept
-    -> bool
-{
-  return lhs.value() > rhs.value();
-}
-
-/**
- * @brief Less than or equal operator between two `TDegree`s
- * @related TDegree
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator<=(TDegree<T> lhs, TDegree<T> rhs) noexcept
-    -> bool
-{
-  return lhs.value() <= rhs.value();
-}
-
-/**
- * @brief Greater than or equal operator between two `TDegree`s
- * @related TDegree
- */
-template <typename T>
-[[nodiscard]] constexpr auto operator>=(TDegree<T> lhs, TDegree<T> rhs) noexcept
-    -> bool
-{
-  return lhs.value() >= rhs.value();
-}
 
 namespace literals {
 
