@@ -9,7 +9,7 @@
 
 namespace beyond {
 
-template <typename T, unsigned int N> struct Array {
+template <typename T, std::uint32_t N> struct Array {
   static_assert(N > 0, "Cannot create an array with zero elements");
 
   T elems_[N];
@@ -197,28 +197,28 @@ template <typename T, unsigned int N> struct Array {
 /**
  * @brief Extracts the Ith element element from the array.
  */
-template <unsigned int I, class T, unsigned int N>
+template <std::uint32_t I, class T, std::uint32_t N>
 [[nodiscard]] constexpr auto get(Array<T, N>& a) noexcept -> T&
 {
   static_assert(I < N);
   return a.elems_[I];
 }
 
-template <unsigned int I, class T, unsigned int N>
+template <std::uint32_t I, class T, std::uint32_t N>
 [[nodiscard]] constexpr auto get(const Array<T, N>& a) noexcept -> const T&
 {
   static_assert(I < N);
   return a.elems_[I];
 }
 
-template <unsigned int I, class T, unsigned int N>
+template <std::uint32_t I, class T, std::uint32_t N>
 [[nodiscard]] constexpr auto get(Array<T, N>&& a) noexcept -> T&&
 {
   static_assert(I < N);
   return std::move(a.elems_[I]);
 }
 
-template <unsigned int I, class T, unsigned int N>
+template <std::uint32_t I, class T, std::uint32_t N>
 [[nodiscard]] constexpr auto get(const Array<T, N>&& a) noexcept -> const T&&
 {
   static_assert(I < N);
@@ -228,11 +228,11 @@ template <unsigned int I, class T, unsigned int N>
 } // namespace beyond
 
 namespace std {
-template <typename T, unsigned int N> struct tuple_size<beyond::Array<T, N>> {
+template <typename T, std::uint32_t N> struct tuple_size<beyond::Array<T, N>> {
   static constexpr size_t value = N;
 };
 
-template <std::size_t I, class T, unsigned int N>
+template <std::size_t I, class T, std::uint32_t N>
 struct tuple_element<I, beyond::Array<T, N>> {
   using type = T;
 };
