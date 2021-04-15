@@ -91,11 +91,8 @@ TEST_CASE("UniquePtr test", "[beyond.core.types.unique_ptr]")
 
   SECTION("Covariant conversion")
   {
-    constexpr auto f = []() {
-      beyond::UniquePtr<Base> ptr = beyond::make_unique<Derived>(42);
-      return ptr->value();
-    };
-    STATIC_REQUIRE(f() == 42);
+    beyond::UniquePtr<Base> ptr = beyond::make_unique<Derived>(42);
+    REQUIRE(ptr->value() == 42);
   }
 
   SECTION("Equality comparison")
@@ -105,10 +102,7 @@ TEST_CASE("UniquePtr test", "[beyond.core.types.unique_ptr]")
       return ptr1 == ptr1;
     };
     STATIC_REQUIRE(f1());
-    constexpr auto f2 = []() {
-      return beyond::make_unique<int>(42) != beyond::make_unique<int>(42);
-    };
-    STATIC_REQUIRE(f2());
+    REQUIRE(beyond::make_unique<int>(42) != beyond::make_unique<int>(42));
   }
 
   SECTION("Three way comparison")
