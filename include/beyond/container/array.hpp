@@ -2,7 +2,7 @@
 #define BEYOND_CORE_CONTAINER_ARRAY_HPP
 
 #include <beyond/utils/assert.hpp>
-#include <beyond/utils/force_inline.hpp>
+#include <beyond/utils/utils.hpp>
 
 #include <iterator>
 #include <type_traits>

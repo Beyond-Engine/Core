@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-#include "force_inline.hpp"
+#include "utils.hpp"
 
 namespace beyond {
 

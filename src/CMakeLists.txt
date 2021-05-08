@@ -5,7 +5,6 @@ add_library(core
         ../include/beyond/ecs/sparse_map.hpp
         ../include/beyond/ecs/sparse_set.hpp
         ../include/beyond/utils/assert.hpp
-        ../include/beyond/utils/size.hpp
         ../include/beyond/utils/arrow_proxy.hpp
         ../include/beyond/utils/bit_cast.hpp
         ../include/beyond/utils/conversion.hpp
@@ -14,10 +13,7 @@ add_library(core
         ../include/beyond/utils/function_ref.hpp
         ../include/beyond/utils/handle.hpp
         ../include/beyond/utils/make_array.hpp
-        ../include/beyond/utils/numeric_aliases.hpp
         ../include/beyond/utils/panic.hpp
-        ../include/beyond/utils/to_pointer.hpp
-        ../include/beyond/utils/byte_size.hpp
         utils/panic.cpp
         ../include/beyond/utils/type_traits.hpp
         ../include/beyond/math/angle.hpp
@@ -46,14 +42,17 @@ add_library(core
         ../include/beyond/types/in_place.hpp
         ../include/beyond/types/monostate.hpp
         ../include/beyond/math/quat.hpp
-        ../include/beyond/utils/force_inline.hpp
         ../include/beyond/utils/noexcept_cast.hpp
 
         ../include/beyond/allocators/memory_resource.hpp
         ../include/beyond/allocators/global_resource.cpp
         ../include/beyond/allocators/global_resource.hpp
         ../include/beyond/algorithm/sort_by_key.hpp
-        ../include/beyond/coroutine/generator.hpp ../include/beyond/container/vector_interface.hpp ../include/beyond/utils/ref.hpp ../include/beyond/types/unique_ptr.hpp)
+        ../include/beyond/coroutine/generator.hpp
+        ../include/beyond/container/vector_interface.hpp
+        ../include/beyond/utils/ref.hpp
+        ../include/beyond/types/unique_ptr.hpp
+        ../include/beyond/utils/utils.hpp)
 
 if (BEYOND_CORE_ENABLE_PCH)
     target_precompile_headers(core INTERFACE

@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include <beyond/utils/size.hpp>
+#include <beyond/utils/utils.hpp>
 
 TEST_CASE("beyond::size of raw array", "[beyond.core.util.size]")
 {

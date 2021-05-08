@@ -1,7 +1,7 @@
 #ifndef BEYOND_CORE_CONTAINER_VECTOR_INTERFACE_HPP
 #define BEYOND_CORE_CONTAINER_VECTOR_INTERFACE_HPP
 
-#include "../utils/force_inline.hpp"
+#include "../utils/utils.hpp"
 #include "../utils/panic.hpp"
 
 namespace beyond {

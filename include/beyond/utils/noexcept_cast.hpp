@@ -1,7 +1,7 @@
 #ifndef BEYOND_CORE_UTILS_NOEXCEPT_CAST_HPP
 #define BEYOND_CORE_UTILS_NOEXCEPT_CAST_HPP
 
-#include "force_inline.hpp"
+#include "utils.hpp"
 
 namespace beyond {
 
