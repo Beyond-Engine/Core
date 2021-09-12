@@ -63,14 +63,14 @@ using isize = std::ptrdiff_t;
  */
 template <typename T>
 [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
-byte_size(const std::vector<T>& v) noexcept -> std::uint32_t
+byte_size(const std::vector<T>& v) noexcept -> u32
 {
   return static_cast<std::uint32_t>(v.size() * sizeof(T));
 }
 
 template <typename T, std::uint32_t N>
 [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
-    byte_size(T (&/*arr*/)[N]) noexcept -> std::uint32_t
+    byte_size(T (&/*arr*/)[N]) noexcept -> u32
 {
   return N * sizeof(T);
 }
