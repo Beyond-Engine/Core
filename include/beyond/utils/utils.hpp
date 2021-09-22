@@ -1,6 +1,8 @@
 #ifndef BEYOND_CORE_UTILS_HPP
 #define BEYOND_CORE_UTILS_HPP
 
+#include <ranges>
+
 #ifdef DOXYGEN_SHOULD_SKIP_THIS
 #define BEYOND_FORCE_INLINE
 #elif _MSC_VER
@@ -59,13 +61,14 @@ using usize = std::size_t;
 using isize = std::ptrdiff_t;
 
 /**
- * @brief Gets the data size in bytes of a container
+ * @brief Gets the data size in bytes of a contiguous range
  */
-template <typename T>
-[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
-byte_size(const std::vector<T>& v) noexcept -> u32
+template <std::ranges::contiguous_range Range>
+[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto byte_size(Range v) noexcept
+    -> u32
 {
-  return static_cast<std::uint32_t>(v.size() * sizeof(T));
+  return static_cast<std::uint32_t>(v.size() *
+                                    sizeof(std::ranges::range_value_t<Range>));
 }
 
 template <typename T, std::uint32_t N>
