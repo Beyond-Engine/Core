@@ -74,7 +74,7 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     endif ()
 endif ()
 
-option(BEYOND_CORE_ENABLE_PCH "Enable Precompiled Headers" ON)
+option(BEYOND_CORE_ENABLE_PCH "Enable Precompiled Headers" OFF)
 if (BEYOND_CORE_ENABLE_PCH)
     target_precompile_headers(beyond_compiler_options INTERFACE
             <algorithm>
