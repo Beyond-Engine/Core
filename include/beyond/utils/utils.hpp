@@ -1,6 +1,8 @@
 #ifndef BEYOND_CORE_UTILS_HPP
 #define BEYOND_CORE_UTILS_HPP
 
+#include <cstdint>
+#include <cstdlib>
 #include <ranges>
 
 #ifdef DOXYGEN_SHOULD_SKIP_THIS
