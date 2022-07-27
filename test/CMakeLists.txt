@@ -42,7 +42,7 @@ add_executable(${TEST_TARGET_NAME}
         container/at_opt_test.cpp
         ../include/beyond/container/at_opt.hpp
         container/array_test.cpp
-        coroutine/generator_test.cpp utils/ref_test.cpp types/unique_ptr_test.cpp)
+        coroutine/generator_test.cpp utils/ref_test.cpp types/unique_ptr_test.cpp utils/defer_test.cpp)
 
 target_link_libraries(${TEST_TARGET_NAME}
         PRIVATE
