@@ -1,13 +1,15 @@
 #ifndef BEYOND_CORE_UTILS_DEFER_HPP
 #define BEYOND_CORE_UTILS_DEFER_HPP
 
+#include "utils.hpp"
+
 namespace beyond {
 
 template <typename Func> class Defer {
   Func func_;
 
 public:
-  explicit Defer(Func func) : func_{std::move(func)} {}
+  explicit Defer(Func func) : func_{BEYOND_MOV(func)} {}
   ~Defer()
   {
     func_();
