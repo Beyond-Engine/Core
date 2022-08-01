@@ -7,7 +7,6 @@
  * @ingroup math
  */
 
-#include <array>
 #include <cmath>
 #include <type_traits>
 #include <utility>
@@ -53,15 +52,8 @@ template <typename Derived> struct VectorStorage<Derived, 2> {
   using Trait = VecTrait<Derived>;
   using ValueType = typename Trait::ValueType;
 
-  constexpr VectorStorage() noexcept : elem{{}} {}
-  explicit constexpr VectorStorage(
-      const std::array<ValueType, 2>& data) noexcept
-      : elem{data}
-  {
-  }
-
   union {
-    std::array<ValueType, 2> elem;
+    ValueType elem[2]{};
     struct {
       ValueType x;
       ValueType y;
@@ -76,15 +68,8 @@ template <typename Derived> struct VectorStorage<Derived, 3> {
   using ValueType = typename Trait::ValueType;
   using Trait2 = VecTrait<TVec<ValueType, 2>>;
 
-  constexpr VectorStorage() noexcept : elem{{}} {}
-  explicit constexpr VectorStorage(
-      const std::array<ValueType, 3>& data) noexcept
-      : elem{data}
-  {
-  }
-
   union {
-    std::array<ValueType, 3> elem;
+    ValueType elem[3]{};
     struct {
       ValueType x;
       ValueType y;
@@ -111,14 +96,8 @@ template <typename Derived> struct VectorStorage<Derived, 4> {
   using Trait2 = VecTrait<TVec<ValueType, 2>>;
   using Trait3 = VecTrait<TVec<ValueType, 3>>;
 
-  constexpr VectorStorage() noexcept : elem{{}} {}
-  explicit constexpr VectorStorage(
-      const std::array<ValueType, 4>& data) noexcept
-      : elem{data}
-  {
-  }
   union {
-    std::array<ValueType, 4> elem;
+    ValueType elem[4]{};
     struct {
       ValueType x;
       ValueType y;
