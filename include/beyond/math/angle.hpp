@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "../utils/utils.hpp"
 #include "constants.hpp"
 
 /**
@@ -30,15 +31,14 @@ template <typename Value> class TDegree;
  */
 template <std::floating_point T> class TRadian {
 public:
-  static_assert(std::is_floating_point_v<T>);
   using ValueType = T;
 
   constexpr TRadian() = default;
   explicit constexpr TRadian(T v) noexcept : value_{v} {}
 
   /// @brief Converts a TDegree to TRadian
-  constexpr TRadian(TDegree<T> r) noexcept
-      : value_{r.value() * constant::pi<T> / 180}
+  explicit constexpr TRadian(TDegree<T> d) noexcept
+      : value_{d.value() * constant::pi<T> / static_cast<T>(180)}
   {
   }
 
@@ -175,7 +175,7 @@ public:
   constexpr TDegree() = default;
   explicit constexpr TDegree(T v) noexcept : value_{v} {}
 
-  constexpr TDegree(TRadian<T> r) noexcept
+  explicit constexpr TDegree(TRadian<T> r) noexcept
       : value_{r.value() / constant::pi<T> * 180}
   {
   }
@@ -295,6 +295,16 @@ public:
 private:
   T value_ = 0;
 };
+
+template <typename T> [[nodiscard]] auto to_degree(TRadian<T> rad) -> TDegree<T>
+{
+  return TDegree{rad};
+}
+
+template <typename T> [[nodiscard]] auto to_radian(TDegree<T> deg) -> TRadian<T>
+{
+  return TRadian{deg};
+}
 
 namespace literals {
 
