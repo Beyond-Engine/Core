@@ -4,9 +4,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 find_package(Catch2)
 
-add_library(catch_main STATIC main.cpp)
-target_link_libraries(catch_main PUBLIC Catch2::Catch2)
-
 add_executable(${TEST_TARGET_NAME}
         algorithms/sort_by_key_test.cpp
         coroutine/generator_test.cpp
@@ -34,21 +31,25 @@ add_executable(${TEST_TARGET_NAME}
 
         types/optional_test.cpp
         types/expected_test.cpp
+        types/unique_ptr_test.cpp
 
         geometry/ray_test.cpp
         geometry/aabb_test.cpp
 
         random/xorshift32_test.cpp
         container/at_opt_test.cpp
-        ../include/beyond/container/at_opt.hpp
         container/array_test.cpp
-        coroutine/generator_test.cpp utils/ref_test.cpp types/unique_ptr_test.cpp utils/defer_test.cpp)
+        coroutine/generator_test.cpp
+
+        utils/ref_test.cpp
+        utils/defer_test.cpp
+        )
 
 target_link_libraries(${TEST_TARGET_NAME}
         PRIVATE
         beyond::core
         beyond::compiler_options
-        catch_main)
+        Catch2::Catch2WithMain)
 
 if (${BEYOND_CORE_BUILD_TESTS_COVERAGE})
     include("../cmake/CodeCoverage.cmake")
@@ -63,7 +64,7 @@ endif ()
 
 if (BEYOND_CORE_ENABLE_PCH)
     target_precompile_headers(${TEST_TARGET_NAME} PRIVATE
-            <catch2/catch.hpp>
+            <catch2/catch_test_macros.hpp>
             )
 endif ()
 

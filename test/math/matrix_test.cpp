@@ -1,10 +1,13 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_template_test_macros.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include "beyond/math/matrix.hpp"
 #include "beyond/math/serial.hpp"
 
 #include "../serial_test_util.hpp"
 #include "./matrix_test_util.hpp"
+
+using Catch::Approx;
 
 TEMPLATE_TEST_CASE("Default constructed matrices are zero matrices",
                    "[beyond.core.math.mat]", beyond::Mat2, beyond::Mat3,

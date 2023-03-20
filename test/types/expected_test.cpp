@@ -1,5 +1,5 @@
 #include "beyond/types/expected.hpp"
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include <memory>
 #include <string>
@@ -1186,10 +1186,8 @@ TEST_CASE("expected swap", "[beyond.core.types.expected]")
   REQUIRE(b.error().i == s2);
 }
 
-struct a {
-};
-struct b : a {
-};
+struct a {};
+struct b : a {};
 
 auto doit() -> beyond::expected<std::unique_ptr<b>, int>
 {

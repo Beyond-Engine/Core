@@ -1,7 +1,10 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_approx.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include "beyond/math/math.hpp"
 #include <cmath>
+
+using Catch::Approx;
 
 TEST_CASE("Scalar Trig functions", "[beyond.core.math]")
 {

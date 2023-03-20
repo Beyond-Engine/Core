@@ -37,7 +37,7 @@ public:
   explicit constexpr TRadian(T v) noexcept : value_{v} {}
 
   /// @brief Converts a TDegree to TRadian
-  explicit constexpr TRadian(TDegree<T> d) noexcept
+  explicit(false) constexpr TRadian(TDegree<T> d) noexcept
       : value_{d.value() * constant::pi<T> / static_cast<T>(180)}
   {
   }
@@ -175,7 +175,7 @@ public:
   constexpr TDegree() = default;
   explicit constexpr TDegree(T v) noexcept : value_{v} {}
 
-  explicit constexpr TDegree(TRadian<T> r) noexcept
+  explicit(false) constexpr TDegree(TRadian<T> r) noexcept
       : value_{r.value() / constant::pi<T> * 180}
   {
   }

@@ -1,6 +1,9 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_approx.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include "beyond/geometry/ray.hpp"
+
+using Catch::Approx;
 
 TEST_CASE("Ray", "[geometry]")
 {

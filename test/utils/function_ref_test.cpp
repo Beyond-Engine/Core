@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include "beyond/utils/function_ref.hpp"
 
@@ -90,10 +90,8 @@ TEST_CASE("Implicit conversion from function that returns child to "
           "function_ref that returns a Parent",
           "[beyond.core.function_ref]")
 {
-  struct Fruit {
-  };
-  struct Apple : Fruit {
-  };
+  struct Fruit {};
+  struct Apple : Fruit {};
 
   auto get_apple = []() -> Apple* { return nullptr; };
   auto bar = [get_apple]() -> beyond::function_ref<Fruit*()> {

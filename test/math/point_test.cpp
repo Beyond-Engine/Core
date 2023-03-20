@@ -1,34 +1,25 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_approx.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include "../serial_test_util.hpp"
 #include "beyond/math/point.hpp"
 #include "beyond/math/serial.hpp"
-
-template <typename T1, typename T2> concept Addable = requires(T1 x, T2 y)
-{
-  x + y;
-};
-
-template <typename T1, typename T2> concept Multiplicable = requires(T1 x, T2 y)
-{
-  x* y;
-};
-
-template <typename T1, typename T2> concept CanDotProduct = requires(T1 x, T2 y)
-{
-  beyond::dot(x, y);
-};
+using Catch::Approx;
 
 template <typename T1, typename T2>
-concept CanCrossProduct = requires(T1 x, T2 y)
-{
-  beyond::cross(x, y);
-};
+concept Addable = requires(T1 x, T2 y) { x + y; };
 
-template <typename T> concept Normalizable = requires(T x)
-{
-  beyond::normalize(x);
-};
+template <typename T1, typename T2>
+concept Multiplicable = requires(T1 x, T2 y) { x* y; };
+
+template <typename T1, typename T2>
+concept CanDotProduct = requires(T1 x, T2 y) { beyond::dot(x, y); };
+
+template <typename T1, typename T2>
+concept CanCrossProduct = requires(T1 x, T2 y) { beyond::cross(x, y); };
+
+template <typename T>
+concept Normalizable = requires(T x) { beyond::normalize(x); };
 
 TEST_CASE("Points", "[beyond.core.math.vec]")
 {

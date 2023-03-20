@@ -1,4 +1,5 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_approx.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include <sstream>
 
@@ -12,6 +13,8 @@ using namespace beyond;
 
 using beyond::float_constants::pi;
 using namespace beyond::literals;
+
+using Catch::Approx;
 
 TEST_CASE("TRadian", "[beyond.core.math.angle]")
 {

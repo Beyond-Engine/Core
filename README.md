@@ -63,4 +63,4 @@ make breaking changes frequently.
 
 ## License
 
-This repository is released under Mit License. See [License](file:License) for more information.
+This repository is released under MIT License. See [License](file:License) for more information.

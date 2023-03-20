@@ -1,4 +1,4 @@
-from conans import ConanFile, CMake
+from conan import ConanFile
 
 
 class BeyondCoreConan(ConanFile):
@@ -12,10 +12,10 @@ class BeyondCoreConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
     default_options = {"shared": False}
-    generators = "cmake_find_package"
+    generators = ["CMakeToolchain", "CMakeDeps"]
     exports_sources = ["cmake/*", "include/*", "src/*", "third-party/*", "CMakeLists.txt"]
-    requires = ["fmt/7.1.3", "backward-cpp/1.6"]
-    build_requires = ["catch2/2.13.4"]
+    requires = ["fmt/9.1.0", "backward-cpp/1.6"]
+    test_requires = ["catch2/3.3.2"]
 
     def build(self):
         cmake = CMake(self)

@@ -1,8 +1,9 @@
+#include <catch2/catch_test_macros.hpp>
+
 #include "beyond/math/serial.hpp"
 #include "beyond/math/transform.hpp"
 
 #include "matrix_test_util.hpp"
-#include <catch2/catch.hpp>
 
 TEST_CASE("Translate", "[beyond.core.math.transform]")
 {

@@ -1,8 +1,10 @@
 ﻿#include "beyond/ecs/sparse_map.hpp"
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_approx.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 using namespace beyond;
+using Catch::Approx;
 
 struct Entity : Handle<Entity, std::uint32_t, 24, 8> {
   using Handle::Handle;

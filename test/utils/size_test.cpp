@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include <beyond/container/static_vector.hpp>
 #include <beyond/utils/utils.hpp>

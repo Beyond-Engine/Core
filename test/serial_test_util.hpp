@@ -2,7 +2,7 @@
 #ifndef BEYOND_CORE_SERIAL_TEST_UTIL_HPP
 #define BEYOND_CORE_SERIAL_TEST_UTIL_HPP
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <sstream>
 
 #define REQUIRE_TO_STRING_EQ(data, expected)                                   \

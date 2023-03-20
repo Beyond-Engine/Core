@@ -1,10 +1,13 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_approx.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include <sstream>
 
 #include "../serial_test_util.hpp"
 #include "beyond/math/serial.hpp"
 #include "beyond/math/vector.hpp"
+
+using Catch::Approx;
 
 TEST_CASE("Vec All types test", "[beyond.core.math.vec]")
 {
