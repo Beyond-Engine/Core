@@ -28,7 +28,7 @@ if (BEYOND_CORE_USE_CMAKE_CONAN)
 
     conan_cmake_run(CONANFILE conanfile.py  # or relative build/conanfile.txt
             BASIC_SETUP
-            GENERATORS cmake_find_package
+            GENERATORS CMakeDeps
             BUILD missing)
 endif ()
 

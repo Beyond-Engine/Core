@@ -22,9 +22,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Checkout submodules
-        uses: textbook/git-checkout-submodule-action@master
+        with:
+          submodules: recursive
 
       - name: Cache
         uses: actions/cache@v2
@@ -43,12 +42,13 @@ jobs:
           python3 -m pip install --upgrade pip setuptools
           python3 -m pip install cmake
           cmake -E make_directory ${{runner.workspace}}/build
-          sudo apt install g++-10
+          sudo apt install g++-10 libelf-dev
 
       - name: Install conan
         shell: bash
         run: |
           python3 -m pip install conan
+          conan profile detect
 
       - name: Configure CMake
         # Use a bash shell so we can use the same syntax for environment variable
