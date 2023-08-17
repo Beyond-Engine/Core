@@ -86,9 +86,7 @@ TEST_CASE("function_ref Constructors", "[beyond.core.function_ref]")
   fr2();
 }
 
-TEST_CASE("Implicit conversion from function that returns child to "
-          "function_ref that returns a Parent",
-          "[beyond.core.function_ref]")
+TEST_CASE("function_ref return type covariance", "[beyond.core.function_ref]")
 {
   struct Fruit {};
   struct Apple : Fruit {};

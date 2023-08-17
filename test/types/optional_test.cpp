@@ -887,10 +887,8 @@ int& x(int& i)
 
 } // anonymous namespace
 
-TEST_CASE(
-    " optional `.map` with a callable returning a reference should return an "
-    "optional reference",
-    "[beyond.core.types.optional]")
+TEST_CASE(" optional `.map` with a callable returning a reference",
+          "[beyond.core.types.optional]")
 {
   beyond::optional<foo2> f = foo2{};
   auto v = f.map(&foo2::v).map(x);

@@ -40,6 +40,7 @@ public:
  * ```
  */
 #define BEYOND_DEFER(expr)                                                     \
+  /* NOLINTNEXTLINE(misc-const-correctness) */                                 \
   beyond::Defer BEYOND_CONCAT(defer_, __COUNTER__)                             \
   {                                                                            \
     [&]() { expr; }                                                            \

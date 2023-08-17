@@ -47,17 +47,7 @@ template <typename T> struct TQuat {
 
   [[nodiscard]] friend constexpr auto operator==(const TQuat<T>& lhs,
                                                  const TQuat<T>& rhs) noexcept
-      -> bool
-  {
-    return lhs.w == rhs.w && lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
-  }
-
-  [[nodiscard]] friend constexpr auto operator!=(const TQuat<T>& lhs,
-                                                 const TQuat<T>& rhs) noexcept
-      -> bool
-  {
-    return lhs.w != rhs.w || lhs.x != rhs.x || lhs.y != rhs.y || lhs.z == rhs.z;
-  }
+      -> bool = default;
 };
 
 using Quat = TQuat<float>;
