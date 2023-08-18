@@ -96,6 +96,18 @@ TEST_CASE("Axis-wise rotation", "[beyond.core.math.transform]")
     matrix_approx_match(beyond::rotate_z(beyond::Radian::pi() / 3.f), expected);
     matrix_approx_match(beyond::rotate_z(60.0_deg), expected);
   }
+
+  SECTION("axis angle rotation")
+  {
+    const auto angle = beyond::Radian::pi() / 3.f;
+
+    matrix_approx_match(beyond::rotate_x(angle),
+                        beyond::rotate(angle, beyond::Vec3{1, 0, 0}));
+    matrix_approx_match(beyond::rotate_y(angle),
+                        beyond::rotate(angle, beyond::Vec3{0, 1, 0}));
+    matrix_approx_match(beyond::rotate_z(angle),
+                        beyond::rotate(angle, beyond::Vec3{0, 0, 1}));
+  }
 }
 
 TEST_CASE("Scaling", "[beyond.core.math.transform]")

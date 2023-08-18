@@ -24,7 +24,7 @@ namespace beyond {
  * @{
  */
 
-/// @brief Creates a 4x4 rotation matrix that rotates around x-axis  by r radian
+/// @brief Creates a 4x4 rotation matrix that rotates around x-axis by r radian
 template <typename T>
 [[nodiscard]] inline auto rotate_x(TRadian<T> r) noexcept -> TMat4<T>
 {
@@ -41,7 +41,7 @@ template <typename T>
   };
 }
 
-/// @brief Creates a 4x4 rotation matrix that rotates around x-axis  by r radian
+/// @brief Creates a 4x4 rotation matrix that rotates around y-axis by r radian
 template <typename T>
 [[nodiscard]] inline auto rotate_y(TRadian<T> r) noexcept -> TMat4<T>
 {
@@ -58,7 +58,7 @@ template <typename T>
   };
 }
 
-/// @brief Creates a 4x4 rotation matrix that rotates around x-axis  by r radian
+/// @brief Creates a 4x4 rotation matrix that rotates around z-axis by r radian
 template <typename T>
 [[nodiscard]] inline auto rotate_z(TRadian<T> r) noexcept -> TMat4<T>
 {
@@ -73,6 +73,34 @@ template <typename T>
       0, 0, 0, 1
       // clang-format on
   };
+}
+
+/// @brief Creates a 4x4 rotation matrix that rotates around an axis by an angle
+template <typename T>
+[[nodiscard]] inline auto rotate(TRadian<T> angle, TVec3<T> axis) noexcept
+    -> TMat4<T>
+{
+  axis = normalize(axis);
+  const T c = cos(angle);
+  const T s = sin(angle);
+
+  TVec3<T> temp((T(1) - c) * axis);
+
+  TMat4<T> Rotate;
+  Rotate[0][0] = c + temp[0] * axis[0];
+  Rotate[0][1] = temp[0] * axis[1] + s * axis[2];
+  Rotate[0][2] = temp[0] * axis[2] - s * axis[1];
+
+  Rotate[1][0] = temp[1] * axis[0] - s * axis[2];
+  Rotate[1][1] = c + temp[1] * axis[1];
+  Rotate[1][2] = temp[1] * axis[2] + s * axis[0];
+
+  Rotate[2][0] = temp[2] * axis[0] + s * axis[1];
+  Rotate[2][1] = temp[2] * axis[1] - s * axis[0];
+  Rotate[2][2] = c + temp[2] * axis[2];
+
+  Rotate[3][3] = 1;
+  return Rotate;
 }
 
 // Rotation functions with degree as input
