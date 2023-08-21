@@ -18,22 +18,21 @@ namespace beyond {
 /**
  * @addtogroup core
  * @{
- * @addtogroup ecs
+ * @addtogroup util
  * @{
  */
 
-struct HandleBase {
-};
+struct HandleBase {};
 
 /**
- * @brief Template for the base class of a versioned resource handle
+ * @brief Template for the base class of a generational resource handle
  *
  * Handles act as none-owning references to a resource. It has
  * additional functionality of storing a generation number to check collision.
  */
 template <typename Derived, typename StorageT, std::size_t index_bits,
           std::size_t generation_bits>
-struct Handle : HandleBase {
+struct GenerationalHandle : HandleBase {
 public:
   using Storage = StorageT;
   using Index = Storage;
@@ -48,7 +47,7 @@ public:
                 "The storage must an unsigned integer");
   static_assert(index_bits + generation_bits == 8 * sizeof(Storage));
 
-  explicit constexpr Handle(Storage id = 0, Storage gen = 0)
+  explicit constexpr GenerationalHandle(Storage id = 0, Storage gen = 0)
       : data_{id + (gen << shift)}
   {
   }

@@ -8,8 +8,8 @@ using namespace beyond;
 
 namespace {
 
-struct DummyHandle : Handle<DummyHandle, std::uint32_t, 12, 20> {
-  using Handle::Handle;
+struct DummyHandle : GenerationalHandle<DummyHandle, std::uint32_t, 12, 20> {
+  using GenerationalHandle::GenerationalHandle;
 };
 
 } // anonymous namespace
@@ -33,5 +33,3 @@ TEST_CASE("Resource handle", "[beyond.core.util.handle]")
   REQUIRE(hd1 == hd1);
   REQUIRE(hd1 != hd2);
 }
-
-TEST_CASE("Handle index overflow test", "[beyond.core.util.handle]") {}
