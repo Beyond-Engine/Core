@@ -43,7 +43,6 @@ namespace beyond {
 template <typename Handle, typename T> class SparseMap {
 public:
   using SizeType = typename Handle::Index;
-  using DiffType = typename Handle::DiffType;
   using MappedType = T;
 
   SparseMap() noexcept = default;
@@ -212,7 +211,7 @@ public:
           std::ref(map_->data_[static_cast<SizeType>(index_)]));
     }
 
-    [[nodiscard]] auto operator-> () const noexcept -> pointer
+    [[nodiscard]] auto operator->() const noexcept -> pointer
     {
       return pointer{operator*()};
     }

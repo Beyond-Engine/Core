@@ -8,7 +8,7 @@ using namespace beyond;
 
 namespace {
 
-struct DummyHandle : GenerationalHandle<DummyHandle, std::uint32_t, 12, 20> {
+struct DummyHandle : GenerationalHandle<DummyHandle, std::uint32_t, 16> {
   using GenerationalHandle::GenerationalHandle;
 };
 

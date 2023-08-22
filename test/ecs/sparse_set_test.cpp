@@ -3,7 +3,7 @@
 
 using namespace beyond;
 
-struct Entity : GenerationalHandle<Entity, std::uint32_t, 24, 8> {
+struct Entity : GenerationalHandle<Entity, std::uint32_t, 24> {
   using GenerationalHandle::GenerationalHandle;
 };
 

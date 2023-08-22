@@ -57,7 +57,6 @@ class SparseSet : public SparseSetBase<SparseSet<Handle>> {
 public:
   using SparseSetBase<SparseSet<Handle>>::SparseSetBase;
   using SizeType = typename Handle::Index;
-  using DiffType = typename Handle::DiffType;
 
 private:
   static constexpr SizeType page_count =
@@ -170,9 +169,7 @@ public:
   [[nodiscard]] auto contains(Handle handle) const noexcept -> bool
   {
     const auto [page, offset] = page_index_of(handle);
-    if (reverse_[page]) {
-      return (*reverse_[page])[offset] != std::nullopt;
-    }
+    if (reverse_[page]) { return (*reverse_[page])[offset] != std::nullopt; }
     return false;
   }
 

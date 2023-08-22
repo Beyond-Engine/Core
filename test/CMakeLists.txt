@@ -43,7 +43,7 @@ add_executable(${TEST_TARGET_NAME}
 
         utils/ref_test.cpp
         utils/defer_test.cpp
-        )
+        container/slot_map_test.cpp)
 
 target_link_libraries(${TEST_TARGET_NAME}
         PRIVATE
