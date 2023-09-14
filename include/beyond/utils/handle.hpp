@@ -77,7 +77,7 @@ public:
   /// @brief Return true if the index overflows the index range
   [[nodiscard]] static constexpr auto is_overflow(Index index) -> bool
   {
-    return (index >> shift) != 0;
+    return (static_cast<StorageT>(index) >> shift) != 0;
   }
 
   void set_index(Index new_index)

@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <ranges>
 
+#include "panic.hpp"
+
 #ifdef DOXYGEN_SHOULD_SKIP_THIS
 #define BEYOND_FORCE_INLINE
 #elif _MSC_VER
@@ -30,7 +32,7 @@ namespace beyond {
  * @brief Similar to std::size, but returns an uint32_t
  */
 template <typename T, std::uint32_t N>
-[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto size(T (&/*arr*/)[N]) noexcept
+[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto size(T (& /*arr*/)[N]) noexcept
     -> std::uint32_t
 {
   return N;
@@ -41,7 +43,7 @@ template <typename T, std::uint32_t N>
  */
 template <typename T, std::uint32_t N>
 [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
-    to_pointer(T (&arr)[N]) noexcept -> T*
+to_pointer(T (&arr)[N]) noexcept -> T*
 {
   return static_cast<T*>(arr);
 }
@@ -75,7 +77,7 @@ template <std::ranges::contiguous_range Range>
 
 template <typename T, std::uint32_t N>
 [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
-    byte_size(T (&/*arr*/)[N]) noexcept -> u32
+byte_size(T (& /*arr*/)[N]) noexcept -> u32
 {
   return N * sizeof(T);
 }

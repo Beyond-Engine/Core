@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include <fmt/format.h>
+#include <fmt/core.h>
 
 #if __has_include(<backward.hpp>)
 

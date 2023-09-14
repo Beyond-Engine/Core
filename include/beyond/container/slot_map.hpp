@@ -34,6 +34,16 @@ private:
   KeyIndex free_list_last_index_{};
 
 public:
+  [[nodiscard]] constexpr auto values() -> std::span<Value>
+  {
+    return data_;
+  }
+
+  [[nodiscard]] constexpr auto values() const -> std::span<const Value>
+  {
+    return data_;
+  }
+
   [[nodiscard]] constexpr auto size() noexcept -> SizeType
   {
     return data_.size();
@@ -87,7 +97,7 @@ public:
     reverse_map_[data_index] = std::move(reverse_map_.back());
     reverse_map_.pop_back();
 
-    slots_[reverse_map_[data_index]].set_index(data_index);
+    slots_.at(reverse_map_[data_index]).set_index(data_index);
   }
 
   template <class... Args> constexpr auto emplace(Args&&... args) -> Key
@@ -100,19 +110,19 @@ public:
     if (free_list_last_index_ == slots_.size()) {  // free list is empty
       slots_.emplace_back(data_index, generation); // make a new slot
 
-      free_list_first_index_ = slots_.size();
-      free_list_last_index_ = slots_.size();
+      free_list_first_index_ = static_cast<KeyIndex>(slots_.size());
+      free_list_last_index_ = static_cast<KeyIndex>(slots_.size());
     } else {
       auto& slot = slots_.at(slot_location);
       if (free_list_first_index_ == free_list_last_index_) { // Last free slot
-        free_list_last_index_ = slots_.size();
+        free_list_last_index_ = static_cast<KeyIndex>(slots_.size());
       }
       free_list_first_index_ = slot.index();
       generation = slot.generation();
       slot = Key{data_index, generation};
     }
 
-    reverse_map_.push_back(slot_location);
+    reverse_map_.emplace_back(slot_location);
 
     return Key{slot_location, generation};
   }
