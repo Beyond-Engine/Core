@@ -78,5 +78,7 @@ TEST_CASE("Scalar Trig functions", "[beyond.core.math]")
 
 TEST_CASE("Scalar lerp", "[beyond.core.math]")
 {
-  REQUIRE(beyond::lerp(0, 3, 0.5) == Approx(1.5));
+  REQUIRE(beyond::lerp(0, 1, 0.0f) == 0);
+  REQUIRE(beyond::lerp(0, 1, 1.0f) == 1);
+  REQUIRE(beyond::lerp(0, 1, 0.3f) == Approx(0.3f));
 }

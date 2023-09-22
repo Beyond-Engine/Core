@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "readability-identifier-length"
 #ifndef BEYOND_CORE_MATH_HPP
 #define BEYOND_CORE_MATH_HPP
 
@@ -162,13 +164,15 @@ template <Arithmetic T1, Arithmetic T2>
  * @param b Second value
  * @param t Interpolation phase (from range \f$[0, 1]\f$)
  */
-template <typename T1, typename T2, Arithmetic T3>
-[[nodiscard]] constexpr auto lerp(const T1& a, const T2& b,
-                                  const T3& t) noexcept
-    -> std::common_type_t<T1, T2, T3>
+[[nodiscard]] constexpr auto lerp(float a, float b, float t) noexcept -> float
 {
-  using ResultType = std::common_type_t<T1, T2, T3>;
-  return b * (static_cast<ResultType>(1) - t) + (a * t);
+  return a * (static_cast<float>(1) - t) + (b * t);
+}
+
+[[nodiscard]] constexpr auto lerp(double a, double b, double t) noexcept
+    -> double
+{
+  return a * (static_cast<float>(1) - t) + (b * t);
 }
 
 using std::abs;
@@ -211,3 +215,5 @@ using std::trunc;
 } // namespace beyond
 
 #endif // BEYOND_CORE_MATH_HPP
+
+#pragma clang diagnostic pop
