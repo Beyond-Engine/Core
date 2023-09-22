@@ -232,6 +232,25 @@ TEST_CASE("Point Swizzling test", "[beyond.core.math.pec]")
   }
 }
 
+TEST_CASE("Point Lerp test", "[beyond.core.math.pec]")
+{
+  const beyond::Point2 p1{0, 1};
+  const beyond::Point2 p2{1, 42};
+
+  const beyond::Point2 result1 = beyond::lerp(p1, p2, 0.f);
+  CHECK(result1.x == Approx(p1.x));
+  CHECK(result1.y == Approx(p1.y));
+
+  const beyond::Point2 result2 = beyond::lerp(p1, p2, 1.f);
+  CHECK(result2.x == Approx(p2.x));
+  CHECK(result2.y == Approx(p2.y));
+
+  const float t3 = 0.3;
+  const beyond::Point2 result3 = beyond::lerp(p1, p2, t3);
+  CHECK(result3.x == beyond::lerp(p1.x, p2.x, t3));
+  CHECK(result3.y == beyond::lerp(p1.y, p2.y, t3));
+}
+
 TEST_CASE("Point serialization test", "[beyond.core.math.vec]")
 {
   SECTION("Output TPoint2 to a stream")

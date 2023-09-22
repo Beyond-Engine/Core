@@ -416,6 +416,25 @@ TEST_CASE("Vec Cross product", "[beyond.core.math.vec]")
   }
 }
 
+TEST_CASE("Vector Lerp test", "[beyond.core.math.pec]")
+{
+  const beyond::Vec2 v1{0, 1};
+  const beyond::Vec2 v2{1, 42};
+
+  const beyond::Vec2 result1 = beyond::lerp(v1, v2, 0.f);
+  CHECK(result1.x == Approx(v1.x));
+  CHECK(result1.y == Approx(v1.y));
+
+  //  const beyond::Vec2 result2 = beyond::lerp<float, 2>(v1, v2, 1.f);
+  //  CHECK(result2.x == Approx(v2.x));
+  //  CHECK(result2.y == Approx(v2.y));
+  //
+  //  const float t3 = 0.3;
+  //  const beyond::Vec2 result3 = beyond::lerp<float, 2>(v1, v2, t3);
+  //  CHECK(result3.x == beyond::lerp(v1.x, v2.x, t3));
+  //  CHECK(result3.y == beyond::lerp(v1.y, v2.y, t3));
+}
+
 TEST_CASE("Vec serialization test", "[beyond.core.math.vec]")
 {
   SECTION("Output TVec2 to a stream")

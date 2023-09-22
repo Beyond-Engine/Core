@@ -14,6 +14,7 @@
 #include "../utils/assert.hpp"
 #include "../utils/bit_cast.hpp"
 #include "detail/swizzle.hpp"
+#include "math.hpp"
 #include "math_fwd.hpp"
 
 namespace beyond {
@@ -190,28 +191,37 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
   using Storage = VectorStorage<TVec<T, N>, N>;
 
   constexpr TVec() noexcept = default;
-  constexpr TVec(T xx, T yy) noexcept requires(N == 2) : Storage{{xx, yy}} {}
+  constexpr TVec(T xx, T yy) noexcept
+    requires(N == 2)
+      : Storage{{xx, yy}}
+  {
+  }
 
-  constexpr TVec(const TVec<T, 2>& v, T zz) noexcept requires(N == 3)
+  constexpr TVec(const TVec<T, 2>& v, T zz) noexcept
+    requires(N == 3)
       : Storage{{v[0], v[1], zz}}
   {
   }
-  constexpr TVec(T xx, T yy, T zz) noexcept requires(N == 3)
+  constexpr TVec(T xx, T yy, T zz) noexcept
+    requires(N == 3)
       : Storage{{xx, yy, zz}}
   {
   }
 
-  constexpr TVec(T xx, T yy, T zz, T ww) noexcept requires(N == 4)
+  constexpr TVec(T xx, T yy, T zz, T ww) noexcept
+    requires(N == 4)
       : Storage{{xx, yy, zz, ww}}
   {
   }
 
-  constexpr TVec(const TVec<T, 2>& v, T zz, T ww) noexcept requires(N == 4)
+  constexpr TVec(const TVec<T, 2>& v, T zz, T ww) noexcept
+    requires(N == 4)
       : Storage{{v[0], v[1], zz, ww}}
   {
   }
 
-  constexpr TVec(const TVec<T, 3>& v, T ww) noexcept requires(N == 4)
+  constexpr TVec(const TVec<T, 3>& v, T ww) noexcept
+    requires(N == 4)
       : Storage{{v[0], v[1], v[2], ww}}
   {
   }
@@ -281,11 +291,9 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
    */
   constexpr auto operator-() const noexcept -> TVec
   {
-    return [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
+    return [&]<std::size_t... I>(std::index_sequence<I...>) {
       return TVec{(-Storage::elem[I])...};
-    }
-    (std::make_index_sequence<N>());
+    }(std::make_index_sequence<N>());
   }
 
   /**
@@ -293,11 +301,9 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
    */
   constexpr auto operator+=(const TVec& rhs) noexcept -> TVec&
   {
-    [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
+    [&]<std::size_t... I>(std::index_sequence<I...>) {
       ((Storage::elem[I] += rhs[I]), ...);
-    }
-    (std::make_index_sequence<N>());
+    }(std::make_index_sequence<N>());
     return *this;
   }
 
@@ -306,11 +312,9 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
    */
   constexpr auto operator-=(const TVec& rhs) noexcept -> TVec&
   {
-    [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
+    [&]<std::size_t... I>(std::index_sequence<I...>) {
       ((Storage::elem[I] -= rhs[I]), ...);
-    }
-    (std::make_index_sequence<N>());
+    }(std::make_index_sequence<N>());
     return *this;
   }
 
@@ -319,11 +323,9 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
    */
   constexpr auto operator*=(ValueType rhs) noexcept -> TVec&
   {
-    [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
+    [&]<std::size_t... I>(std::index_sequence<I...>) {
       ((Storage::elem[I] *= rhs), ...);
-    }
-    (std::make_index_sequence<N>());
+    }(std::make_index_sequence<N>());
     return *this;
   }
 
@@ -336,11 +338,9 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
     static_assert(std::is_floating_point_v<U>);
     BEYOND_ASSERT_MSG(rhs != 0, "Devide by zero");
     const auto inv = static_cast<ValueType>(1) / rhs;
-    [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
+    [&]<std::size_t... I>(std::index_sequence<I...>) {
       ((Storage::elem[I] *= inv), ...);
-    }
-    (std::make_index_sequence<N>());
+    }(std::make_index_sequence<N>());
     return *this;
   }
 
@@ -366,11 +366,9 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
    */
   [[nodiscard]] constexpr auto operator==(const TVec& v) const noexcept -> bool
   {
-    return [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
+    return [&]<std::size_t... I>(std::index_sequence<I...>) {
       return ((Storage::elem[I] == v.elem[I]) && ...);
-    }
-    (std::make_index_sequence<N>());
+    }(std::make_index_sequence<N>());
   }
 
   /**
@@ -415,7 +413,7 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
 template <typename T, std::size_t N>
 [[nodiscard]] constexpr auto normalize(const TVec<T, N>& v) noexcept
     -> TVec<T, N>
-requires(std::floating_point<T>)
+  requires(std::floating_point<T>)
 {
   return v / v.length();
 }
@@ -427,11 +425,9 @@ requires(std::floating_point<T>)
 template <typename T, std::size_t N>
 [[nodiscard]] constexpr auto operator*(const TVec<T, N>& v, T scalar) noexcept
 {
-  return [&]<std::size_t... I>(std::index_sequence<I...>)
-  {
+  return [&]<std::size_t... I>(std::index_sequence<I...>) {
     return TVec<T, N>{(scalar * v.elem[I])...};
-  }
-  (std::make_index_sequence<N>());
+  }(std::make_index_sequence<N>());
 }
 
 /**
@@ -457,11 +453,9 @@ template <typename T, std::size_t N>
 [[nodiscard]] constexpr auto dot(const TVec<T, N>& v1,
                                  const TVec<T, N>& v2) noexcept -> T
 {
-  return [&]<std::size_t... I>(std::index_sequence<I...>)
-  {
+  return [&]<std::size_t... I>(std::index_sequence<I...>) {
     return ((v1.elem[I] * v2.elem[I]) + ...);
-  }
-  (std::make_index_sequence<N>());
+  }(std::make_index_sequence<N>());
 }
 
 /**
@@ -474,6 +468,18 @@ template <typename T>
 {
   return {(v1.y * v2.z) - (v1.z * v2.y), (v1.z * v2.x) - (v1.x * v2.z),
           (v1.x * v2.y) - (v1.y * v2.x)};
+}
+
+template <typename T, std::size_t size>
+[[nodiscard]] constexpr auto lerp(const TVec<T, size>& v1,
+                                  const TVec<T, size>& v2, T t) noexcept
+    -> TVec<T, size>
+{
+  return [&]<std::size_t... I>(std::index_sequence<I...>) {
+    TVec<T, size> v;
+    ((v.elem[I] = beyond::lerp(v1.elem[I], v2.elem[I], t)), ...);
+    return v;
+  }(std::make_index_sequence<size>());
 }
 
 /** @}
@@ -499,13 +505,11 @@ template <typename T, std::size_t N> struct hash<beyond::TVec<T, N>> {
       -> std::size_t
   {
     using beyond::detail::hash_combine;
-    return [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
+    return [&]<std::size_t... I>(std::index_sequence<I...>) {
       std::size_t seed = 0;
       ((seed ^= hash_combine(seed, std::hash<T>{}(vec[I]))), ...);
       return seed;
-    }
-    (std::make_index_sequence<N>());
+    }(std::make_index_sequence<N>());
   }
 };
 

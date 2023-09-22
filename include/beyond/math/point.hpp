@@ -2,6 +2,7 @@
 #define BEYOND_CORE_MATH_POINT_HPP
 
 #include "concepts.hpp"
+#include "math.hpp"
 #include "math_fwd.hpp"
 #include "vector.hpp"
 
@@ -30,12 +31,10 @@ template <typename T, std::size_t N> struct TPoint : TVec<T, N> {
                                                 const TVec<T, N>& v) noexcept
       -> TPoint
   {
-    return [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
+    return [&]<std::size_t... I>(std::index_sequence<I...>) {
       ((p[I] += v[I]), ...);
       return p;
-    }
-    (std::make_index_sequence<N>());
+    }(std::make_index_sequence<N>());
   }
 
   /**
@@ -54,12 +53,10 @@ template <typename T, std::size_t N> struct TPoint : TVec<T, N> {
                                                 const TVec<T, N>& v) noexcept
       -> TPoint
   {
-    return [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
+    return [&]<std::size_t... I>(std::index_sequence<I...>) {
       ((p[I] -= v[I]), ...);
       return p;
-    }
-    (std::make_index_sequence<N>());
+    }(std::make_index_sequence<N>());
   }
 
   /**
@@ -69,13 +66,11 @@ template <typename T, std::size_t N> struct TPoint : TVec<T, N> {
                                                 const TPoint& p2) noexcept
       -> TVec<T, N>
   {
-    return [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
+    return [&]<std::size_t... I>(std::index_sequence<I...>) {
       TVec v = p1;
       ((v[I] -= p2[I]), ...);
       return v;
-    }
-    (std::make_index_sequence<N>());
+    }(std::make_index_sequence<N>());
   }
 
   /**
@@ -126,6 +121,26 @@ template <typename T, std::size_t size>
                             const TPoint<T, size>& p2) noexcept -> T
 {
   return std::sqrt(distance_squared(p1, p2));
+}
+
+template <typename T, std::size_t size>
+[[nodiscard]] constexpr auto
+lerp(const TPoint<T, size>& p1, const TVec<T, size>& p2, T t) noexcept = delete;
+
+template <typename T, std::size_t size>
+[[nodiscard]] constexpr auto
+lerp(const TVec<T, size>& p1, const TPoint<T, size>& p2, T t) noexcept = delete;
+
+template <typename T, std::size_t size>
+[[nodiscard]] constexpr auto lerp(const TPoint<T, size>& p1,
+                                  const TPoint<T, size>& p2, T t) noexcept
+    -> TPoint<T, size>
+{
+  return [&]<std::size_t... I>(std::index_sequence<I...>) {
+    TPoint<T, size> v;
+    ((v[I] = beyond::lerp(p1[I], p2[I], t)), ...);
+    return v;
+  }(std::make_index_sequence<size>());
 }
 
 /** @}

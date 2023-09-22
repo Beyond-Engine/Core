@@ -1,5 +1,3 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "readability-identifier-length"
 #ifndef BEYOND_CORE_MATH_HPP
 #define BEYOND_CORE_MATH_HPP
 
@@ -215,5 +213,3 @@ using std::trunc;
 } // namespace beyond
 
 #endif // BEYOND_CORE_MATH_HPP
-
-#pragma clang diagnostic pop
