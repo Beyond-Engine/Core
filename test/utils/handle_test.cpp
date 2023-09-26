@@ -18,10 +18,6 @@ TEST_CASE("Resource handle", "[beyond.core.util.handle]")
 {
   STATIC_REQUIRE(sizeof(DummyHandle) == sizeof(std::uint32_t));
 
-  const DummyHandle hd1;
-  REQUIRE(hd1.index() == 0);
-  REQUIRE(hd1.generation() == 0);
-
   const DummyHandle hd2{10};
   REQUIRE(hd2.index() == 10);
   REQUIRE(hd2.generation() == 0);
@@ -30,6 +26,5 @@ TEST_CASE("Resource handle", "[beyond.core.util.handle]")
   REQUIRE(hd3.index() == 10);
   REQUIRE(hd3.generation() == 10);
 
-  REQUIRE(hd1 == hd1);
-  REQUIRE(hd1 != hd2);
+  REQUIRE(hd2 != hd3);
 }

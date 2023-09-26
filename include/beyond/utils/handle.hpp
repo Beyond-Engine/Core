@@ -68,7 +68,8 @@ public:
                 "The storage must an unsigned integer");
   static_assert(generation_bits, "Too less bits for generation");
 
-  explicit constexpr GenerationalHandle(Index id = 0, Generation gen = 0)
+  GenerationalHandle() = delete;
+  explicit constexpr GenerationalHandle(Index id, Generation gen = 0)
       : data_{static_cast<StorageT>(id + static_cast<StorageT>(gen << shift))}
   {
     BEYOND_ENSURE(not is_overflow(id));
