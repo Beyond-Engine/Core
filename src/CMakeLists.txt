@@ -51,7 +51,7 @@ add_library(core
         ../include/beyond/container/vector_interface.hpp
         ../include/beyond/utils/ref.hpp
         ../include/beyond/types/unique_ptr.hpp
-        ../include/beyond/utils/utils.hpp ../include/beyond/utils/copy_move.hpp ../include/beyond/utils/defer.hpp ../include/beyond/utils/assets_folder_locator.cpp ../include/beyond/utils/assets_folder_locator.hpp ../include/beyond/container/slot_map.hpp ../include/beyond/utils/narrowing.hpp)
+        ../include/beyond/utils/utils.hpp ../include/beyond/utils/copy_move.hpp ../include/beyond/utils/defer.hpp ../include/beyond/utils/assets_folder_locator.cpp ../include/beyond/utils/assets_folder_locator.hpp ../include/beyond/container/slot_map.hpp ../include/beyond/utils/narrowing.hpp ../include/beyond/utils/zstring_view.hpp)
 
 if (BEYOND_CORE_ENABLE_PCH)
     target_precompile_headers(core INTERFACE
