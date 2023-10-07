@@ -33,13 +33,13 @@ template <typename Trait> struct VectorConverter<Trait, 0, 1> {
   [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
       -> const VectorType&
   {
-    return (*bit_cast<const VectorType*>(data));
+    return (*std::bit_cast<const VectorType*>(data));
   }
 
   [[nodiscard]] static constexpr auto convert(ValueType* data) noexcept
       -> VectorType&
   {
-    return (*bit_cast<VectorType*>(data));
+    return (*std::bit_cast<VectorType*>(data));
   }
 };
 
@@ -97,13 +97,13 @@ template <typename Trait> struct VectorConverter<Trait, 0, 1, 2> {
   [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
       -> const VectorType&
   {
-    return (*bit_cast<const VectorType*>(data));
+    return (*std::bit_cast<const VectorType*>(data));
   }
 
   [[nodiscard]] static constexpr auto convert(ValueType* data) noexcept
       -> VectorType&
   {
-    return (*bit_cast<VectorType*>(data));
+    return (*std::bit_cast<VectorType*>(data));
   }
 };
 
@@ -114,7 +114,7 @@ template <typename Trait> struct VectorConverter<Trait, 1, 2, 3> {
   [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
       -> const VectorType&
   {
-    return (*bit_cast<const VectorType*>(data + 1));
+    return (*std::bit_cast<const VectorType*>(data + 1));
   }
 
   [[nodiscard]] static constexpr auto convert(ValueType* data) noexcept
@@ -179,7 +179,7 @@ struct Subvector {
 
   [[nodiscard]] constexpr operator PointType() noexcept
   {
-    return beyond::bit_cast<PointType>(
+    return std::bit_cast<PointType>(
         detail::VectorConverter<Trait, indices...>::convert(elem.data()));
   }
 

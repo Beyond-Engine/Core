@@ -9,7 +9,6 @@
 #include <type_traits>
 
 #include "../utils/assert.hpp"
-#include "../utils/bit_cast.hpp"
 #include "vector_interface.hpp"
 
 /**

@@ -12,7 +12,6 @@
 #include <utility>
 
 #include "../utils/assert.hpp"
-#include "../utils/bit_cast.hpp"
 #include "detail/swizzle.hpp"
 #include "math.hpp"
 #include "math_fwd.hpp"

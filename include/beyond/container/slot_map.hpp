@@ -70,7 +70,7 @@ public:
 
   [[nodiscard]] constexpr auto insert(const Value& v) -> Key
   {
-    this->emplace(v);
+    return this->emplace(v);
   }
   [[nodiscard]] constexpr auto insert(Value&& value) -> Key
   {

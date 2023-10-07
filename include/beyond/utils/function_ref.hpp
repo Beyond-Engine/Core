@@ -11,8 +11,6 @@
 #include <type_traits>
 #include <utility>
 
-#include "bit_cast.hpp"
-
 namespace beyond {
 
 /**
@@ -42,11 +40,12 @@ public:
       std::enable_if_t<!std::is_same_v<std::decay_t<F>, function_ref> &&
                        std::is_invocable_r<R, F&&, Args...>::value>* = nullptr>
   constexpr function_ref(F&& f) noexcept // NOLINT
-      : obj_(bit_cast<void*>(std::addressof(f)))
+      : obj_(std::bit_cast<void*>(std::addressof(f)))
   {
     callback_ = [](void* obj, Args... args) -> R {
-      return std::invoke(*bit_cast<typename std::add_pointer<F>::type>(obj),
-                         std::forward<Args>(args)...);
+      return std::invoke(
+          *std::bit_cast<typename std::add_pointer<F>::type>(obj),
+          std::forward<Args>(args)...);
     };
   }
 
@@ -60,10 +59,11 @@ public:
       std::enable_if_t<std::is_invocable_r<R, F&&, Args...>::value>* = nullptr>
   constexpr auto operator=(F&& f) noexcept -> function_ref<R(Args...)>&
   {
-    obj_ = bit_cast<void*>(std::addressof(f));
+    obj_ = std::bit_cast<void*>(std::addressof(f));
     callback_ = [](void* obj, Args... args) {
-      return std::invoke(*bit_cast<typename std::add_pointer<F>::type>(obj),
-                         std::forward<Args>(args)...);
+      return std::invoke(
+          *std::bit_cast<typename std::add_pointer<F>::type>(obj),
+          std::forward<Args>(args)...);
     };
 
     return *this;
@@ -96,7 +96,7 @@ constexpr auto swap(function_ref<R(Args...)>& lhs,
 }
 
 template <typename R, typename... Args>
-function_ref(R (*)(Args...))->function_ref<R(Args...)>;
+function_ref(R (*)(Args...)) -> function_ref<R(Args...)>;
 
 /** @}@} */
 
