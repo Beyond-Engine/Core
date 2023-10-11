@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <cstdlib>
 
 #include <fmt/core.h>
@@ -18,21 +20,49 @@
 
 #endif
 
+#if defined(WIN32) && !defined(NDEBUG)
+#include <debugapi.h>
+#endif
+
 #include "beyond/utils/panic.hpp"
 
 namespace beyond {
 
-[[noreturn]] auto panic(std::string_view msg) noexcept -> void
+[[noreturn]] void panic(std::string_view msg,
+                        std::source_location source_location)
 {
-  fmt::print(stderr, "beyond panic() invoked with message:\n{}\n", msg);
+  std::string panic_message;
+  fmt::format_to(std::back_inserter(panic_message),
+                 "Thread panicked at: {}:{}:{}:\n", source_location.file_name(),
+                 source_location.line(), source_location.column());
+  fmt::format_to(std::back_inserter(panic_message), "{}\n", msg);
+
+  const char* use_backtrace = std::getenv("BEYOND_BACKTRACE");
+
+  fmt::println(stderr, "{}", panic_message);
 
 #if __has_include(<backward.hpp>)
-  backward::StackTrace st;
-  st.load_here(32);
-  backward::Printer p;
-  p.print(st);
+  if (use_backtrace == nullptr or strcmp(use_backtrace, "1") != 0) {
+    panic_message.append(
+        "note: run with `BEYOND_BACKTRACE=1` environment variable to "
+        "display a backtrace\n");
+  } else {
+    backward::StackTrace st;
+    st.load_here(32);
+
+    // Skip backward-cpp implementation details
+    st.skip_n_firsts(2);
+
+    backward::Printer p;
+    p.print(st, stderr);
+  }
 #endif
 
+#if defined(WIN32) && !defined(NDEBUG)
+  DebugBreak();
+#endif
+
+  std::fflush(stderr);
   std::abort();
 }
 

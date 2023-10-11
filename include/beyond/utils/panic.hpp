@@ -6,6 +6,7 @@
  * @ingroup util
  */
 
+#include <source_location>
 #include <string_view>
 
 namespace beyond {
@@ -21,7 +22,9 @@ namespace beyond {
  * @brief Dumps some error messages and terminates the program
  * @param msg The error message to output before abort
  */
-[[noreturn]] auto panic(std::string_view msg) noexcept -> void;
+[[noreturn]] void
+panic(std::string_view msg,
+      std::source_location source_location = std::source_location::current());
 
 /** @}@} */
 

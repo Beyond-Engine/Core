@@ -22,16 +22,15 @@
 #define BEYOND_ASSERT(condition)                                               \
   do {                                                                         \
     if (!(condition)) {                                                        \
-      ::beyond::panic(fmt::format("[{}:{}] Assert failed in {}\n", __FILE__,   \
-                                  __LINE__, __func__));                        \
+      ::beyond::panic(fmt::format("Assert `{}` failed", #condition));          \
     }                                                                          \
   } while (0)
 
 #define BEYOND_ASSERT_MSG(condition, message)                                  \
   do {                                                                         \
     if (!(condition)) {                                                        \
-      ::beyond::panic(fmt::format("[{}:{}] Assert failed in {}: {}\n",         \
-                                  __FILE__, __LINE__, __func__, message));     \
+      ::beyond::panic(fmt::format("Assert `{}` failed with message:{}",        \
+                                  #condition, message));                       \
     }                                                                          \
   } while (0)
 
@@ -44,8 +43,7 @@
 // code is never reached.
 #define BEYOND_UNREACHABLE()                                                   \
   do {                                                                         \
-    ::beyond::panic(fmt::format("[{}:{}] Reach unreachable code {}\n",         \
-                                __FILE__, __LINE__, __func__));                \
+    ::beyond::panic(fmt::format("Reach unreachable code in {}", __func__));    \
   } while (0)
 #else
 #define BEYOND_ASSERT(condition)                                               \
@@ -70,17 +68,16 @@
 #define BEYOND_ENSURE(condition)                                               \
   do {                                                                         \
     if (!(condition)) {                                                        \
-      ::beyond::panic(fmt::format("[{}:{}] Condition not satisfied in {}\n",   \
-                                  __FILE__, __LINE__, __func__));              \
+      ::beyond::panic(fmt::format("Condition `{}` failed", #condition));       \
     }                                                                          \
+                                                                               \
   } while (0)
 
 #define BEYOND_ENSURE_MSG(condition, message)                                  \
   do {                                                                         \
     if (!(condition)) {                                                        \
-      ::beyond::panic(                                                         \
-          fmt::format("[{}:{}] Condition not satisfied in {}: {}\n", __FILE__, \
-                      __LINE__, __func__, message));                           \
+      ::beyond::panic(fmt::format("Condition `{}` failed with message:{}",     \
+                                  #condition, message));                       \
     }                                                                          \
   } while (0)
 

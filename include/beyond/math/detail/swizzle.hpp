@@ -50,13 +50,13 @@ template <typename Trait> struct VectorConverter<Trait, 1, 2> {
   [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
       -> const VectorType&
   {
-    return (*bit_cast<const VectorType*>(data + 1)); // NOLINT
+    return (*std::bit_cast<const VectorType*>(data + 1)); // NOLINT
   }
 
   [[nodiscard]] static constexpr auto convert(ValueType* data) noexcept
       -> VectorType&
   {
-    return (bit_cast<VectorType>(data + 1)); // NOLINT
+    return (std::bit_cast<VectorType>(data + 1)); // NOLINT
   }
 };
 
@@ -67,13 +67,13 @@ template <typename Trait> struct VectorConverter<Trait, 2, 3> {
   [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
       -> const VectorType&
   {
-    return (*bit_cast<const VectorType*>(data + 2)); // NOLINT
+    return (*std::bit_cast<const VectorType*>(data + 2)); // NOLINT
   }
 
   [[nodiscard]] static constexpr auto convert(ValueType* data) noexcept
       -> VectorType&
   {
-    return (bit_cast<VectorType>(data + 2)); // NOLINT
+    return (std::bit_cast<VectorType>(data + 2)); // NOLINT
   }
 };
 
@@ -120,7 +120,7 @@ template <typename Trait> struct VectorConverter<Trait, 1, 2, 3> {
   [[nodiscard]] static constexpr auto convert(ValueType* data) noexcept
       -> VectorType&
   {
-    return (*bit_cast<VectorType*>(data + 1));
+    return (*std::bit_cast<VectorType*>(data + 1));
   }
 };
 
@@ -145,13 +145,13 @@ template <typename Trait> struct VectorConverter<Trait, 0, 1, 2, 3> {
   [[nodiscard]] static constexpr auto convert(const ValueType* data) noexcept
       -> const VectorType&
   {
-    return (*bit_cast<const VectorType*>(data));
+    return (*std::bit_cast<const VectorType*>(data));
   }
 
   [[nodiscard]] static constexpr auto convert(ValueType* data) noexcept
       -> VectorType&
   {
-    return (*bit_cast<VectorType*>(data));
+    return (*std::bit_cast<VectorType*>(data));
   }
 };
 

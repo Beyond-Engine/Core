@@ -1,7 +1,7 @@
 ﻿---
 BasedOnStyle: LLVM
 AllowShortBlocksOnASingleLine: Always
-AllowShortFunctionsOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: 'true'
 BreakBeforeBraces: WebKit
 ColumnLimit: 80
