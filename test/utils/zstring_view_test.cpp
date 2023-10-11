@@ -46,5 +46,5 @@ TEST_CASE("Implicitly convert ZStringView to std::string_view",
 {
   beyond::ZStringView sv = "Hello";
   std::string_view std_sv = sv;
-  REQUIRE(sv == std_sv);
+  REQUIRE(std::string{std_sv} == sv);
 }
