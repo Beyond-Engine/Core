@@ -190,6 +190,25 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
   using Storage = VectorStorage<TVec<T, N>, N>;
 
   constexpr TVec() noexcept = default;
+
+  explicit constexpr TVec(T xx) noexcept
+    requires(N == 2)
+      : Storage{{xx, xx}}
+  {
+  }
+
+  explicit constexpr TVec(T xx) noexcept
+    requires(N == 3)
+      : Storage{{xx, xx, xx}}
+  {
+  }
+
+  explicit constexpr TVec(T xx) noexcept
+    requires(N == 4)
+      : Storage{{xx, xx, xx, xx}}
+  {
+  }
+
   constexpr TVec(T xx, T yy) noexcept
     requires(N == 2)
       : Storage{{xx, yy}}
