@@ -3,6 +3,8 @@
 #ifndef BEYOND_CORE_MATH_TRANSFORM_HPP
 #define BEYOND_CORE_MATH_TRANSFORM_HPP
 
+#include <concepts>
+
 #include "angle.hpp"
 #include "math.hpp"
 #include "matrix.hpp"
@@ -20,6 +22,8 @@ namespace beyond {
  * @defgroup transform Transform
  * @brief Matrix transformations
  * @ingroup math
+ *
+ * All transformations are in right-handed coordinate.
  *
  * @{
  */
@@ -125,7 +129,7 @@ template <typename T>
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 /// @brief Builds a translation 4 * 4 matrix created from 3 scalars.
-template <typename T>
+template <std::floating_point T>
 [[nodiscard]] constexpr auto translate(T x, T y, T z) noexcept -> TMat4<T>
 {
   return {
@@ -139,7 +143,7 @@ template <typename T>
 }
 
 /// @brief Builds a translation 4 * 4 matrix created from a 3d vector.
-template <typename T>
+template <std::floating_point T>
 [[nodiscard]] constexpr auto translate(const TVec3<T>& v) noexcept -> TMat4<T>
 {
   return translate(v.x, v.y, v.z);
@@ -147,7 +151,7 @@ template <typename T>
 
 /// @brief Transforms a matrix with a translation 4 * 4 matrix created from 3
 /// scalars.
-template <typename T>
+template <std::floating_point T>
 [[nodiscard]] constexpr auto translate(const TMat4<T>& m, T x, T y,
                                        T z) noexcept -> TMat4<T>
 {
@@ -155,7 +159,7 @@ template <typename T>
 }
 
 /// @brief Builds a scale 4 * 4 matrix created from 3 scalars.
-template <typename T>
+template <std::floating_point T>
 [[nodiscard]] constexpr auto scale(T x, T y, T z) noexcept -> TMat4<T>
 {
   return {
@@ -169,7 +173,7 @@ template <typename T>
 }
 
 /// @brief Builds a scale 4 * 4 matrix created from a 3d vector.
-template <typename T>
+template <std::floating_point T>
 [[nodiscard]] constexpr auto scale(const TVec3<T>& v) noexcept -> TMat4<T>
 {
   return scale(v.x, v.y, v.z);
@@ -177,7 +181,7 @@ template <typename T>
 
 /// @brief Transforms a matrix with a translation 4 * 4 matrix created from 3
 /// scalars.
-template <typename T>
+template <std::floating_point T>
 [[nodiscard]] constexpr auto scale(const TMat4<T>& m, T x, T y, T z) noexcept
     -> TMat4<T>
 {
@@ -187,43 +191,42 @@ template <typename T>
 /**
  * @brief Creates a matrix for an orthographic parallel viewing volume.
  */
-template <typename T>
+// orthoRH_ZO
+template <std::floating_point T>
 [[nodiscard]] constexpr auto ortho(T left, T right, T bottom, T top, T z_near,
                                    T z_far) noexcept -> TMat4<T>
 {
-  TMat4<T> Result;
-  Result[0][0] = static_cast<T>(2) / (right - left);
-  Result[1][1] = static_cast<T>(2) / (top - bottom);
-  Result[2][2] = -static_cast<T>(2) / (z_far - z_near);
-  Result[3][0] = -(right + left) / (right - left);
-  Result[3][1] = -(top + bottom) / (top - bottom);
-  Result[3][2] = -(z_far + z_near) / (z_far - z_near);
-  Result[3][3] = static_cast<T>(1);
-  return Result;
+  TMat4<T> result;
+  result[0][0] = static_cast<T>(2) / (right - left);
+  result[1][1] = static_cast<T>(2) / (top - bottom);
+  result[2][2] = -static_cast<T>(1) / (z_far - z_near);
+  result[3][0] = -(right + left) / (right - left);
+  result[3][1] = -(top + bottom) / (top - bottom);
+  result[3][2] = -z_near / (z_far - z_near);
+  result[3][3] = static_cast<T>(1);
+  return result;
 }
 
 /**
  * @brief Creates a matrix for a symetric perspective-view frustum.
  */
-template <typename T>
+template <std::floating_point T>
 [[nodiscard]] inline auto perspective(TRadian<T> fovy, T aspect, T z_near,
                                       T z_far) noexcept -> TMat4<T>
 {
   const T g = static_cast<T>(1.) / tan(fovy * static_cast<T>(0.5));
-  const T k = z_far / (z_near - z_far);
-
   // clang-format off
-  return TMat4<T> {
-      g / aspect, 0, 0, 0,
-      0, g, 0, 0,
-      0, 0, k, -z_near * k,
-      0, 0, -1, 0
-  };
+    return TMat4<T> {
+        g / aspect, 0, 0, 0,
+        0, g, 0, 0,
+        0, 0, z_far / (z_near - z_far), -(z_far * z_near) / (z_far - z_near),
+        0, 0, -1, 0
+    };
   // clang-format on
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-template <typename T>
+template <std::floating_point T>
 [[nodiscard]] inline auto perspective(TDegree<T> fovy, T aspect, T z_near,
                                       T z_far) noexcept -> TMat4<T>
 {
@@ -238,20 +241,20 @@ template <typename T>
  * @param up Normalized up vector, how the camera is oriented. Typically (0, 0,
  * 1)
  */
-template <typename T>
+template <std::floating_point T>
 [[nodiscard]] inline auto look_at(const TVec3<T>& eye, const TVec3<T>& center,
                                   const TVec3<T>& up) noexcept -> TMat4<T>
 {
   const TVec3<T> forward(normalize(center - eye));
-  const TVec3<T> side(normalize(cross(forward, up)));
-  const TVec3<T> up_(cross(side, forward));
+  const TVec3<T> right(normalize(cross(forward, up)));
+  const TVec3<T> up_(cross(right, forward));
 
   // clang-format off
   return TMat4<T>  {
-      side.x,     side.y,     side.z,     -dot(side, eye),
-      up_.x,      up_.y,      up_.z,      -dot(up_, eye),
-      -forward.x, -forward.y, -forward.z, dot(forward, eye),
-      0,          0,          0,          -1
+    right.x,    right.y,    right.z,    -dot(right, eye),
+    up_.x,      up_.y,      up_.z,      -dot(up_, eye),
+    -forward.x, -forward.y, -forward.z, dot(forward, eye),
+    0,          0,          0,          1
   };
   // clang-format on
 }

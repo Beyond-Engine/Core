@@ -180,7 +180,7 @@ TEST_CASE("Orthogonal Projection", "[beyond.core.math.transform]")
       // clang-format off
       2.f / (right - left), 0,                    0,                       -(right + left) / (right - left),
       0,                    2.f / (top - bottom), 0,                       -(top + bottom) / (top - bottom),
-      0,                    0,                    -2.f / (z_far - z_near), -(z_far + z_near) / (z_far - z_near),
+      0,                    0,                    -1.f / (z_far - z_near), -z_near / (z_far - z_near),
       0,                    0,                    0,                       1
       // clang-format on
   };
@@ -193,7 +193,7 @@ TEST_CASE("Perspective Projection", "[beyond.core.math.transform]")
   using namespace beyond::literals;
 
   constexpr beyond::Radian fovy = 90._deg;
-  constexpr float aspect = 1.6f, z_near = 0.f, z_far = 1.f;
+  constexpr float aspect = 1.6f, z_near = 0.1f, z_far = 10.f;
 
   const auto result = beyond::perspective(fovy, aspect, z_near, z_far);
 
@@ -201,8 +201,8 @@ TEST_CASE("Perspective Projection", "[beyond.core.math.transform]")
   expected(0, 0) = 1.0f / aspect;
   expected(1, 1) = 1.0f;
   expected(3, 2) = -1.0f;
-  expected(2, 2) = -1.0f;
-  expected(2, 3) = 0.0f;
+  expected(2, 2) = z_far / (z_near - z_far);
+  expected(2, 3) = -(z_far * z_near) / (z_far - z_near);
 
   matrix_approx_match(expected, result);
 }
@@ -230,7 +230,7 @@ TEST_CASE("look_at transformation matrix", "[beyond.core.math.transform]")
   expected[1][2] = -forward.y;
   expected[2][2] = -forward.z;
   expected[3][2] = dot(forward, eye);
-  expected[3][3] = -1.0f;
+  expected[3][3] = 1.0f;
 
   matrix_approx_match(result, expected);
 }

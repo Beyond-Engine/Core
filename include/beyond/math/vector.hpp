@@ -48,7 +48,9 @@ template <typename T, std::size_t N> struct VecTrait<TVec<T, N>> {
  */
 template <typename Derived, std::size_t size> struct VectorStorage;
 
-template <typename Derived> struct VectorStorage<Derived, 2> {
+template <typename Derived>
+struct alignas(sizeof(typename VecTrait<Derived>::ValueType) *
+               2) VectorStorage<Derived, 2> {
   using Trait = VecTrait<Derived>;
   using ValueType = typename Trait::ValueType;
 
@@ -90,7 +92,9 @@ template <typename Derived> struct VectorStorage<Derived, 3> {
   };
 };
 
-template <typename Derived> struct VectorStorage<Derived, 4> {
+template <typename Derived>
+struct alignas(sizeof(typename VecTrait<Derived>::ValueType) *
+               4) VectorStorage<Derived, 4> {
   using Trait = VecTrait<Derived>;
   using ValueType = typename Trait::ValueType;
   using Trait2 = VecTrait<TVec<ValueType, 2>>;

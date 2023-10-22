@@ -43,9 +43,11 @@ namespace beyond {
 
 #if __has_include(<backward.hpp>)
   if (use_backtrace == nullptr or strcmp(use_backtrace, "1") != 0) {
-    panic_message.append(
-        "note: run with `BEYOND_BACKTRACE=1` environment variable to "
-        "display a backtrace\n");
+
+    fmt::println(stderr,
+                 "note: run with `BEYOND_BACKTRACE=1` environment variable to "
+                 "display a backtrace");
+
   } else {
     backward::StackTrace st;
     st.load_here(32);
