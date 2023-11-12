@@ -177,10 +177,7 @@ protected:
   static constexpr bool is_mcg = false;
 
   // Is never called, but is provided for symmetry with specific_stream
-  void set_stream(...)
-  {
-    abort();
-  }
+  void set_stream(...) { abort(); }
 
 public:
   typedef itype state_type;
@@ -190,10 +187,7 @@ public:
     return itype(reinterpret_cast<unsigned long>(this) | 1);
   }
 
-  constexpr itype stream() const
-  {
-    return increment() >> 1;
-  }
+  constexpr itype stream() const { return increment() >> 1; }
 
   static constexpr bool can_specify_stream = false;
 
@@ -217,25 +211,16 @@ protected:
   static constexpr bool is_mcg = true;
 
   // Is never called, but is provided for symmetry with specific_stream
-  void set_stream(...)
-  {
-    abort();
-  }
+  void set_stream(...) { abort(); }
 
 public:
   typedef itype state_type;
 
-  static constexpr itype increment()
-  {
-    return 0;
-  }
+  static constexpr itype increment() { return 0; }
 
   static constexpr bool can_specify_stream = false;
 
-  static constexpr size_t streams_pow2()
-  {
-    return 0u;
-  }
+  static constexpr size_t streams_pow2() { return 0u; }
 
 protected:
   constexpr no_stream() = default;
@@ -251,10 +236,7 @@ protected:
   static constexpr bool is_mcg = false;
 
   // Is never called, but is provided for symmetry with specific_stream
-  void set_stream(...)
-  {
-    abort();
-  }
+  void set_stream(...) { abort(); }
 
 public:
   typedef itype state_type;
@@ -266,10 +248,7 @@ public:
 
   static constexpr bool can_specify_stream = false;
 
-  static constexpr size_t streams_pow2()
-  {
-    return 0u;
-  }
+  static constexpr size_t streams_pow2() { return 0u; }
 
 protected:
   constexpr oneseq_stream() = default;
@@ -289,27 +268,15 @@ public:
   typedef itype state_type;
   typedef itype stream_state;
 
-  constexpr itype increment() const
-  {
-    return inc_;
-  }
+  constexpr itype increment() const { return inc_; }
 
-  itype stream()
-  {
-    return inc_ >> 1;
-  }
+  itype stream() { return inc_ >> 1; }
 
-  void set_stream(itype specific_seq)
-  {
-    inc_ = (specific_seq << 1) | 1;
-  }
+  void set_stream(itype specific_seq) { inc_ = (specific_seq << 1) | 1; }
 
   static constexpr bool can_specify_stream = true;
 
-  static constexpr size_t streams_pow2()
-  {
-    return (sizeof(itype) * 8) - 1u;
-  }
+  static constexpr size_t streams_pow2() { return (sizeof(itype) * 8) - 1u; }
 
 protected:
   specific_stream() = default;
@@ -346,10 +313,8 @@ class engine : protected output_mixin,
 protected:
   itype state_;
 
-  struct can_specify_stream_tag {
-  };
-  struct no_specifiable_stream_tag {
-  };
+  struct can_specify_stream_tag {};
+  struct no_specifiable_stream_tag {};
 
   using multiplier_mixin::multiplier;
   using stream_mixin::increment;
@@ -366,26 +331,14 @@ public:
   // It would be nice to use std::numeric_limits for these, but
   // we can't be sure that it'd be defined for the 128-bit types.
 
-  static constexpr result_type min()
-  {
-    return result_type(0UL);
-  }
+  static constexpr result_type min() { return result_type(0UL); }
 
-  static constexpr result_type max()
-  {
-    return ~result_type(0UL);
-  }
+  static constexpr result_type max() { return ~result_type(0UL); }
 
 protected:
-  itype bump(itype state)
-  {
-    return state * multiplier() + increment();
-  }
+  itype bump(itype state) { return state * multiplier() + increment(); }
 
-  itype base_generate()
-  {
-    return state_ = bump(state_);
-  }
+  itype base_generate() { return state_ = bump(state_); }
 
   itype base_generate0()
   {
@@ -426,15 +379,9 @@ public:
     state_ = advance(state_, delta, this->multiplier(), this->increment());
   }
 
-  void backstep(itype delta)
-  {
-    advance(-delta);
-  }
+  void backstep(itype delta) { advance(-delta); }
 
-  void discard(itype delta)
-  {
-    advance(delta);
-  }
+  void discard(itype delta) { advance(delta); }
 
   bool wrapped()
   {
@@ -961,8 +908,7 @@ template <typename xtype, typename itype> struct xsl_rr_mixin {
  * If you really want an invertable 128-bit RNG, I guess this is the one.
  */
 
-template <typename T> struct halfsize_trait {
-};
+template <typename T> struct halfsize_trait {};
 template <> struct halfsize_trait<pcg128_t> {
   typedef uint64_t type;
 };
@@ -1177,15 +1123,9 @@ public:
 
   void advance(state_type distance, bool forwards = true);
 
-  void backstep(state_type distance)
-  {
-    advance(distance, false);
-  }
+  void backstep(state_type distance) { advance(distance, false); }
 
-  extended(const result_type* data) : baseclass()
-  {
-    datainit(data);
-  }
+  extended(const result_type* data) : baseclass() { datainit(data); }
 
   extended(const result_type* data, state_type seed) : baseclass(seed)
   {
@@ -1203,15 +1143,9 @@ public:
     datainit(data);
   }
 
-  extended() : baseclass()
-  {
-    selfinit();
-  }
+  extended() : baseclass() { selfinit(); }
 
-  extended(state_type seed) : baseclass(seed)
-  {
-    selfinit();
-  }
+  extended(state_type seed) : baseclass(seed) { selfinit(); }
 
   // This function may or may not exist.  It thus has to be a template
   // to use SFINAE; users don't have to worry about its template-ness.
@@ -1303,7 +1237,7 @@ bool operator==(
   auto& base_lhs = static_cast<const baseclass&>(lhs);
   auto& base_rhs = static_cast<const baseclass&>(rhs);
   return base_lhs == base_rhs &&
-         !memcmp((void*)lhs.data_, (void*)rhs.data_, sizeof(lhs.data_));
+         !memcmp((void*)lhs.value_, (void*)rhs.value_, sizeof(lhs.value_));
 }
 
 template <bitcount_t table_pow2, bitcount_t advance_pow2, typename baseclass,
@@ -1328,7 +1262,7 @@ std::basic_ostream<CharT, Traits>& operator<<(
 
   out << rng.multiplier() << space << rng.increment() << space << rng.state_;
 
-  for (const auto& datum : rng.data_)
+  for (const auto& datum : rng.value_)
     out << space << datum;
 
   out.flags(orig_flags);
@@ -1351,7 +1285,7 @@ operator>>(std::basic_istream<CharT, Traits>& in,
 
   auto orig_flags = in.flags(std::ios_base::dec | std::ios_base::skipws);
 
-  for (auto& datum : new_rng.data_) {
+  for (auto& datum : new_rng.value_) {
     in >> datum;
     if (in.fail()) goto bail;
   }

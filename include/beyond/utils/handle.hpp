@@ -46,9 +46,34 @@ using minimum_uint_type =
 struct HandleBase {};
 
 /**
+ * @brief Template for the base class of an integer handle
+ *
+ * Handles act as non-owning references to a resource.
+ */
+template <typename Derived, typename Value = u32>
+class Handle : public HandleBase {
+  Value value_ = static_cast<Value>(-1);
+
+public:
+  Handle() = default;
+  constexpr explicit Handle(Value value) noexcept : value_{value} {}
+
+  [[nodiscard]] constexpr auto value() const noexcept -> Value
+  {
+    return value_;
+  }
+
+  [[nodiscard]] friend constexpr auto operator==(Derived lhs, Derived rhs)
+      -> bool
+  {
+    return lhs.value_ == rhs.value_;
+  }
+};
+
+/**
  * @brief Template for the base class of a generational resource handle
  *
- * Handles act as none-owning references to a resource. It has
+ * Handles act as non-owning references to a resource. A GenerationalHandle has
  * additional functionality of storing a generation number to check collision.
  */
 template <typename Derived, typename StorageT, std::size_t index_bits>
@@ -70,7 +95,7 @@ public:
 
   GenerationalHandle() = delete;
   explicit constexpr GenerationalHandle(Index id, Generation gen = 0)
-      : data_{static_cast<StorageT>(id + static_cast<StorageT>(gen << shift))}
+      : value_{static_cast<StorageT>(id + static_cast<StorageT>(gen << shift))}
   {
     BEYOND_ENSURE(not is_overflow(id));
   }
@@ -84,31 +109,44 @@ public:
   void set_index(Index new_index)
   {
     BEYOND_ENSURE(not is_overflow(new_index));
-    data_ = new_index + generation() << shift;
+    value_ = new_index + generation() << shift;
   }
 
-  [[nodiscard]] auto index() const -> Index
-  {
-    return data_ & index_mask;
-  }
+  [[nodiscard]] auto index() const -> Index { return value_ & index_mask; }
 
   [[nodiscard]] auto generation() const -> Generation
   {
-    return data_ >> shift;
+    return value_ >> shift;
   }
+
+  [[nodiscard]] auto value() const -> Storage { return value_; }
 
   [[nodiscard]] friend constexpr auto operator==(Derived lhs, Derived rhs)
       -> bool
   {
-    return lhs.data_ == rhs.data_;
+    return lhs.value_ == rhs.value_;
   }
 
 private:
-  Storage data_;
+  Storage value_ = static_cast<Storage>(-1);
+  ;
 };
 
 /** @} @} */
 
 } // namespace beyond
+
+namespace std {
+
+template <typename T>
+  requires std::is_base_of_v<beyond::HandleBase, T>
+struct hash<T> {
+  [[nodiscard]] auto operator()(T handle) const noexcept -> std::size_t
+  {
+    return std::hash<decltype(handle.value())>{}(handle.value());
+  }
+};
+
+} // namespace std
 
 #endif // BEYOND_CORE_UTILS_HANLDE_HPP
