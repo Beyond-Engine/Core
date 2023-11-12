@@ -23,7 +23,7 @@ namespace beyond {
  * @brief Matrix transformations
  * @ingroup math
  *
- * All transformations are in right-handed coordinate.
+ * All transformations are in right-handed coordinate with [0, 1] z.
  *
  * @{
  */
@@ -250,12 +250,12 @@ template <std::floating_point T>
   const TVec3<T> up_(cross(right, forward));
 
   // clang-format off
-  return TMat4<T>  {
-    right.x,    right.y,    right.z,    -dot(right, eye),
-    up_.x,      up_.y,      up_.z,      -dot(up_, eye),
-    -forward.x, -forward.y, -forward.z, dot(forward, eye),
-    0,          0,          0,          1
-  };
+    return TMat4<T>  {
+      right.x,    right.y,    right.z,    -dot(right, eye),
+      up_.x,      up_.y,      up_.z,      -dot(up_, eye),
+      -forward.x, -forward.y, -forward.z, dot(forward, eye),
+      0,          0,          0,          1
+    };
   // clang-format on
 }
 

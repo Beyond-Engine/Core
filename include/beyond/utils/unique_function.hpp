@@ -6,7 +6,6 @@
 #include <functional>
 #include <type_traits>
 
-
 namespace beyond {
 
 template <typename R, typename... Args> class unique_function;
@@ -22,9 +21,9 @@ union unique_function_storage {
   void* large_;
 
   template <class T>
-  static constexpr bool fit_small = sizeof(T) <= sizeof(small_) &&
-                                    alignof(T) <= alignof(decltype(small_)) &&
-                                    std::is_nothrow_move_constructible_v<T>;
+  static constexpr bool fit_small =
+      sizeof(T) <= sizeof(small_) && alignof(T) <= alignof(decltype(small_)) &&
+      std::is_nothrow_move_constructible_v<T>;
 
   unique_function_storage() noexcept = default;
 
@@ -83,10 +82,7 @@ public:
   using result_type = R;
 
   unique_function_base() = default;
-  ~unique_function_base()
-  {
-    this->reset();
-  }
+  ~unique_function_base() { this->reset(); }
 
   template <
       typename Func, class DFunc = std::decay_t<Func>,
@@ -115,7 +111,7 @@ public:
   }
 
   auto operator=(unique_function_base&& other) & noexcept
-                                                 -> unique_function_base&
+      -> unique_function_base&
   {
     if (other) {
       other.behaviors_(detail::unique_function_behaviors::move_to, other, this);
@@ -182,7 +178,8 @@ public:
   template <typename Func, class DFunc = std::decay_t<Func>,
             class = std::enable_if_t<!std::is_same_v<DFunc, unique_function> &&
                                      std::is_move_constructible_v<DFunc>>>
-  explicit unique_function(Func&& func) : base_type{std::forward<Func>(func)}
+  explicit(false) unique_function(Func&& func)
+      : base_type{std::forward<Func>(func)}
   {
   }
 
@@ -208,7 +205,7 @@ public:
                                      std::is_move_constructible_v<DFunc>>,
             class = std::void_t<
                 decltype(std::declval<const Func&>()(std::declval<Args>()...))>>
-  explicit unique_function(Func&& func)
+  explicit(false) unique_function(Func&& func)
       : detail::unique_function_base<R, Args...>{std::forward<Func>(func)}
   {
   }
@@ -256,13 +253,12 @@ auto operator!=(std::nullptr_t, const unique_function<Func>& lhs) noexcept
 
 // deduction guides
 template <class R, typename... Args>
-unique_function(R (*)(Args...))->unique_function<R(Args...) const>;
+unique_function(R (*)(Args...)) -> unique_function<R(Args...) const>;
 
 namespace detail {
 
 // TODO: Support member functions that take this by reference
-template <typename T> struct member_function_pointer_trait {
-};
+template <typename T> struct member_function_pointer_trait {};
 
 #define BEYOND_MEMBER_FUNCTION_POINTER_TRAIT(CV_OPT, NOEXCEPT_OPT)             \
   template <typename R, typename U, typename... Args>                          \
@@ -288,8 +284,7 @@ BEYOND_MEMBER_FUNCTION_POINTER_TRAIT(volatile, noexcept)
 
 // Main template: cannot find &Func::operator()
 template <typename Func, typename = void>
-struct function_deduce_signature_impl {
-};
+struct function_deduce_signature_impl {};
 
 template <typename Func>
 struct function_deduce_signature_impl<
@@ -299,15 +294,13 @@ struct function_deduce_signature_impl<
 
 template <typename Func>
 struct function_deduce_signature
-    : function_deduce_signature_impl<std::remove_cv_t<Func>> {
-};
+    : function_deduce_signature_impl<std::remove_cv_t<Func>> {};
 
 } // namespace detail
 
 template <class Func, class = std::enable_if_t<!std::is_pointer_v<Func>>>
-unique_function(Func)
-    ->unique_function<
-        typename detail::function_deduce_signature<Func>::type::guide_type>;
+unique_function(Func) -> unique_function<
+    typename detail::function_deduce_signature<Func>::type::guide_type>;
 
 } // namespace beyond
 

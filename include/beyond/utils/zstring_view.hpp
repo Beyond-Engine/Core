@@ -13,10 +13,7 @@ namespace beyond {
 
 /// @brief A guarantee null-terminated string view
 ///
-/// This is useful to interop with C librar
-///
-///
-/// ies
+/// This is useful to interop with C libraries
 struct ZStringView {
   using size_type = std::size_t;
 

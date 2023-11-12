@@ -295,8 +295,8 @@ public:
   }
 
 private:
-  size_type size_ = 0;
   alignas(T) std::byte data_[sizeof(T) * N];
+  size_type size_ = 0;
 };
 
 /** @}@} */
