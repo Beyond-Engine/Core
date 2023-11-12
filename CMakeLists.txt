@@ -37,7 +37,6 @@ if (BEYOND_CORE_BUILD_DOCUMENTATION)
 endif ()
 include("cmake/compiler.cmake")
 
-add_subdirectory(third-party)
 add_subdirectory(src)
 
 if (BEYOND_CORE_BUILD_TESTS)

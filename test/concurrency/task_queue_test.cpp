@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include <jthread.hpp>
+#include <thread>
 
 TEST_CASE("Task Queue push and pop", "[beyond.core.concurrency.task_queue]")
 {
@@ -37,7 +37,7 @@ TEST_CASE("Task Queue push and pop", "[beyond.core.concurrency.task_queue]")
   cq.push([&]() { strout(c2); });
   dq.push([&]() { strout(d2); });
 
-  std::vector<nostd::jthread> threads;
+  std::vector<std::jthread> threads;
 
   SECTION("Pop and render all the tasks")
   {

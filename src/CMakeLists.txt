@@ -103,7 +103,6 @@ target_link_libraries(core
         PUBLIC
         Threads::Threads
         fmt::fmt
-        jthread
         )
 if (TARGET Backward::Backward)
     target_link_libraries(core
