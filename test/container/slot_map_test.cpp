@@ -6,13 +6,13 @@
 
 using namespace beyond;
 
+struct DymmyHandle : GenerationalHandle<DymmyHandle, std::uint32_t, 16> {
+  using GenerationalHandle::GenerationalHandle;
+};
+
 TEST_CASE("SlotMap", "[beyond.core.container.slot_map]")
 {
-  struct Handle : GenerationalHandle<Handle, std::uint32_t, 16> {
-    using GenerationalHandle::GenerationalHandle;
-  };
-
-  SlotMap<Handle, std::string> map;
+  SlotMap<DymmyHandle, std::string> map;
   REQUIRE(map.size() == 0);
   REQUIRE(map.capacity() == 0);
 
@@ -51,4 +51,28 @@ TEST_CASE("SlotMap", "[beyond.core.container.slot_map]")
   REQUIRE(map.try_get(comma) == ", ");
   REQUIRE(map.try_get(world) == beyond::nullopt);
   REQUIRE(map.try_get(world2) == "World 2");
+}
+
+TEST_CASE("SlotMap LIFO Erase", "[beyond.core.container.slot_map]")
+{
+  SlotMap<DymmyHandle, int> map;
+
+  const auto first = map.emplace(42);
+  const auto second = map.emplace(32);
+
+  REQUIRE(map.size() == 2);
+  REQUIRE(map.try_get(first) == 42);
+  REQUIRE(map.try_get(second) == 32);
+
+  map.erase(second);
+
+  REQUIRE(map.size() == 1);
+  REQUIRE(map.try_get(first) == 42);
+  REQUIRE(map.try_get(second) == nullopt);
+
+  map.erase(first);
+
+  REQUIRE(map.size() == 0);
+  REQUIRE(map.try_get(first) == nullopt);
+  REQUIRE(map.try_get(second) == nullopt);
 }

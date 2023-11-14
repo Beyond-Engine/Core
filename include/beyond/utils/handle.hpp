@@ -109,7 +109,7 @@ public:
   void set_index(Index new_index)
   {
     BEYOND_ENSURE(not is_overflow(new_index));
-    value_ = new_index + generation() << shift;
+    value_ = new_index + (generation() << shift);
   }
 
   [[nodiscard]] auto index() const -> Index { return value_ & index_mask; }

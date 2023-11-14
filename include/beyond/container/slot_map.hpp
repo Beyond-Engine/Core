@@ -34,10 +34,7 @@ private:
   KeyIndex free_list_last_index_{};
 
 public:
-  [[nodiscard]] constexpr auto values() -> std::span<Value>
-  {
-    return data_;
-  }
+  [[nodiscard]] constexpr auto values() -> std::span<Value> { return data_; }
 
   [[nodiscard]] constexpr auto values() const -> std::span<const Value>
   {
@@ -80,24 +77,27 @@ public:
   constexpr auto erase(Key key)
   {
     const auto slot_index = key.index();
-    auto& slot = slots_.at(slot_index);
-    BEYOND_ENSURE(key.generation() == slot.generation());
-    const auto data_index = slot.index();
+    auto& slot_ref = slots_.at(slot_index);
+    BEYOND_ENSURE(key.generation() == slot_ref.generation());
+    const auto data_index = slot_ref.index();
 
-    slot = Key{free_list_first_index_,
-               static_cast<KeyGeneration>(slot.generation() + 1)};
+    slot_ref = Key{free_list_first_index_,
+                   static_cast<KeyGeneration>(slot_ref.generation() + 1)};
     free_list_first_index_ = slot_index;
     if (free_list_last_index_ == slots_.size()) { // free list is empty
       free_list_last_index_ = free_list_first_index_;
     }
 
-    data_[data_index] = std::move(data_.back());
+    data_.at(data_index) = std::move(data_.back());
     data_.pop_back();
 
-    reverse_map_[data_index] = std::move(reverse_map_.back());
+    reverse_map_.at(data_index) = reverse_map_.back();
     reverse_map_.pop_back();
 
-    slots_.at(reverse_map_[data_index]).set_index(data_index);
+    // TODO: is this correct
+    if (data_index < reverse_map_.size()) {
+      slots_.at(reverse_map_.at(data_index)).set_index(data_index);
+    }
   }
 
   template <class... Args> constexpr auto emplace(Args&&... args) -> Key
