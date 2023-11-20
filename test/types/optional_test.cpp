@@ -1,10 +1,13 @@
-#include "beyond/types/optional.hpp"
 #include <catch2/catch_test_macros.hpp>
 
+#include <optional>
 #include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
+
+#include "beyond/types/optional.hpp"
+#include "beyond/types/optional_conversion.hpp"
 
 TEST_CASE("optional Assignment value", "[beyond.core.types.optional]")
 {
@@ -103,14 +106,8 @@ TEST_CASE("optional Triviality", "[beyond.core.types.optional]")
     struct T {
       T(const T&) {}
       T(T&&){};
-      T& operator=(const T&)
-      {
-        return *this;
-      }
-      T& operator=(T&&)
-      {
-        return *this;
-      };
+      T& operator=(const T&) { return *this; }
+      T& operator=(T&&) { return *this; };
       ~T() {}
     };
     REQUIRE(!std::is_trivially_copy_constructible<beyond::optional<T>>::value);
@@ -325,10 +322,7 @@ TEST_CASE("optional Monadic operations", "[beyond.core.types.optional]")
     REQUIRE(o2r.value() == 42);
 
     struct rval_call_map {
-      double operator()(int) &&
-      {
-        return 42.0;
-      };
+      double operator()(int) && { return 42.0; };
     };
 
     // ensure that function object is forwarded
@@ -468,10 +462,7 @@ TEST_CASE("optional Monadic operations", "[beyond.core.types.optional]")
     REQUIRE(o2r.value() == 42);
 
     struct rval_call_transform {
-      double operator()(int) &&
-      {
-        return 42.0;
-      };
+      double operator()(int) && { return 42.0; };
     };
 
     // ensure that function object is forwarded
@@ -798,14 +789,8 @@ TEST_CASE("optional Monadic operations", "[beyond.core.types.optional]")
   }
 
   struct overloaded {
-    beyond::optional<int> operator()(foo&)
-    {
-      return 0;
-    }
-    beyond::optional<std::string> operator()(const foo&)
-    {
-      return "";
-    }
+    beyond::optional<int> operator()(foo&) { return 0; }
+    beyond::optional<std::string> operator()(const foo&) { return ""; }
   };
 
   SECTION("Issue #2")
@@ -872,10 +857,7 @@ TEST_CASE("optional In place", "[beyond.core.types.optional]")
 namespace {
 
 struct foo2 {
-  int& v()
-  {
-    return i;
-  }
+  int& v() { return i; }
   int i = 0;
 };
 
@@ -1060,10 +1042,7 @@ TEST_CASE("optional Observers", "[beyond.core.types.optional]")
 {
   struct move_detector {
     move_detector() = default;
-    move_detector(move_detector&& rhs)
-    {
-      rhs.been_moved = true;
-    }
+    move_detector(move_detector&& rhs) { rhs.been_moved = true; }
     bool been_moved = false;
   };
 
@@ -1277,4 +1256,25 @@ TEST_CASE("optional swap", "[beyond.core.types.optional]")
     CHECK(o1.value() == 42);
     CHECK(!o2.has_value());
   }
+}
+
+TEST_CASE("Optional Conversion Test", "[beyond.core.types.optional]")
+{
+  constexpr auto nullopt = beyond::to_std(beyond::nullopt);
+  static_assert(
+      std::same_as<std::remove_cv_t<decltype(nullopt)>, std::nullopt_t>);
+
+  constexpr auto nullopt2 = beyond::from_std(std::nullopt);
+  static_assert(
+      std::same_as<std::remove_cv_t<decltype(nullopt2)>, beyond::nullopt_t>);
+
+  constexpr beyond::optional<int> nullopt3 = beyond::nullopt;
+  constexpr auto nullopt4 = beyond::to_std(nullopt3);
+  static_assert(not beyond::to_std(nullopt3).has_value());
+  static_assert(not beyond::from_std(nullopt4).has_value());
+
+  constexpr beyond::optional<int> opt = 42;
+  constexpr auto std_opt = beyond::to_std(opt);
+  static_assert(std_opt.value() == 42);
+  static_assert(beyond::from_std(std_opt) == 42);
 }

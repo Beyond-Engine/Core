@@ -1,7 +1,7 @@
 /*
  optional.hpp
  An implementation of std::optional with monadic extensions
- Written in 2017 by Simon Brand (simonrbrand@gmail.com, @TartanLlama)
+ Written in 2017 by Sy Brand (simonrbrand@gmail.com, @TartanLlama)
  Forked and modified in 2020 by Lesley Lai
 */
 
@@ -11,6 +11,7 @@
 #include <exception>
 #include <functional>
 #include <new>
+#include <optional>
 #include <type_traits>
 #include <utility>
 
@@ -31,10 +32,8 @@ template <class T> class optional;
 
 namespace detail {
 // Trait for checking if a type is a beyond::optional
-template <class T> struct is_optional_impl : std::false_type {
-};
-template <class T> struct is_optional_impl<optional<T>> : std::true_type {
-};
+template <class T> struct is_optional_impl : std::false_type {};
+template <class T> struct is_optional_impl<optional<T>> : std::true_type {};
 template <class T> using is_optional = is_optional_impl<std::decay_t<T>>;
 
 // Change void to beyond::monostate
@@ -48,8 +47,7 @@ using get_map_return = optional<fixup_void<std::invoke_result_t<F, U>>>;
 template <class F, class = void, class... U> struct returns_void_impl;
 template <class F, class... U>
 struct returns_void_impl<F, std::void_t<std::invoke_result_t<F, U...>>, U...>
-    : std::is_void<std::invoke_result_t<F, U...>> {
-};
+    : std::is_void<std::invoke_result_t<F, U...>> {};
 template <class F, class... U>
 using returns_void = returns_void_impl<F, void, U...>;
 
@@ -122,8 +120,7 @@ struct optional_storage_base {
     }
   }
 
-  struct dummy {
-  };
+  struct dummy {};
   union {
     dummy m_dummy;
     T m_value;
@@ -144,8 +141,7 @@ template <class T> struct optional_storage_base<T, true> {
 
   // No destructor, so this class is trivially destructible
 
-  struct dummy {
-  };
+  struct dummy {};
   union {
     dummy m_dummy;
     T m_value;
@@ -187,27 +183,12 @@ template <class T> struct optional_operations_base : optional_storage_base<T> {
     }
   }
 
-  bool has_value() const
-  {
-    return this->m_has_value;
-  }
+  bool has_value() const { return this->m_has_value; }
 
-  constexpr T& get() &
-  {
-    return this->m_value;
-  }
-  constexpr const T& get() const&
-  {
-    return this->m_value;
-  }
-  constexpr T&& get() &&
-  {
-    return std::move(this->m_value);
-  }
-  constexpr const T&& get() const&&
-  {
-    return std::move(this->m_value);
-  }
+  constexpr T& get() & { return this->m_value; }
+  constexpr const T& get() const& { return this->m_value; }
+  constexpr T&& get() && { return std::move(this->m_value); }
+  constexpr const T&& get() const&& { return std::move(this->m_value); }
 };
 
 // This class manages conditionally having a trivial copy constructor
@@ -419,8 +400,7 @@ template <class T> struct optional_delete_assign_base<T, false, false> {
 
 /// @brief A tag type to represent an empty optional
 struct nullopt_t {
-  struct do_not_use {
-  };
+  struct do_not_use {};
   constexpr explicit nullopt_t(do_not_use, do_not_use) noexcept {}
 };
 /// @brief Represents an empty optional
@@ -430,10 +410,7 @@ static constexpr nullopt_t nullopt{nullopt_t::do_not_use{},
 class bad_optional_access : public std::exception {
 public:
   bad_optional_access() = default;
-  const char* what() const noexcept
-  {
-    return "optional has no value";
-  }
+  const char* what() const noexcept { return "optional has no value"; }
 };
 
 /// @brief An optional implementation with monadic extension
@@ -982,10 +959,7 @@ public:
     return std::addressof(this->m_value);
   }
 
-  constexpr T* operator->()
-  {
-    return std::addressof(this->m_value);
-  }
+  constexpr T* operator->() { return std::addressof(this->m_value); }
   /// @}
 
   /**
@@ -994,33 +968,18 @@ public:
    * @warning The result is undefined if the optional does not store a value.
    */
   /// @{
-  constexpr T& operator*() &
-  {
-    return this->m_value;
-  }
+  constexpr T& operator*() & { return this->m_value; }
 
-  constexpr const T& operator*() const&
-  {
-    return this->m_value;
-  }
+  constexpr const T& operator*() const& { return this->m_value; }
 
-  constexpr T&& operator*() &&
-  {
-    return std::move(this->m_value);
-  }
+  constexpr T&& operator*() && { return std::move(this->m_value); }
 
-  constexpr const T&& operator*() const&&
-  {
-    return std::move(this->m_value);
-  }
+  constexpr const T&& operator*() const&& { return std::move(this->m_value); }
   /// @}
 
   /// @name has_value
   /// @brief Returns whether or not the optional has a value
-  constexpr bool has_value() const noexcept
-  {
-    return this->m_has_value;
-  }
+  constexpr bool has_value() const noexcept { return this->m_has_value; }
 
   /// @name operator bool()
   /// @brief Returns whether or not the optional has a value
@@ -1291,8 +1250,7 @@ template <class T> void swap(optional<T>& lhs, optional<T>& rhs) noexcept
 }
 
 namespace detail {
-struct i_am_secret {
-};
+struct i_am_secret {};
 } // namespace detail
 
 template <class T = detail::i_am_secret, class U,
@@ -1688,37 +1646,19 @@ public:
     return *this = std::forward<U>(u);
   }
 
-  void swap(optional& rhs) noexcept
-  {
-    std::swap(m_value, rhs.m_value);
-  }
+  void swap(optional& rhs) noexcept { std::swap(m_value, rhs.m_value); }
 
   /// Returns a pointer to the stored value
-  constexpr const T* operator->() const noexcept
-  {
-    return m_value;
-  }
+  constexpr const T* operator->() const noexcept { return m_value; }
 
-  constexpr T* operator->() noexcept
-  {
-    return m_value;
-  }
+  constexpr T* operator->() noexcept { return m_value; }
 
   /// Returns the stored value
-  constexpr T& operator*() noexcept
-  {
-    return *m_value;
-  }
+  constexpr T& operator*() noexcept { return *m_value; }
 
-  constexpr const T& operator*() const noexcept
-  {
-    return *m_value;
-  }
+  constexpr const T& operator*() const noexcept { return *m_value; }
 
-  constexpr bool has_value() const noexcept
-  {
-    return m_value != nullptr;
-  }
+  constexpr bool has_value() const noexcept { return m_value != nullptr; }
 
   constexpr explicit operator bool() const noexcept
   {
@@ -1767,10 +1707,7 @@ public:
   }
 
   /// Destroys the stored value if one exists, making the optional empty
-  void reset() noexcept
-  {
-    m_value = nullptr;
-  }
+  void reset() noexcept { m_value = nullptr; }
 
 private:
   T* m_value;

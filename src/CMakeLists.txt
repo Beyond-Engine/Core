@@ -36,6 +36,7 @@ add_library(core
         ../include/beyond/random/generators/pcg_extras.hpp
 
         ../include/beyond/types/optional.hpp
+        ../include/beyond/types/optional_conversion.hpp
         ../include/beyond/types/expected.hpp
         ../include/beyond/types/in_place.hpp
         ../include/beyond/types/monostate.hpp
