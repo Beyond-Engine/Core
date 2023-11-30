@@ -185,14 +185,12 @@ public:
    *
    * Complexity: O(1)
    */
-  template <typename... Args>
   BEYOND_FORCE_INLINE auto push_back(const value_type& value) -> reference
   {
     return emplace_back(value);
   }
 
   /// @overload
-  template <typename... Args>
   BEYOND_FORCE_INLINE auto push_back(value_type&& value) -> reference
   {
     return emplace_back(std::move(value));

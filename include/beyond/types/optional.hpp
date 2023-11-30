@@ -16,6 +16,7 @@
 #include <utility>
 
 #include "../utils/panic.hpp"
+#include "../utils/utils.hpp"
 #include "in_place.hpp"
 #include "monostate.hpp"
 
@@ -1356,45 +1357,45 @@ public:
     return detail::optional_map_impl(*this, std::forward<F>(f));
   }
 
-  template <class F> constexpr auto map(F&& f) &&
+  template <class F> BEYOND_FORCE_INLINE constexpr auto map(F&& f) &&
   {
     return detail::optional_map_impl(std::move(*this), std::forward<F>(f));
   }
 
-  template <class F> constexpr auto map(F&& f) const&
+  template <class F> BEYOND_FORCE_INLINE constexpr auto map(F&& f) const&
   {
     return detail::optional_map_impl(*this, std::forward<F>(f));
   }
 
-  template <class F> constexpr auto map(F&& f) const&&
+  template <class F> BEYOND_FORCE_INLINE constexpr auto map(F&& f) const&&
   {
     return detail::optional_map_impl(std::move(*this), std::forward<F>(f));
   }
 
   /// Carries out some operation on the stored object if there is one.
-  template <class F> constexpr auto transform(F&& f) &
+  template <class F> BEYOND_FORCE_INLINE constexpr auto transform(F&& f) &
   {
     return detail::optional_map_impl(*this, std::forward<F>(f));
   }
 
-  template <class F> constexpr auto transform(F&& f) &&
+  template <class F> BEYOND_FORCE_INLINE constexpr auto transform(F&& f) &&
   {
     return detail::optional_map_impl(std::move(*this), std::forward<F>(f));
   }
 
-  template <class F> constexpr auto transform(F&& f) const&
+  template <class F> BEYOND_FORCE_INLINE constexpr auto transform(F&& f) const&
   {
     return detail::optional_map_impl(*this, std::forward<F>(f));
   }
 
-  template <class F> constexpr auto transform(F&& f) const&&
+  template <class F> BEYOND_FORCE_INLINE constexpr auto transform(F&& f) const&&
   {
     return detail::optional_map_impl(std::move(*this), std::forward<F>(f));
   }
 
   /// Calls `f` if the optional is empty
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
-  optional<T> constexpr or_else(F&& f) &
+  optional<T> BEYOND_FORCE_INLINE constexpr or_else(F&& f) &
   {
     if (has_value()) return *this;
 
@@ -1403,13 +1404,13 @@ public:
   }
 
   template <class F, detail::disable_if_ret_void<F>* = nullptr>
-  optional<T> constexpr or_else(F&& f) &
+  optional<T> BEYOND_FORCE_INLINE constexpr or_else(F&& f) &
   {
     return has_value() ? *this : std::forward<F>(f)();
   }
 
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
-  optional<T> or_else(F&& f) &&
+  optional<T> BEYOND_FORCE_INLINE or_else(F&& f) &&
   {
     if (has_value()) return std::move(*this);
 
@@ -1418,13 +1419,13 @@ public:
   }
 
   template <class F, detail::disable_if_ret_void<F>* = nullptr>
-  optional<T> constexpr or_else(F&& f) &&
+  optional<T> BEYOND_FORCE_INLINE constexpr or_else(F&& f) &&
   {
     return has_value() ? std::move(*this) : std::forward<F>(f)();
   }
 
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
-  optional<T> or_else(F&& f) const&
+  optional<T> BEYOND_FORCE_INLINE or_else(F&& f) const&
   {
     if (has_value()) return *this;
 
@@ -1433,13 +1434,13 @@ public:
   }
 
   template <class F, detail::disable_if_ret_void<F>* = nullptr>
-  optional<T> constexpr or_else(F&& f) const&
+  optional<T> BEYOND_FORCE_INLINE constexpr or_else(F&& f) const&
   {
     return has_value() ? *this : std::forward<F>(f)();
   }
 
   template <class F, detail::enable_if_ret_void<F>* = nullptr>
-  optional<T> or_else(F&& f) const&&
+  optional<T> BEYOND_FORCE_INLINE or_else(F&& f) const&&
   {
     if (has_value()) return std::move(*this);
 
@@ -1448,31 +1449,31 @@ public:
   }
 
   template <class F, detail::disable_if_ret_void<F>* = nullptr>
-  optional<T> or_else(F&& f) const&&
+  optional<T> BEYOND_FORCE_INLINE or_else(F&& f) const&&
   {
     return has_value() ? std::move(*this) : std::forward<F>(f)();
   }
 
   /// Maps the stored value with `f` if there is one, otherwise returns `u`
-  template <class F, class U> U map_or(F&& f, U&& u) &
+  template <class F, class U> BEYOND_FORCE_INLINE U map_or(F&& f, U&& u) &
   {
     return has_value() ? std::invoke(std::forward<F>(f), **this)
                        : std::forward<U>(u);
   }
 
-  template <class F, class U> U map_or(F&& f, U&& u) &&
+  template <class F, class U> BEYOND_FORCE_INLINE U map_or(F&& f, U&& u) &&
   {
     return has_value() ? std::invoke(std::forward<F>(f), std::move(**this))
                        : std::forward<U>(u);
   }
 
-  template <class F, class U> U map_or(F&& f, U&& u) const&
+  template <class F, class U> BEYOND_FORCE_INLINE U map_or(F&& f, U&& u) const&
   {
     return has_value() ? std::invoke(std::forward<F>(f), **this)
                        : std::forward<U>(u);
   }
 
-  template <class F, class U> U map_or(F&& f, U&& u) const&&
+  template <class F, class U> BEYOND_FORCE_INLINE U map_or(F&& f, U&& u) const&&
   {
     return has_value() ? std::invoke(std::forward<F>(f), std::move(**this))
                        : std::forward<U>(u);
@@ -1481,28 +1482,28 @@ public:
   /// Maps the stored value with `f` if there is one, otherwise calls
   /// `u` and returns the result.
   template <class F, class U>
-  std::invoke_result_t<U> map_or_else(F&& f, U&& u) &
+  BEYOND_FORCE_INLINE std::invoke_result_t<U> map_or_else(F&& f, U&& u) &
   {
     return has_value() ? std::invoke(std::forward<F>(f), **this)
                        : std::forward<U>(u)();
   }
 
   template <class F, class U>
-  std::invoke_result_t<U> map_or_else(F&& f, U&& u) &&
+  BEYOND_FORCE_INLINE std::invoke_result_t<U> map_or_else(F&& f, U&& u) &&
   {
     return has_value() ? std::invoke(std::forward<F>(f), std::move(**this))
                        : std::forward<U>(u)();
   }
 
   template <class F, class U>
-  std::invoke_result_t<U> map_or_else(F&& f, U&& u) const&
+  BEYOND_FORCE_INLINE std::invoke_result_t<U> map_or_else(F&& f, U&& u) const&
   {
     return has_value() ? std::invoke(std::forward<F>(f), **this)
                        : std::forward<U>(u)();
   }
 
   template <class F, class U>
-  std::invoke_result_t<U> map_or_else(F&& f, U&& u) const&&
+  BEYOND_FORCE_INLINE std::invoke_result_t<U> map_or_else(F&& f, U&& u) const&&
   {
     return has_value() ? std::invoke(std::forward<F>(f), std::move(**this))
                        : std::forward<U>(u)();
@@ -1510,7 +1511,8 @@ public:
 
   /// Returns `u` if `*this` has a value, otherwise an empty optional.
   template <class U>
-  constexpr optional<typename std::decay<U>::type> conjunction(U&& u) const
+  BEYOND_FORCE_INLINE constexpr optional<typename std::decay<U>::type>
+  conjunction(U&& u) const
   {
     using result = optional<std::decay_t<U>>;
     return has_value() ? result{u} : result{nullopt};

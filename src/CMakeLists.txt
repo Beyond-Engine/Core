@@ -1,5 +1,4 @@
 add_library(core
-        ../include/beyond/concurrency/task_queue.hpp
         ../include/beyond/container/array.hpp
         ../include/beyond/container/static_vector.hpp
         ../include/beyond/ecs/sparse_map.hpp
@@ -51,7 +50,15 @@ add_library(core
         ../include/beyond/container/vector_interface.hpp
         ../include/beyond/utils/ref.hpp
         ../include/beyond/types/unique_ptr.hpp
-        ../include/beyond/utils/utils.hpp ../include/beyond/utils/copy_move.hpp ../include/beyond/utils/defer.hpp ../include/beyond/utils/assets_folder_locator.cpp ../include/beyond/utils/assets_folder_locator.hpp ../include/beyond/container/slot_map.hpp ../include/beyond/utils/narrowing.hpp ../include/beyond/utils/zstring_view.hpp)
+        ../include/beyond/utils/utils.hpp
+        ../include/beyond/utils/copy_move.hpp
+        ../include/beyond/utils/defer.hpp
+        ../include/beyond/utils/assets_folder_locator.cpp
+        ../include/beyond/utils/assets_folder_locator.hpp
+        ../include/beyond/container/slot_map.hpp
+        ../include/beyond/utils/narrowing.hpp
+        ../include/beyond/utils/zstring_view.hpp
+        ../include/beyond/concurrency/thread_pool.hpp concurrency/thread_pool.cpp)
 
 if (BEYOND_CORE_ENABLE_PCH)
     target_precompile_headers(core INTERFACE

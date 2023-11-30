@@ -11,8 +11,8 @@ the core utilities of the [Beyond Game Engine](https://github.com/Beyond-Engine/
 
 * [`algorithm`](include/beyond/algorithm/)
   <br /> additional STL-style algorithm library.
-* [`concurrency`](include/beyond/concurrency/)  (incomplete and unusable)
-  <br /> contains high level constructs for concurrent programming.
+* [`concurrency`](include/beyond/concurrency/)
+  <br /> A task system
 * [`coroutine`](include/beyond/coroutine)
   <br /> C++20 coroutine supporting library.
 * [`container`](include/beyond/container)

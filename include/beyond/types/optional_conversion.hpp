@@ -12,36 +12,32 @@
 
 namespace beyond {
 
-BEYOND_FORCE_INLINE constexpr auto to_std(beyond::nullopt_t) -> std::nullopt_t
+[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto to_std(beyond::nullopt_t)
+    -> std::nullopt_t
 {
   return std::nullopt;
 }
 
-BEYOND_FORCE_INLINE constexpr auto from_std(std::nullopt_t) -> beyond::nullopt_t
+[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto from_std(std::nullopt_t)
+    -> beyond::nullopt_t
 {
   return beyond::nullopt;
 }
 
 template <typename T>
-BEYOND_FORCE_INLINE constexpr auto to_std(beyond::optional<T> opt)
+[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto to_std(beyond::optional<T> opt)
     -> std::optional<T>
 {
-  if (opt.has_value()) {
-    return std::optional<T>{opt.value()};
-  } else {
-    return std::nullopt;
-  }
+  if (opt.has_value()) { return std::optional<T>{opt.value()}; }
+  return std::nullopt;
 }
 
 template <typename T>
-BEYOND_FORCE_INLINE constexpr auto from_std(std::optional<T> opt)
+[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto from_std(std::optional<T> opt)
     -> beyond::optional<T>
 {
-  if (opt.has_value()) {
-    return beyond::optional<T>{opt.value()};
-  } else {
-    return beyond::nullopt;
-  }
+  if (opt.has_value()) { return beyond::optional<T>{opt.value()}; }
+  return beyond::nullopt;
 }
 
 } // namespace beyond
