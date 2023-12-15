@@ -20,9 +20,9 @@
 
 #endif
 
-#if defined(WIN32) && !defined(NDEBUG)
-#include <debugapi.h>
-#endif
+// #if defined(WIN32) && !defined(NDEBUG)
+// #include <debugapi.h>
+// #endif
 
 #include "beyond/utils/panic.hpp"
 
@@ -37,7 +37,7 @@ namespace beyond {
                  source_location.line(), source_location.column());
   fmt::format_to(std::back_inserter(panic_message), "{}\n", msg);
 
-  const char* use_backtrace = std::getenv("BEYOND_BACKTRACE");
+  [[maybe_unused]] const char* use_backtrace = std::getenv("BEYOND_BACKTRACE");
 
   fmt::println(stderr, "{}", panic_message);
 
@@ -60,9 +60,9 @@ namespace beyond {
   }
 #endif
 
-#if defined(WIN32) && !defined(NDEBUG)
-  DebugBreak();
-#endif
+  // #if defined(WIN32) && !defined(NDEBUG)
+  //   DebugBreak();
+  // #endif
 
   std::fflush(stderr);
   std::abort();

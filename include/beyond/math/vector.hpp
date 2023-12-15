@@ -197,25 +197,25 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
 
   explicit constexpr TVec(T xx) noexcept
     requires(N == 2)
-      : Storage{{xx, xx}}
+      : Storage{{{xx, xx}}}
   {
   }
 
   explicit constexpr TVec(T xx) noexcept
     requires(N == 3)
-      : Storage{{xx, xx, xx}}
+      : Storage{{{xx, xx, xx}}}
   {
   }
 
   explicit constexpr TVec(T xx) noexcept
     requires(N == 4)
-      : Storage{{xx, xx, xx, xx}}
+      : Storage{{{xx, xx, xx, xx}}}
   {
   }
 
   constexpr TVec(T xx, T yy) noexcept
     requires(N == 2)
-      : Storage{{xx, yy}}
+      : Storage{{{xx, yy}}}
   {
   }
 
@@ -226,25 +226,25 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
   }
   constexpr TVec(T xx, T yy, T zz) noexcept
     requires(N == 3)
-      : Storage{{xx, yy, zz}}
+      : Storage{{{xx, yy, zz}}}
   {
   }
 
   constexpr TVec(T xx, T yy, T zz, T ww) noexcept
     requires(N == 4)
-      : Storage{{xx, yy, zz, ww}}
+      : Storage{{{xx, yy, zz, ww}}}
   {
   }
 
   constexpr TVec(const TVec<T, 2>& v, T zz, T ww) noexcept
     requires(N == 4)
-      : Storage{{v[0], v[1], zz, ww}}
+      : Storage{{{v[0], v[1], zz, ww}}}
   {
   }
 
   constexpr TVec(const TVec<T, 3>& v, T ww) noexcept
     requires(N == 4)
-      : Storage{{v[0], v[1], v[2], ww}}
+      : Storage{{{v[0], v[1], v[2], ww}}}
   {
   }
 

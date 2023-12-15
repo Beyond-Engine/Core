@@ -101,8 +101,9 @@ target_include_directories(core
         )
 
 find_package(Threads)
-find_package(fmt REQUIRED)
-find_package(Backward)
+
+find_package(fmt CONFIG REQUIRED)
+find_package(Backward CONFIG)
 
 target_link_libraries(core
         PRIVATE
