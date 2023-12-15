@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="beyond::StaticVector&lt;*,*&gt;" Inheritable="false">
+        <DisplayString>{{size = {size_}}}</DisplayString>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">size_</Item>
+		     <ArrayItems>
+                <Size>size_</Size>
+                <ValuePointer Condition="data_ != 0">($T1*)data_</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+	<Type Name="beyond::TVec&lt;*,2&gt;">
+		<DisplayString>[{x}, {y}]</DisplayString>
+	    <Expand HideRawView="1">
+            <Item Name="x">x</Item>
+			<Item Name="y">y</Item>
+        </Expand>
+    </Type>
+		
+	<Type Name="beyond::TVec&lt;*,3&gt;">
+		<DisplayString>[{x}, {y}, {z}]</DisplayString>
+	    <Expand HideRawView="1">
+            <Item Name="x">x</Item>
+			<Item Name="y">y</Item>
+			<Item Name="z">z</Item>
+        </Expand>
+    </Type>
+
+	<Type Name="beyond::TVec&lt;*,4&gt;">
+		<DisplayString>[{x}, {y}, {z}, {w}]</DisplayString>
+	    <Expand HideRawView="1">
+            <Item Name="x">x</Item>
+			<Item Name="y">y</Item>
+			<Item Name="z">z</Item>
+			<Item Name="w">w</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="beyond::optional&lt;*&gt;">
+        <DisplayString Condition="!m_has_value">nullopt</DisplayString>
+        <DisplayString Condition="m_has_value">{m_value}</DisplayString>
+        <Expand HideRawView="true">
+            <Item Condition="m_has_value" Name="value">m_value</Item>
+        </Expand>
+    </Type>
+	
+	<Type Name="beyond::unexpected&lt;*&gt;">		
+	    <DisplayString>{m_val}</DisplayString>
+    </Type>
+
+    <Type Name="beyond::expected&lt;*,*&gt;">		
+        <DisplayString Condition="!m_has_val">error: {m_unexpect}</DisplayString>
+	    <DisplayString Condition="m_has_val">value: {m_val}</DisplayString>
+	    <Expand HideRawView="true">
+            <Item Condition="m_has_val" Name="value">m_val</Item>
+		    <Item Condition="!m_has_val" Name="error">m_unexpect</Item>
+        </Expand>
+    </Type>
+
+	<Type Name="beyond::Handle&lt;*,*&gt;">		
+	    <DisplayString>{value_}</DisplayString>
+    </Type>
+
+    <Type Name="beyond::GenerationalHandle&lt;*,*,*&gt;">
+	    <Expand>
+            <Item Name="index">value_ &amp; index_mask</Item>
+		    <Item Name="generation">value_ >> shift</Item>
+        </Expand>
+    </Type>
+
+	<Type Name="beyond::Ref&lt;*&gt;">		
+	    <DisplayString>{data_}</DisplayString>
+    </Type>
+	
+	<Type Name="beyond::TRadian&lt;*&gt;">		
+	    <DisplayString>{value_} radians</DisplayString>
+	    <Expand HideRawView="true">
+            <Item Name="radians">value_</Item>
+		    <Item Name="degrees">value_ * 180 / 3.14159265358979311599796346854</Item>
+        </Expand>
+    </Type>
+	
+	<Type Name="beyond::TDegree&lt;*&gt;">		
+	    <DisplayString>{value_} degrees</DisplayString>
+		<Expand HideRawView="true">
+            <Item Name="radians">value_ / 180 * 3.14159265358979311599796346854</Item>
+		    <Item Name="degrees">value_</Item>
+        </Expand>
+    </Type>
+
+</AutoVisualizer>

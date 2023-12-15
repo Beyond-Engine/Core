@@ -3,6 +3,7 @@
 
 #include <latch>
 #include <numeric>
+#include <thread>
 
 #include <beyond/concurrency/thread_pool.hpp>
 

@@ -52,14 +52,8 @@ TEST_CASE("expected Triviality", "[beyond.core.types.expected]")
     struct T {
       T(const T&) {}
       T(T&&){};
-      T& operator=(const T&)
-      {
-        return *this;
-      }
-      T& operator=(T&&)
-      {
-        return *this;
-      };
+      T& operator=(const T&) { return *this; }
+      T& operator=(T&&) { return *this; };
       ~T() {}
     };
     STATIC_REQUIRE(
@@ -1050,10 +1044,7 @@ TEST_CASE("expected or_else()", "[beyond.core.types.expected]")
 
 struct move_detector {
   move_detector() = default;
-  move_detector(move_detector&& rhs)
-  {
-    rhs.been_moved = true;
-  }
+  move_detector(move_detector&& rhs) { rhs.been_moved = true; }
   bool been_moved = false;
 };
 
@@ -1074,11 +1065,8 @@ TEST_CASE("expected Observers", "[beyond.core.types.expected]")
   REQUIRE(success);
   success = std::is_same<decltype(std::move(o1).value()), int&&>::value;
   REQUIRE(success);
-
-#ifndef TL_EXPECTED_NO_CONSTRR
   success = std::is_same<decltype(std::move(o3).value()), const int&&>::value;
   REQUIRE(success);
-#endif
 
   beyond::expected<move_detector, int> o4{beyond::in_place};
   move_detector o5 = std::move(o4).value();
