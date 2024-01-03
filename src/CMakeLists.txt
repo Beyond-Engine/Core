@@ -58,7 +58,9 @@ add_library(core
         ../include/beyond/container/slot_map.hpp
         ../include/beyond/utils/narrowing.hpp
         ../include/beyond/utils/zstring_view.hpp
-        ../include/beyond/concurrency/thread_pool.hpp concurrency/thread_pool.cpp)
+        ../include/beyond/concurrency/thread_pool.hpp
+        concurrency/thread_pool.cpp
+        ../include/beyond/utils/bitflags.hpp)
 
 if (BEYOND_CORE_ENABLE_PCH)
     target_precompile_headers(core INTERFACE

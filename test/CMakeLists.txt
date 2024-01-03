@@ -24,6 +24,7 @@ add_executable(${TEST_TARGET_NAME}
         utils/make_array_test.cpp
         utils/noexcept_cast_test.cpp
         utils/size_test.cpp
+        utils/bitflags_test.cpp
         serial_test_util.hpp
 
         types/optional_test.cpp
