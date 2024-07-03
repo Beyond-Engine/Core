@@ -60,9 +60,9 @@ namespace beyond {
   }
 #endif
 
-  // #if defined(WIN32) && !defined(NDEBUG)
-  //   DebugBreak();
-  // #endif
+#if defined(WIN32) && !defined(NDEBUG)
+  DebugBreak();
+#endif
 
   std::fflush(stderr);
   std::abort();

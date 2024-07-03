@@ -75,16 +75,16 @@ template <typename Derived> struct MatrixBase {
    *
    * @warning If the i and j are out-of-index, the result is undefined
    */
-  [[nodiscard]] constexpr auto operator()(std::size_t i, std::size_t j) const
-      noexcept -> ValueType
+  [[nodiscard]] constexpr auto
+  operator()(std::size_t i, std::size_t j) const noexcept -> ValueType
   {
     BEYOND_ASSERT(i <= dimension() && j < dimension());
     return underlying().data[flattern(i, j)];
   }
 
   /// @overload
-  [[nodiscard]] constexpr auto operator()(std::size_t i, std::size_t j) noexcept
-      -> ValueType&
+  [[nodiscard]] constexpr auto operator()(std::size_t i,
+                                          std::size_t j) noexcept -> ValueType&
   {
     BEYOND_ASSERT(i <= dimension() && j < dimension());
     return underlying().data[this->flattern(i, j)];
@@ -130,9 +130,8 @@ template <typename Derived> struct MatrixBase {
     return this->underlying();
   }
 
-  [[nodiscard]] friend constexpr auto operator+(const MatrixBase& lhs,
-                                                const MatrixBase& rhs) noexcept
-      -> Derived
+  [[nodiscard]] friend constexpr auto
+  operator+(const MatrixBase& lhs, const MatrixBase& rhs) noexcept -> Derived
   {
     Derived result(uninitialized_tag);
     for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
@@ -141,9 +140,8 @@ template <typename Derived> struct MatrixBase {
     return result;
   };
 
-  [[nodiscard]] friend constexpr auto operator-(const MatrixBase& lhs,
-                                                const MatrixBase& rhs) noexcept
-      -> Derived
+  [[nodiscard]] friend constexpr auto
+  operator-(const MatrixBase& lhs, const MatrixBase& rhs) noexcept -> Derived
   {
     Derived result(uninitialized_tag);
     for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
@@ -152,9 +150,8 @@ template <typename Derived> struct MatrixBase {
     return result;
   };
 
-  [[nodiscard]] friend constexpr auto operator*(const MatrixBase& lhs,
-                                                const MatrixBase& rhs) noexcept
-      -> Derived
+  [[nodiscard]] friend constexpr auto
+  operator*(const MatrixBase& lhs, const MatrixBase& rhs) noexcept -> Derived
   {
     Derived result(uninitialized_tag);
     for (std::size_t i = 0; i < dimension(); i++) {
@@ -179,9 +176,8 @@ template <typename Derived> struct MatrixBase {
     return result;
   };
 
-  [[nodiscard]] friend constexpr auto operator*(ValueType s,
-                                                const MatrixBase& mat) noexcept
-      -> Derived
+  [[nodiscard]] friend constexpr auto
+  operator*(ValueType s, const MatrixBase& mat) noexcept -> Derived
   {
     return mat * s;
   };
@@ -197,9 +193,8 @@ template <typename Derived> struct MatrixBase {
     return result;
   };
 
-  [[nodiscard]] friend constexpr auto operator==(const MatrixBase& lhs,
-                                                 const MatrixBase& rhs) noexcept
-      -> bool
+  [[nodiscard]] friend constexpr auto
+  operator==(const MatrixBase& lhs, const MatrixBase& rhs) noexcept -> bool
   {
     for (std::size_t i = 0; i < MatrixBase::size(); ++i) {
       if (lhs.underlying().data[i] != rhs.underlying().data[i]) {
@@ -209,9 +204,8 @@ template <typename Derived> struct MatrixBase {
     return true;
   }
 
-  [[nodiscard]] friend constexpr auto operator!=(const MatrixBase& lhs,
-                                                 const MatrixBase& rhs) noexcept
-      -> bool
+  [[nodiscard]] friend constexpr auto
+  operator!=(const MatrixBase& lhs, const MatrixBase& rhs) noexcept -> bool
   {
     return !(lhs == rhs);
   }
@@ -238,17 +232,16 @@ template <typename Derived> struct MatrixBase {
 protected:
   constexpr MatrixBase() noexcept = default;
 
-  [[nodiscard]] static constexpr auto flattern(std::size_t i,
-                                               std::size_t j) noexcept
-      -> std::size_t
+  [[nodiscard]] static constexpr auto
+  flattern(std::size_t i, std::size_t j) noexcept -> std::size_t
   {
     return j * Trait::dimension + i;
   }
 };
 
 template <typename Derived>
-[[nodiscard]] constexpr auto transpose(const MatrixBase<Derived>& m) noexcept
-    -> Derived
+[[nodiscard]] constexpr auto
+transpose(const MatrixBase<Derived>& m) noexcept -> Derived
 {
   Derived r(uninitialized_tag);
   for (std::size_t i = 0; i < m.dimension(); ++i) {
@@ -277,9 +270,8 @@ template <typename T> struct TMat2 : MatrixBase<TMat2<T>> {
   {
   }
 
-  [[nodiscard]] friend constexpr auto operator*(const TMat2& m,
-                                                const TVec2<ValueType> v)
-      -> TVec2<ValueType>
+  [[nodiscard]] friend constexpr auto
+  operator*(const TMat2& m, const TVec2<ValueType> v) -> TVec2<ValueType>
   {
     return TVec2<ValueType>(m.data[0] * v.x + m.data[2] * v.y,
                             m.data[1] * v.x + m.data[3] * v.y);
@@ -290,8 +282,8 @@ template <typename T> struct TMat2 : MatrixBase<TMat2<T>> {
     return TMat2(1, 0, 0, 1);
   }
 
-  [[nodiscard]] friend constexpr auto determinant(const TMat2& m) noexcept
-      -> ValueType
+  [[nodiscard]] friend constexpr auto
+  determinant(const TMat2& m) noexcept -> ValueType
   {
     return m.data[0] * m.data[3] - m.data[1] * m.data[2];
   }
@@ -322,9 +314,8 @@ template <typename T> struct TMat3 : MatrixBase<TMat3<T>> {
   {
   }
 
-  [[nodiscard]] friend constexpr auto operator*(const TMat3& m,
-                                                const TVec3<ValueType> v)
-      -> TVec3<ValueType>
+  [[nodiscard]] friend constexpr auto
+  operator*(const TMat3& m, const TVec3<ValueType> v) -> TVec3<ValueType>
   {
     return TVec3<ValueType>(m.data[0] * v.x + m.data[3] * v.y + m.data[6] * v.z,
                             m.data[1] * v.x + m.data[4] * v.y + m.data[7] * v.z,
@@ -337,8 +328,8 @@ template <typename T> struct TMat3 : MatrixBase<TMat3<T>> {
     return TMat3(1, 0, 0, 0, 1, 0, 0, 0, 1);
   }
 
-  [[nodiscard]] friend constexpr auto determinant(const TMat3& m) noexcept
-      -> ValueType
+  [[nodiscard]] friend constexpr auto
+  determinant(const TMat3& m) noexcept -> ValueType
   {
     return m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) -
            m(0, 1) * (m(1, 0) * m(2, 2) - m(1, 2) * m(2, 0)) +
@@ -383,9 +374,19 @@ template <typename T> struct TMat4 : MatrixBase<TMat4<T>> {
   {
   }
 
-  [[nodiscard]] friend constexpr auto operator*(const TMat4& m,
-                                                const TVec4<ValueType> v)
-      -> TVec4<ValueType>
+  /**
+   * From a contiguous span of column major elements
+   */
+  [[nodiscard]] static auto from_span(std::span<const T, 16> span) -> TMat4
+  {
+    return TMat4(span[0], span[1], span[2], span[3],   //
+                 span[4], span[5], span[6], span[7],   //
+                 span[8], span[9], span[10], span[11], //
+                 span[12], span[13], span[14], span[15]);
+  }
+
+  [[nodiscard]] friend constexpr auto
+  operator*(const TMat4& m, const TVec4<ValueType> v) -> TVec4<ValueType>
   {
     return TVec4<ValueType>(
         m.data[0] * v.x + m.data[4] * v.y + m.data[8] * v.z + m.data[12] * v.w,
@@ -400,8 +401,8 @@ template <typename T> struct TMat4 : MatrixBase<TMat4<T>> {
     return TMat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   }
 
-  [[nodiscard]] friend constexpr auto determinant(const TMat4& m) noexcept
-      -> ValueType
+  [[nodiscard]] friend constexpr auto
+  determinant(const TMat4& m) noexcept -> ValueType
   {
     return m(0, 0) * m(1, 1) * m(2, 2) * m(3, 3) +
            m(0, 0) * m(2, 1) * m(3, 2) * m(1, 3) +
