@@ -41,7 +41,12 @@ add_executable(${TEST_TARGET_NAME}
 
         utils/ref_test.cpp
         utils/defer_test.cpp
-        container/slot_map_test.cpp utils/zstring_view_test.cpp ../include/beyond/types/optional_conversion.hpp)
+        container/slot_map_test.cpp utils/zstring_view_test.cpp ../include/beyond/types/optional_conversion.hpp
+        math/bivector_test.cpp
+        math/bivector_test.cpp
+        constexpr_test_util.hpp
+        math/rotor3_test.cpp
+        ../include/beyond/math/rotor.hpp)
 
 find_package(Catch2 CONFIG REQUIRED)
 
@@ -65,7 +70,7 @@ endif ()
 if (BEYOND_CORE_ENABLE_PCH)
     target_precompile_headers(${TEST_TARGET_NAME} PRIVATE
             <catch2/catch_test_macros.hpp>
-            )
+    )
 endif ()
 
 add_test(NAME beyond_core_unit_test

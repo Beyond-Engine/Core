@@ -164,48 +164,37 @@ template <Arithmetic T1, Arithmetic T2>
  */
 [[nodiscard]] constexpr auto lerp(float a, float b, float t) noexcept -> float
 {
-  return a * (static_cast<float>(1) - t) + (b * t);
+  return a * (1.0f - t) + (b * t);
 }
 
-[[nodiscard]] constexpr auto lerp(double a, double b, double t) noexcept
-    -> double
+[[nodiscard]] constexpr auto lerp(double a, double b,
+                                  double t) noexcept -> double
 {
-  return a * (static_cast<float>(1) - t) + (b * t);
+  return a * (1.0 - t) + (b * t);
 }
 
-using std::abs;
-using std::fabs;
-using std::fdim;
-using std::fma;
-using std::fmod;
-using std::remainder;
-using std::remquo;
+/**
+ * @brief A constexpr version of sqrt
+ * @return For a finite and non-negative value of "x", returns an approximation
+ *for the square root of "x" Otherwise, returns NaN
+ */
+template <std::floating_point T> [[nodiscard]] auto constexpr sqrt(T x) -> float
+{
+  if (std::is_constant_evaluated()) {
+    if (x < 0) { return std::numeric_limits<T>::quiet_NaN(); }
+    if (x == std::numeric_limits<T>::infinity()) {
+      return std::numeric_limits<T>::infinity();
+    }
 
-using std::exp;
-using std::exp2;
-using std::expm1;
-using std::log;
-using std::log10;
-using std::log1p;
-using std::log2;
+    T curr = x;
+    for (T prev = T{0}; curr != prev;) {
+      prev = std::exchange(curr, T{0.5} * (curr + x / curr));
+    }
+    return curr;
+  }
 
-using std::cbrt;
-using std::hypot;
-using std::pow;
-using std::sqrt;
-
-using std::acosh;
-using std::asinh;
-using std::atanh;
-using std::cosh;
-using std::sinh;
-using std::tanh;
-
-using std::ceil;
-using std::floor;
-using std::nearbyint;
-using std::round;
-using std::trunc;
+  return std::sqrt(x);
+}
 
 /** @}
  *  @} */

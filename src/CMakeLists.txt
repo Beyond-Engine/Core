@@ -60,7 +60,8 @@ add_library(core
         ../include/beyond/utils/zstring_view.hpp
         ../include/beyond/concurrency/thread_pool.hpp
         concurrency/thread_pool.cpp
-        ../include/beyond/utils/bitflags.hpp)
+        ../include/beyond/utils/bitflags.hpp
+        ../include/beyond/math/bivector.hpp)
 
 if (BEYOND_CORE_ENABLE_PCH)
     target_precompile_headers(core INTERFACE
@@ -80,7 +81,7 @@ if (BEYOND_CORE_ENABLE_PCH)
             ../include/beyond/math/quat.hpp
             ../include/beyond/utils/function_ref.hpp
             ../include/beyond/utils/noexcept_cast.hpp
-            )
+    )
 endif ()
 
 set(BEYOND_CORE_ASSERT_POLICY AUTO CACHE STRING "The policy of enabling
@@ -100,7 +101,7 @@ target_include_directories(core
         PUBLIC SYSTEM
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
-        )
+)
 
 find_package(Threads)
 
@@ -114,7 +115,7 @@ target_link_libraries(core
         PUBLIC
         Threads::Threads
         fmt::fmt
-        )
+)
 if (TARGET Backward::Backward)
     target_link_libraries(core
             PRIVATE

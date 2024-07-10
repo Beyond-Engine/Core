@@ -50,7 +50,7 @@ struct HandleBase {};
  *
  * Handles act as non-owning references to a resource.
  */
-template <typename Derived, typename Value = u32>
+template <typename Derived, typename Value = std::uint32_t>
 class Handle : public HandleBase {
   Value value_ = static_cast<Value>(-1);
 
@@ -63,8 +63,8 @@ public:
     return value_;
   }
 
-  [[nodiscard]] friend constexpr auto operator==(Derived lhs, Derived rhs)
-      -> bool
+  [[nodiscard]] friend constexpr auto operator==(Derived lhs,
+                                                 Derived rhs) -> bool
   {
     return lhs.value_ == rhs.value_;
   }
@@ -109,7 +109,8 @@ public:
   void set_index(Index new_index)
   {
     BEYOND_ENSURE(not is_overflow(new_index));
-    value_ = new_index + (generation() << shift);
+    value_ = static_cast<Storage>(new_index) +
+             static_cast<Storage>(generation() << shift);
   }
 
   [[nodiscard]] auto index() const -> Index { return value_ & index_mask; }
@@ -121,15 +122,14 @@ public:
 
   [[nodiscard]] auto value() const -> Storage { return value_; }
 
-  [[nodiscard]] friend constexpr auto operator==(Derived lhs, Derived rhs)
-      -> bool
+  [[nodiscard]] friend constexpr auto operator==(Derived lhs,
+                                                 Derived rhs) -> bool
   {
     return lhs.value_ == rhs.value_;
   }
 
 private:
   Storage value_ = static_cast<Storage>(-1);
-  ;
 };
 
 /** @} @} */

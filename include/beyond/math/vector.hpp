@@ -248,6 +248,13 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
   {
   }
 
+  constexpr TVec(std::span<const T, N> span) noexcept
+  {
+    for (size_t i = 0; i < span.size(); ++i) {
+      Storage::elem[i] = span[i];
+    }
+  }
+
   /**
    * @brief Gets the dimensionality of a vector
    */
@@ -278,14 +285,14 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
    * @brief Gets the i-th component of the vector
    * @warning Behavior of out of index is undefined
    */
-  auto operator[](std::size_t i) const noexcept -> ValueType
+  constexpr auto operator[](std::size_t i) const noexcept -> ValueType
   {
     BEYOND_ASSERT_MSG(i < size(), "Invalid index");
     return Storage::elem[i];
   }
 
   /// @overload
-  auto operator[](std::size_t i) noexcept -> ValueType&
+  constexpr auto operator[](std::size_t i) noexcept -> ValueType&
   {
     BEYOND_ASSERT_MSG(i < size(), "Invalid index");
     return Storage::elem[i];
@@ -295,14 +302,14 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
    * @brief Gets the i-th component of the vector
    * @warning Behavior of out of index is undefined
    */
-  auto operator()(std::size_t i) const noexcept -> ValueType
+  constexpr auto operator()(std::size_t i) const noexcept -> ValueType
   {
     BEYOND_ASSERT_MSG(i < size(), "Invalid index");
     return Storage::elem[i];
   }
 
   /// @overload
-  auto operator()(std::size_t i) noexcept -> ValueType&
+  constexpr auto operator()(std::size_t i) noexcept -> ValueType&
   {
     BEYOND_ASSERT_MSG(i < size(), "Invalid index");
     return Storage::elem[i];
@@ -397,9 +404,8 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
    * @brief Adds two vectors
    * @related TVec
    */
-  [[nodiscard]] friend constexpr auto operator+(TVec lhs,
-                                                const TVec& rhs) noexcept
-      -> TVec
+  [[nodiscard]] friend constexpr auto
+  operator+(TVec lhs, const TVec& rhs) noexcept -> TVec
   {
     lhs += rhs;
     return lhs;
@@ -409,9 +415,8 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
    * @brief Subtracts two vectors
    * @related TVec
    */
-  [[nodiscard]] friend constexpr auto operator-(TVec lhs,
-                                                const TVec& rhs) noexcept
-      -> TVec
+  [[nodiscard]] friend constexpr auto
+  operator-(TVec lhs, const TVec& rhs) noexcept -> TVec
   {
     lhs -= rhs;
     return lhs;
@@ -421,8 +426,8 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
    * @brief Divides a vector by a scalar
    * @related TVec
    */
-  [[nodiscard]] friend constexpr auto operator/(TVec lhs, T scalar) noexcept
-      -> TVec
+  [[nodiscard]] friend constexpr auto operator/(TVec lhs,
+                                                T scalar) noexcept -> TVec
   {
     static_assert(std::is_floating_point_v<T>);
     lhs /= scalar;
@@ -433,8 +438,8 @@ struct TVec : VectorStorage<TVec<T, N>, N> {
 /// @brief Normalizes a vector into a unit vector
 /// @note Only available for floating point vectors
 template <typename T, std::size_t N>
-[[nodiscard]] constexpr auto normalize(const TVec<T, N>& v) noexcept
-    -> TVec<T, N>
+[[nodiscard]] constexpr auto
+normalize(const TVec<T, N>& v) noexcept -> TVec<T, N>
   requires(std::floating_point<T>)
 {
   return v / v.length();
@@ -494,8 +499,8 @@ template <typename T>
 
 template <typename T, std::size_t size>
 [[nodiscard]] constexpr auto lerp(const TVec<T, size>& v1,
-                                  const TVec<T, size>& v2, T t) noexcept
-    -> TVec<T, size>
+                                  const TVec<T, size>& v2,
+                                  T t) noexcept -> TVec<T, size>
 {
   return [&]<std::size_t... I>(std::index_sequence<I...>) {
     TVec<T, size> v;
@@ -508,8 +513,8 @@ template <typename T, std::size_t size>
  *  @} */
 
 namespace detail {
-[[nodiscard]] constexpr auto hash_combine(std::size_t seed, std::size_t hash)
-    -> std::size_t
+[[nodiscard]] constexpr auto hash_combine(std::size_t seed,
+                                          std::size_t hash) -> std::size_t
 {
   return hash + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 }
@@ -523,8 +528,8 @@ namespace std {
  * @brief Hash support for TVec<T, N>
  */
 template <typename T, std::size_t N> struct hash<beyond::TVec<T, N>> {
-  [[nodiscard]] auto operator()(const beyond::TVec<T, N>& vec) const noexcept
-      -> std::size_t
+  [[nodiscard]] auto
+  operator()(const beyond::TVec<T, N>& vec) const noexcept -> std::size_t
   {
     using beyond::detail::hash_combine;
     return [&]<std::size_t... I>(std::index_sequence<I...>) {

@@ -19,6 +19,7 @@ Checks: '*,
 -*-uppercase-literal-suffix,
 -*-magic-numbers,
 -misc-use-anonymous-namespace,
+-*-include-cleaner,
 -google-explicit-constructor,
 -google-runtime-references,
 -google-build-using-namespace

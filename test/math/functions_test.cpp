@@ -6,6 +6,50 @@
 
 using Catch::Approx;
 
+TEST_CASE("Sqrt Test", "[beyond.core.math]")
+{
+  constexpr auto test = []<float x>() {
+    constexpr auto constexpr_res = beyond::sqrt(x);
+    auto runtime_res = beyond::sqrt(x);
+    auto expected = std::sqrt(x);
+
+    REQUIRE(constexpr_res == Approx(expected));
+    REQUIRE(runtime_res == Approx(expected));
+  };
+
+  SECTION("sqrt(0)")
+  {
+    test.operator()<0.f>();
+  }
+
+  SECTION("sqrt(2)")
+  {
+    test.operator()<2.f>();
+  }
+
+  SECTION("sqrt(42)")
+  {
+    test.operator()<42.f>();
+  }
+
+  SECTION("sqrt(-0)")
+  {
+    test.operator()<-0.f>();
+  }
+
+  SECTION("sqrt(-2)")
+  {
+    constexpr auto constexpr_res = beyond::sqrt(-2.);
+    REQUIRE(std::isnan(constexpr_res));
+    REQUIRE(std::isnan(beyond::sqrt(-2.)));
+  }
+
+  SECTION("sqrt(inf)")
+  {
+    test.operator()<std::numeric_limits<float>::infinity()>();
+  }
+}
+
 TEST_CASE("Scalar Trig functions", "[beyond.core.math]")
 {
   using namespace beyond::literals;

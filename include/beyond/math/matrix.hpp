@@ -314,6 +314,11 @@ template <typename T> struct TMat3 : MatrixBase<TMat3<T>> {
   {
   }
 
+  constexpr TMat3(TVec3<T> v0, TVec3<T> v1, TVec3<T> v2)
+      : data{v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z}
+  {
+  }
+
   [[nodiscard]] friend constexpr auto
   operator*(const TMat3& m, const TVec3<ValueType> v) -> TVec3<ValueType>
   {
@@ -362,6 +367,15 @@ template <typename T> struct TMat4 : MatrixBase<TMat4<T>> {
 
   /// @brief Create a TMat4 with all its elements uninitialized
   explicit TMat4(UninitializedTag) noexcept {}
+
+  /// @brief Create a TMat4 from a TMat3
+  explicit TMat4(TMat3<T> mat3) noexcept
+      : data{mat3(0, 0), mat3(0, 1), mat3(0, 2), 0, //
+             mat3(1, 0), mat3(1, 1), mat3(1, 2), 0, //
+             mat3(2, 0), mat3(2, 1), mat3(2, 2), 0, //
+             0,          0,          0,          1}
+  {
+  }
 
   constexpr TMat4(const ValueType v00, const ValueType v01, const ValueType v02,
                   const ValueType v03, const ValueType v10, const ValueType v11,
