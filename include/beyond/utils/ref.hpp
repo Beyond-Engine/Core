@@ -20,6 +20,11 @@ public:
   {
     return *data_;
   }
+
+  [[nodiscard]] BEYOND_FORCE_INLINE auto operator->() const noexcept -> T*
+  {
+    return data_;
+  }
 };
 
 template <typename T> Ref(T&) -> Ref<T>;
@@ -30,22 +35,22 @@ template <class T>
   return Ref{t};
 }
 template <class T>
-[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto ref(Ref<T>& r) noexcept
-    -> Ref<T>
+[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
+ref(Ref<T>& r) noexcept -> Ref<T>
 {
   return Ref{r};
 }
 template <class T> BEYOND_FORCE_INLINE void ref(T&& t) noexcept = delete;
 
 template <class T>
-[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto cref(T& t) noexcept
-    -> Ref<const T>
+[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
+cref(T& t) noexcept -> Ref<const T>
 {
   return Ref<const T>{t};
 }
 template <class T>
-[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto cref(Ref<T>& r) noexcept
-    -> Ref<const T>
+[[nodiscard]] BEYOND_FORCE_INLINE constexpr auto
+cref(Ref<T>& r) noexcept -> Ref<const T>
 {
   return Ref<const T>{r.get()};
 }

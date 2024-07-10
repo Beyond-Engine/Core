@@ -509,6 +509,16 @@ template <typename T, std::size_t size>
   }(std::make_index_sequence<size>());
 }
 
+template <typename T, std::size_t size>
+[[nodiscard]] constexpr auto abs(TVec<T, size> vec) noexcept -> TVec<T, size>
+{
+  return [&]<std::size_t... I>(std::index_sequence<I...>) {
+    TVec<T, size> result;
+    ((result.elem[I] = std::abs(vec[I])), ...);
+    return result;
+  }(std::make_index_sequence<size>());
+}
+
 /** @}
  *  @} */
 
