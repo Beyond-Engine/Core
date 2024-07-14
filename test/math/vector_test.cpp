@@ -466,7 +466,7 @@ TEST_CASE("Vec hash test", "[beyond.core.math.vec]")
 {
   SECTION("Vec4")
   {
-    const beyond::Vec4 v{1, 2, 3, 4};
+    constexpr beyond::Vec4 v{1, 2, 3, 4};
     [[maybe_unused]] auto hash = std::hash<beyond::Vec4>{}(v);
   }
 

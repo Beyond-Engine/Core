@@ -61,7 +61,8 @@ add_library(core
         ../include/beyond/concurrency/thread_pool.hpp
         concurrency/thread_pool.cpp
         ../include/beyond/utils/bitflags.hpp
-        ../include/beyond/math/bivector.hpp)
+        ../include/beyond/math/bivector.hpp
+        ../include/beyond/utils/hash.hpp)
 
 if (BEYOND_CORE_ENABLE_PCH)
     target_precompile_headers(core INTERFACE

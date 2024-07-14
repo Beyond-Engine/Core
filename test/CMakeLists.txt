@@ -46,7 +46,8 @@ add_executable(${TEST_TARGET_NAME}
         math/bivector_test.cpp
         constexpr_test_util.hpp
         math/rotor3_test.cpp
-        ../include/beyond/math/rotor.hpp)
+        ../include/beyond/math/rotor.hpp
+        utils/hash_test.cpp)
 
 find_package(Catch2 CONFIG REQUIRED)
 

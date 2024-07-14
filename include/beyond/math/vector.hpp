@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "../utils/assert.hpp"
+#include "../utils/hash.hpp"
 #include "detail/swizzle.hpp"
 #include "math.hpp"
 #include "math_fwd.hpp"
@@ -522,14 +523,6 @@ template <typename T, std::size_t size>
 /** @}
  *  @} */
 
-namespace detail {
-[[nodiscard]] constexpr auto hash_combine(std::size_t seed,
-                                          std::size_t hash) -> std::size_t
-{
-  return hash + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-}
-} // namespace detail
-
 } // namespace beyond
 
 namespace std {
@@ -541,11 +534,8 @@ template <typename T, std::size_t N> struct hash<beyond::TVec<T, N>> {
   [[nodiscard]] auto
   operator()(const beyond::TVec<T, N>& vec) const noexcept -> std::size_t
   {
-    using beyond::detail::hash_combine;
     return [&]<std::size_t... I>(std::index_sequence<I...>) {
-      std::size_t seed = 0;
-      ((seed ^= hash_combine(seed, std::hash<T>{}(vec[I]))), ...);
-      return seed;
+      return beyond::hash_combine(std::hash<T>{}(vec[I])...);
     }(std::make_index_sequence<N>());
   }
 };
