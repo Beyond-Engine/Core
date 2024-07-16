@@ -520,6 +520,24 @@ template <typename T, std::size_t size>
   }(std::make_index_sequence<size>());
 }
 
+template <typename T, std::size_t size>
+[[nodiscard]] constexpr auto min(TVec<T, size> v1,
+                                 TVec<T, size> v2) noexcept -> TVec<T, size>
+{
+  return [&]<std::size_t... I>(std::index_sequence<I...>) {
+    return TVec<T, size>(std::min(v1.elem[I], v2.elem[I])...);
+  }(std::make_index_sequence<size>());
+}
+
+template <typename T, std::size_t size>
+[[nodiscard]] constexpr auto max(TVec<T, size> v1,
+                                 TVec<T, size> v2) noexcept -> TVec<T, size>
+{
+  return [&]<std::size_t... I>(std::index_sequence<I...>) {
+    return TVec<T, size>(std::max(v1.elem[I], v2.elem[I])...);
+  }(std::make_index_sequence<size>());
+}
+
 /** @}
  *  @} */
 

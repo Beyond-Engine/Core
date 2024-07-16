@@ -15,8 +15,7 @@ namespace beyond {
  */
 class AABB3 {
 public:
-  struct unchecked_tag_t {
-  };
+  struct unchecked_tag_t {};
   static constexpr unchecked_tag_t unchecked_tag{};
 
   constexpr AABB3() noexcept = default;
@@ -30,8 +29,7 @@ public:
    * @brief Construction an AABB3 from two points
    */
   constexpr AABB3(beyond::Point3 p1, beyond::Point3 p2) noexcept
-      : min_{std::min(p1.x, p2.x), std::min(p1.y, p2.y), std::min(p1.z, p2.z)},
-        max_{std::max(p1.x, p2.x), std::max(p1.y, p2.y), std::max(p1.z, p2.z)}
+      : min_{beyond::min(p1, p2)}, max_{beyond::max(p1, p2)}
   {
   }
 
@@ -60,8 +58,8 @@ public:
    * @brief Whether the ray r hit AABB3 or not
    */
   [[nodiscard]] constexpr auto is_intersect_with(const beyond::Ray& r,
-                                                 float t_min, float t_max) const
-      -> bool
+                                                 float t_min,
+                                                 float t_max) const -> bool
   {
     constexpr std::size_t num_dim = 3;
     // Credit: Andrew Kensler at Pixar adapt this version of AABB3 hit method
@@ -70,14 +68,11 @@ public:
       const float invD = 1.f / r.direction[a];
       float t0 = (min_[a] - r.origin[a]) * invD;
       float t1 = (max_[a] - r.origin[a]) * invD;
-      if (invD < 0) {
-        std::swap(t0, t1);
-      }
+      if (invD < 0) { std::swap(t0, t1); }
       t_min = std::max(t0, t_min);
       t_max = std::min(t1, t_max);
 
-      if (t_max <= t_min)
-        return false;
+      if (t_max <= t_min) { return false; }
     }
     return true;
   }
@@ -86,12 +81,6 @@ public:
                                                  const AABB3& rhs) -> bool
   {
     return lhs.min() == rhs.min() && lhs.max() == rhs.max();
-  }
-
-  [[nodiscard]] friend constexpr auto operator!=(const AABB3& lhs,
-                                                 const AABB3& rhs) -> bool
-  {
-    return !(lhs == rhs);
   }
 
 private:
@@ -106,8 +95,8 @@ auto operator<<(std::ostream& os, const AABB3& box) -> std::ostream&;
  * @brief Find the union of two AABBs
  * @related AABB3
  */
-[[nodiscard]] constexpr auto merge(const AABB3& box0, const AABB3& box1)
-    -> AABB3
+[[nodiscard]] constexpr auto merge(const AABB3& box0,
+                                   const AABB3& box1) -> AABB3
 {
   return AABB3{{std::min(box0.min().x, box1.min().x),
                 std::min(box0.min().y, box1.min().y),

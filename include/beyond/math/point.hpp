@@ -27,9 +27,8 @@ template <typename T, std::size_t N> struct TPoint : TVec<T, N> {
   /**
    * @brief TPoint + TVec = TPoint
    */
-  [[nodiscard]] friend constexpr auto operator+(TPoint p,
-                                                const TVec<T, N>& v) noexcept
-      -> TPoint
+  [[nodiscard]] friend constexpr auto
+  operator+(TPoint p, const TVec<T, N>& v) noexcept -> TPoint
   {
     return [&]<std::size_t... I>(std::index_sequence<I...>) {
       ((p[I] += v[I]), ...);
@@ -49,9 +48,8 @@ template <typename T, std::size_t N> struct TPoint : TVec<T, N> {
   /**
    * @brief TPoint - TVec = TPoint
    */
-  [[nodiscard]] friend constexpr auto operator-(TPoint p,
-                                                const TVec<T, N>& v) noexcept
-      -> TPoint
+  [[nodiscard]] friend constexpr auto
+  operator-(TPoint p, const TVec<T, N>& v) noexcept -> TPoint
   {
     return [&]<std::size_t... I>(std::index_sequence<I...>) {
       ((p[I] -= v[I]), ...);
@@ -62,9 +60,8 @@ template <typename T, std::size_t N> struct TPoint : TVec<T, N> {
   /**
    * @brief TPoint - TPoint = TVec
    */
-  [[nodiscard]] friend constexpr auto operator-(const TPoint& p1,
-                                                const TPoint& p2) noexcept
-      -> TVec<T, N>
+  [[nodiscard]] friend constexpr auto
+  operator-(const TPoint& p1, const TPoint& p2) noexcept -> TVec<T, N>
   {
     return [&]<std::size_t... I>(std::index_sequence<I...>) {
       TVec v = p1;
@@ -105,9 +102,8 @@ template <typename T, std::size_t N> auto normalize(TPoint<T, N> p) = delete;
  * @brief Gets the squared distance between two points
  */
 template <typename T, std::size_t N>
-[[nodiscard]] constexpr auto distance_squared(const TPoint<T, N>& p1,
-                                              const TPoint<T, N>& p2) noexcept
-    -> T
+[[nodiscard]] constexpr auto
+distance_squared(const TPoint<T, N>& p1, const TPoint<T, N>& p2) noexcept -> T
 {
   const auto dx = p2 - p1;
   return dot(dx, dx);
@@ -124,6 +120,24 @@ template <typename T, std::size_t size>
 }
 
 template <typename T, std::size_t size>
+[[nodiscard]] constexpr auto min(TPoint<T, size> v1,
+                                 TPoint<T, size> v2) noexcept -> TPoint<T, size>
+{
+  return [&]<std::size_t... I>(std::index_sequence<I...>) {
+    return TPoint<T, size>(std::min(v1.elem[I], v2.elem[I])...);
+  }(std::make_index_sequence<size>());
+}
+
+template <typename T, std::size_t size>
+[[nodiscard]] constexpr auto max(TPoint<T, size> v1,
+                                 TPoint<T, size> v2) noexcept -> TPoint<T, size>
+{
+  return [&]<std::size_t... I>(std::index_sequence<I...>) {
+    return TPoint<T, size>(std::max(v1.elem[I], v2.elem[I])...);
+  }(std::make_index_sequence<size>());
+}
+
+template <typename T, std::size_t size>
 [[nodiscard]] constexpr auto
 lerp(const TPoint<T, size>& p1, const TVec<T, size>& p2, T t) noexcept = delete;
 
@@ -133,8 +147,8 @@ lerp(const TVec<T, size>& p1, const TPoint<T, size>& p2, T t) noexcept = delete;
 
 template <typename T, std::size_t size>
 [[nodiscard]] constexpr auto lerp(const TPoint<T, size>& p1,
-                                  const TPoint<T, size>& p2, T t) noexcept
-    -> TPoint<T, size>
+                                  const TPoint<T, size>& p2,
+                                  T t) noexcept -> TPoint<T, size>
 {
   return [&]<std::size_t... I>(std::index_sequence<I...>) {
     TPoint<T, size> v;

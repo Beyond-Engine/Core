@@ -416,7 +416,15 @@ TEST_CASE("Vec Cross product", "[beyond.core.math.vec]")
   }
 }
 
-TEST_CASE("Vector Lerp test", "[beyond.core.math.pec]")
+TEST_CASE("Vertex min/max test", "[beyond.core.math.vec]")
+{
+  constexpr beyond::Vec3 v1{1.2, 3.4, 5.6};
+  constexpr beyond::Vec3 v2{2.2, 3.1, 5.0};
+  CHECK(min(v1, v2) == beyond::Vec3{1.2, 3.1, 5.0});
+  CHECK(max(v1, v2) == beyond::Vec3{2.2, 3.4, 5.6});
+}
+
+TEST_CASE("Vector Lerp test", "[beyond.core.math.vec]")
 {
   const beyond::Vec2 v1{0, 1};
   const beyond::Vec2 v2{1, 42};

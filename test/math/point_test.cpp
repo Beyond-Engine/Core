@@ -232,6 +232,14 @@ TEST_CASE("Point Swizzling test", "[beyond.core.math.pec]")
   }
 }
 
+TEST_CASE("Point min/max test", "[beyond.core.math.pec]")
+{
+  constexpr beyond::Point3 v1{1.2, 3.4, 5.6};
+  constexpr beyond::Point3 v2{2.2, 3.1, 5.0};
+  CHECK(min(v1, v2) == beyond::Point3{1.2, 3.1, 5.0});
+  CHECK(max(v1, v2) == beyond::Point3{2.2, 3.4, 5.6});
+}
+
 TEST_CASE("Point Lerp test", "[beyond.core.math.pec]")
 {
   const beyond::Point2 p1{0, 1};
