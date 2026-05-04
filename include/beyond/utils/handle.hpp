@@ -59,15 +59,11 @@ public:
   constexpr explicit Handle(Value value) noexcept : value_{value} {}
 
   [[nodiscard]] constexpr auto value() const noexcept -> Value
-  {
-    return value_;
-  }
+  { return value_; }
 
-  [[nodiscard]] friend constexpr auto operator==(Derived lhs,
-                                                 Derived rhs) -> bool
-  {
-    return lhs.value_ == rhs.value_;
-  }
+  [[nodiscard]] friend constexpr auto operator==(Derived lhs, Derived rhs)
+      -> bool
+  { return lhs.value_ == rhs.value_; }
 };
 
 /**
@@ -96,15 +92,11 @@ public:
   GenerationalHandle() = delete;
   explicit constexpr GenerationalHandle(Index id, Generation gen = 0)
       : value_{static_cast<StorageT>(id + static_cast<StorageT>(gen << shift))}
-  {
-    BEYOND_ENSURE(not is_overflow(id));
-  }
+  { BEYOND_ENSURE(not is_overflow(id)); }
 
   /// @brief Return true if the index overflows the index range
   [[nodiscard]] static constexpr auto is_overflow(Index index) -> bool
-  {
-    return (static_cast<StorageT>(index) >> shift) != 0;
-  }
+  { return (static_cast<StorageT>(index) >> shift) != 0; }
 
   void set_index(Index new_index)
   {
@@ -116,17 +108,13 @@ public:
   [[nodiscard]] auto index() const -> Index { return value_ & index_mask; }
 
   [[nodiscard]] auto generation() const -> Generation
-  {
-    return value_ >> shift;
-  }
+  { return static_cast<Generation>(value_ >> shift); }
 
   [[nodiscard]] auto value() const -> Storage { return value_; }
 
-  [[nodiscard]] friend constexpr auto operator==(Derived lhs,
-                                                 Derived rhs) -> bool
-  {
-    return lhs.value_ == rhs.value_;
-  }
+  [[nodiscard]] friend constexpr auto operator==(Derived lhs, Derived rhs)
+      -> bool
+  { return lhs.value_ == rhs.value_; }
 
 private:
   Storage value_ = static_cast<Storage>(-1);
@@ -142,9 +130,7 @@ template <typename T>
   requires std::is_base_of_v<beyond::HandleBase, T>
 struct hash<T> {
   [[nodiscard]] auto operator()(T handle) const noexcept -> std::size_t
-  {
-    return std::hash<decltype(handle.value())>{}(handle.value());
-  }
+  { return std::hash<decltype(handle.value())>{}(handle.value()); }
 };
 
 } // namespace std
