@@ -7,6 +7,7 @@
 #include <memory>
 #include <new>
 #include <type_traits>
+#include <utility>
 
 #include "../utils/assert.hpp"
 #include "vector_interface.hpp"
@@ -113,16 +114,12 @@ public:
   }
 
   ~StaticVector() noexcept(std::is_nothrow_destructible_v<value_type>)
-  {
-    std::destroy_n(data(), size_);
-  }
+  { std::destroy_n(data(), size_); }
 
   StaticVector(const StaticVector& rhs) //
       noexcept(std::is_nothrow_copy_constructible_v<value_type>)
       : size_{rhs.size_}
-  {
-    std::uninitialized_copy_n(std::begin(rhs), rhs.size_, data());
-  }
+  { std::uninitialized_copy_n(std::begin(rhs), rhs.size_, data()); }
 
   auto operator=(const StaticVector& rhs) & noexcept(
       std::is_nothrow_copy_constructible_v<value_type>) -> StaticVector&
@@ -162,9 +159,7 @@ public:
    */
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto capacity() const noexcept
       -> size_type
-  {
-    return N;
-  }
+  { return N; }
 
   /**
    * @brief Gets the size of the `StaticVector`
@@ -173,9 +168,7 @@ public:
    */
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto size() const noexcept
       -> size_type
-  {
-    return size_;
-  }
+  { return size_; }
 
   /**
    * @brief Pushes an object into the end of the StaticVector
@@ -186,15 +179,11 @@ public:
    * Complexity: O(1)
    */
   BEYOND_FORCE_INLINE auto push_back(const value_type& value) -> reference
-  {
-    return emplace_back(value);
-  }
+  { return emplace_back(value); }
 
   /// @overload
   BEYOND_FORCE_INLINE auto push_back(value_type&& value) -> reference
-  {
-    return emplace_back(std::move(value));
-  }
+  { return emplace_back(std::move(value)); }
 
   /**
    * @brief Inplace constructs an object into the end of the StaticVector
@@ -245,29 +234,21 @@ public:
    * Complexity: O(1)
    */
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto data() noexcept -> pointer
-  {
-    return std::launder(reinterpret_cast<T*>(data_));
-  }
+  { return std::launder(reinterpret_cast<T*>(data_)); }
 
   /// @overload
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto data() const noexcept
       -> const_pointer
-  {
-    return std::launder(reinterpret_cast<const T*>(data_));
-  }
+  { return std::launder(reinterpret_cast<const T*>(data_)); }
 
   // TODO(lesley): erase, insert, resize, asign
 
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto begin() noexcept -> iterator
-  {
-    return iterator{data()};
-  }
+  { return iterator{data()}; }
 
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto begin() const noexcept
       -> const_iterator
-  {
-    return const_iterator{data()};
-  }
+  { return const_iterator{data()}; }
 
   /**
    * @brief Swap two `StaticVector`s
@@ -288,9 +269,7 @@ public:
   friend constexpr void
   swap(StaticVector<T, N>& lhs,
        StaticVector<T, N>& rhs) noexcept(std::is_nothrow_swappable_v<T>)
-  {
-    lhs.swap(rhs);
-  }
+  { lhs.swap(rhs); }
 
 private:
   alignas(T) std::byte data_[sizeof(T) * N];
