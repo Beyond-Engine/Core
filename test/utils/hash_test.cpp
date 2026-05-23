@@ -1,13 +1,11 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include <beyond/utils/hash.hpp>
-
 #include <string>
 
+import beyond.core;
+
 template <typename T> void single_hash_combine(std::size_t& seed, const T& v)
-{
-  seed ^= std::hash<T>{}(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-}
+{ seed ^= std::hash<T>{}(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2); }
 
 TEST_CASE("hash combine")
 {

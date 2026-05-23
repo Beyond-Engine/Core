@@ -5,13 +5,11 @@
 #include <numeric>
 #include <thread>
 
-#include <beyond/concurrency/thread_pool.hpp>
+import beyond.core;
 
 TEST_CASE("Empty Thread Pool should not stuck",
           "[beyond.core.concurrency.thread_pool]")
-{
-  [[maybe_unused]] beyond::ThreadPool thread_pool{};
-}
+{ [[maybe_unused]] beyond::ThreadPool thread_pool{}; }
 
 TEST_CASE("Thread Pool one worker two tasks",
           "[beyond.core.concurrency.thread_pool]")

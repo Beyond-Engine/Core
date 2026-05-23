@@ -1,4 +1,3 @@
-#include "beyond/types/expected.hpp"
 #include <catch2/catch_test_macros.hpp>
 
 #include <memory>
@@ -7,6 +6,8 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+
+#include <beyond/types/expected.hpp>
 
 TEST_CASE("expected Triviality", "[beyond.core.types.expected]")
 {
@@ -51,7 +52,7 @@ TEST_CASE("expected Triviality", "[beyond.core.types.expected]")
   {
     struct T {
       T(const T&) {}
-      T(T&&){};
+      T(T&&) {};
       T& operator=(const T&) { return *this; }
       T& operator=(T&&) { return *this; };
       ~T() {}
@@ -268,7 +269,7 @@ TEST_CASE("expected Assignment deletion", "[beyond.core.types.expected]")
   struct except_move {
     except_move() = default;
     except_move(const except_move&) = default;
-    except_move(except_move&&) noexcept(false){};
+    except_move(except_move&&) noexcept(false) {};
     except_move& operator=(const except_move&) = default;
   };
   beyond::expected<except_move, except_move> e3 = {};
@@ -1178,9 +1179,7 @@ struct a {};
 struct b : a {};
 
 auto doit() -> beyond::expected<std::unique_ptr<b>, int>
-{
-  return beyond::make_unexpected(0);
-}
+{ return beyond::make_unexpected(0); }
 
 TEST_CASE("expected covariant", "[beyond.core.types.expected]")
 {
@@ -1196,7 +1195,7 @@ TEST_CASE("expected moving of nested type", "[beyond.core.types.expected]")
   struct foo {
     foo() = default;
     foo(foo&) = delete;
-    foo(foo&&){};
+    foo(foo&&) {};
   };
 
   std::vector<foo> v;

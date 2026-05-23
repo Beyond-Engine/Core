@@ -26,12 +26,11 @@ if (BEYOND_CORE_BUILD_TESTS)
     add_subdirectory(test)
 endif ()
 
-
-install(TARGETS core
-        EXPORT beyond-core
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
-        INCLUDES DESTINATION include
-)
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/beyond" DESTINATION include)
+#install(TARGETS core
+#        EXPORT beyond-core
+#        LIBRARY DESTINATION lib
+#        ARCHIVE DESTINATION lib
+#        RUNTIME DESTINATION bin
+#        INCLUDES DESTINATION include
+#)
+#install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/beyond" DESTINATION include)

@@ -9,24 +9,22 @@ the core utilities of the [Beyond Game Engine](https://github.com/Beyond-Engine/
 
 `beyond::core` contains the following C++ library components:
 
-* [`algorithm`](include/beyond/algorithm/)
+* [`algorithm`](src/algorithm/)
   <br /> additional STL-style algorithm library.
-* [`concurrency`](include/beyond/concurrency/)
-  <br /> A task system
-* [`coroutine`](include/beyond/coroutine)
+* [`concurrency`](src/concurrency/)
+  <br /> A work-stealing thread-pool based task system
+* [`coroutines`](src/coroutines/)
   <br /> C++20 coroutine supporting library.
-* [`container`](include/beyond/container)
+* [`container`](src/container)
   <br /> contains additional STL-style containers.
-* [`ecs`](include/beyond/ecs) (incomplete and unusable)
+* [`ecs`](src/ecs) (incomplete and unusable)
   <br /> contains an implementation of an entity component system.
-* [`math`](include/beyond/math/)
+* [`math`](src/math/)
   <br /> contains a mathematics library with a graphics focus.
 * [`types`](include/beyond/types/)
   <br /> contains non-container utility types, like the
   `optional` and `expected` types with monadic extensions.
-* [`random`](include/beyond/random/)
-  <br />  contains random number generators and distributions with a standard `<random>`-like interface.
-* [`utils`](include/beyond/utils/)
+* [`utils`](src/utils/)
   <br />  contains utility and helper code.
 
 ## Usage
@@ -39,7 +37,7 @@ make breaking changes frequently.
 ### CMake Options
 
 - `BEYOND_CORE_BUILD_TESTS` (`OFF` by default) build tests
-- `BP_BUILD_TESTS_COVERAGE` (`OFF` by default) test coverage with `gcov` and `lcov`
+- `BEYOND_CORE_BUILD_TESTS_COVERAGE` (`OFF` by default) test coverage with `gcov` and `lcov`
 - `BEYOND_CORE_BUILD_DOCUMENTATION` (`OFF` by default) build doxygen documentation
 - `BEYOND_CORE_ENABLE_PCH`  (`ON` by default) precompiled header
 
@@ -55,9 +53,7 @@ make breaking changes frequently.
 
 ## Acknowledgements
 
-- The PCG library vendored in [`random`](include/beyond/random/) belongs to Melissa O'Neill.
-  See [its website](https://www.pcg-random.org/index.html) for more information.
-- The `optional` and `expected` types are modified from [Sy Brand](https://twitter.com/TartanLlama)'s
+- The `optional` and `expected` types are modified from [Sy Brand](https://tartanllama.xyz/)'s
   [tl::optional](https://github.com/TartanLlama/optional)
   and [tl::expected](https://github.com/TartanLlama/expected) libraries
 

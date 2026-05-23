@@ -1,7 +1,7 @@
-﻿#include "beyond/ecs/sparse_map.hpp"
-
-#include <catch2/catch_approx.hpp>
+﻿#include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
+
+import beyond.core;
 
 using namespace beyond;
 using Catch::Approx;
@@ -35,9 +35,7 @@ TEST_CASE("SparseMap", "[beyond.core.ecs.sparse_map]")
       sm.insert(entity, data);
 
       THEN("You cannot find entity 0 in the sparse map")
-      {
-        REQUIRE(!sm.try_get(Entity{0}));
-      }
+      { REQUIRE(!sm.try_get(Entity{0})); }
 
       THEN("You can find this entity and its data in the sparse map")
       {
@@ -112,28 +110,20 @@ TEST_CASE("SparseMap iterator test", "[beyond.core.ecs.sparse_map]")
       }
 
       AND_THEN("++begin = end")
-      {
-        REQUIRE(++begin == end);
-      }
+      { REQUIRE(++begin == end); }
       AND_THEN("--end == begin")
-      {
-        REQUIRE(--end == begin);
-      }
+      { REQUIRE(--end == begin); }
       AND_WHEN("begin += 1")
       {
         begin += 1;
         AND_THEN("begin == end")
-        {
-          REQUIRE(begin == end);
-        }
+        { REQUIRE(begin == end); }
       }
       AND_WHEN("end -= 1")
       {
         end -= 1;
         AND_THEN("begin == end")
-        {
-          REQUIRE(begin == end);
-        }
+        { REQUIRE(begin == end); }
       }
       AND_THEN("begin + 1 == end")
       {
@@ -141,21 +131,15 @@ TEST_CASE("SparseMap iterator test", "[beyond.core.ecs.sparse_map]")
         REQUIRE(1 + begin == end);
       }
       AND_THEN("end - 1 == begin")
-      {
-        REQUIRE(end - 1 == begin);
-      }
+      { REQUIRE(end - 1 == begin); }
       AND_THEN("begin - end == -1")
-      {
-        REQUIRE(begin - end == -1);
-      }
+      { REQUIRE(begin - end == -1); }
 
       AND_WHEN("begin->second = 3.14")
       {
         begin->second = 3.14f;
         AND_THEN("begin->second == 3.14")
-        {
-          REQUIRE(begin->second == Approx(3.14));
-        }
+        { REQUIRE(begin->second == Approx(3.14)); }
       }
     }
 
@@ -174,28 +158,20 @@ TEST_CASE("SparseMap iterator test", "[beyond.core.ecs.sparse_map]")
       }
 
       AND_THEN("++begin = end")
-      {
-        REQUIRE(++begin == end);
-      }
+      { REQUIRE(++begin == end); }
       AND_THEN("--end == begin")
-      {
-        REQUIRE(--end == begin);
-      }
+      { REQUIRE(--end == begin); }
       AND_WHEN("begin += 1")
       {
         begin += 1;
         AND_THEN("begin == end")
-        {
-          REQUIRE(begin == end);
-        }
+        { REQUIRE(begin == end); }
       }
       AND_WHEN("end -= 1")
       {
         end -= 1;
         AND_THEN("begin == end")
-        {
-          REQUIRE(begin == end);
-        }
+        { REQUIRE(begin == end); }
       }
       AND_THEN("begin + 1 == end")
       {
@@ -203,13 +179,9 @@ TEST_CASE("SparseMap iterator test", "[beyond.core.ecs.sparse_map]")
         REQUIRE(1 + begin == end);
       }
       AND_THEN("end - 1 == begin")
-      {
-        REQUIRE(end - 1 == begin);
-      }
+      { REQUIRE(end - 1 == begin); }
       AND_THEN("begin - end == -1")
-      {
-        REQUIRE(begin - end == -1);
-      }
+      { REQUIRE(begin - end == -1); }
     }
   }
 }

@@ -2,8 +2,7 @@
 
 #include <vector>
 
-#include <beyond/utils/handle.hpp>
-#include <beyond/utils/utils.hpp>
+import beyond.core;
 
 using namespace beyond;
 

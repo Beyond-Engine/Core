@@ -1,12 +1,12 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "beyond/algorithm/sort_by_key.hpp"
-
 #include <array>
 #include <string_view>
 
+import beyond.core;
+
 static_assert(
-    std::random_access_iterator<beyond::detail::SortByKeyIterator<int*, int*>>);
+    std::random_access_iterator<beyond::SortByKeyIterator<int*, int*>>);
 
 TEST_CASE("Sort by key", "[beyond.core.algorithm.sort_by_key]")
 {

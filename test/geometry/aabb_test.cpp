@@ -1,7 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <sstream>
 
-#include "beyond/geometry/aabb3.hpp"
+import beyond.core;
 
 static constexpr float inf = std::numeric_limits<float>::infinity();
 

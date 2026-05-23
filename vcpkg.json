@@ -1,6 +1,6 @@
 {
   "name": "beyond-core",
-  "version-string": "0.0.2",
+  "version-string": "0.0.3",
   "homepage": "https://github.com/Beyond-Engine/Core",
   "license": "MIT",
   "description": "Utility library for graphics and game programming",

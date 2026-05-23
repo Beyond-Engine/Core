@@ -1,5 +1,6 @@
-#include "beyond/ecs/sparse_set.hpp"
 #include <catch2/catch_test_macros.hpp>
+
+import beyond.core;
 
 using namespace beyond;
 
@@ -32,9 +33,7 @@ TEST_CASE("SparseSet", "[beyond.core.ecs.sparse_set]")
         ss.insert(entity);
 
         THEN("You cannot find 0 in the sparse set")
-        {
-          REQUIRE(!ss.contains(Entity{0}));
-        }
+        { REQUIRE(!ss.contains(Entity{0})); }
 
         THEN("You can find this entity in the sparse set")
         {
@@ -82,32 +81,22 @@ TEST_CASE("SparseSet", "[beyond.core.ecs.sparse_set]")
           REQUIRE(end >= begin);
 
           AND_THEN("begin() points to the only entity in the sparse set")
-          {
-            REQUIRE(*ss.begin() == entity);
-          }
+          { REQUIRE(*ss.begin() == entity); }
           AND_THEN("++begin = end")
-          {
-            REQUIRE(++begin == end);
-          }
+          { REQUIRE(++begin == end); }
           AND_THEN("--end == begin")
-          {
-            REQUIRE(--end == begin);
-          }
+          { REQUIRE(--end == begin); }
           AND_WHEN("begin += 1")
           {
             begin += 1;
             AND_THEN("begin == end")
-            {
-              REQUIRE(begin == end);
-            }
+            { REQUIRE(begin == end); }
           }
           AND_WHEN("end -= 1")
           {
             end -= 1;
             AND_THEN("begin == end")
-            {
-              REQUIRE(begin == end);
-            }
+            { REQUIRE(begin == end); }
           }
           AND_THEN("begin + 1 == end")
           {
@@ -115,13 +104,9 @@ TEST_CASE("SparseSet", "[beyond.core.ecs.sparse_set]")
             REQUIRE(1 + begin == end);
           }
           AND_THEN("end - 1 == begin")
-          {
-            REQUIRE(end - 1 == begin);
-          }
+          { REQUIRE(end - 1 == begin); }
           AND_THEN("end - begin == 1")
-          {
-            REQUIRE(end - begin == 1);
-          }
+          { REQUIRE(end - begin == 1); }
         }
       }
     }

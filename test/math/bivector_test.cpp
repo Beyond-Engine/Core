@@ -1,8 +1,9 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+import beyond.core;
+
 #include "../constexpr_test_util.hpp"
-#include "beyond/math/bivector.hpp"
 
 using beyond::BiVec3;
 using beyond::Vec3;

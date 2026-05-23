@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "beyond/utils/function_ref.hpp"
+import beyond.core;
 
 TEST_CASE("function_ref assignments", "[beyond.core.function_ref]")
 {
@@ -24,20 +24,12 @@ TEST_CASE("function_ref assignments", "[beyond.core.function_ref]")
 namespace {
 bool f_called = false;
 void f2()
-{
-  f_called = true;
-}
+{ f_called = true; }
 struct b2 {
   bool baz_called = false;
-  void baz()
-  {
-    baz_called = true;
-  }
+  void baz() { baz_called = true; }
   bool qux_called = false;
-  void qux()
-  {
-    qux_called = true;
-  }
+  void qux() { qux_called = true; }
 };
 } // namespace
 
@@ -100,8 +92,6 @@ TEST_CASE("function_ref return type covariance", "[beyond.core.function_ref]")
 }
 
 void foo(const beyond::function_ref<int(const std::vector<int>)>& func)
-{
-  REQUIRE(func({12}) == 144);
-}
+{ REQUIRE(func({12}) == 144); }
 
 static_assert(std::is_trivially_copyable_v<beyond::function_ref<void()>>);

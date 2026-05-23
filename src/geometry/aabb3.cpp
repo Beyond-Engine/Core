@@ -1,9 +1,10 @@
+module;
+
 #include <ostream>
 
 #include <fmt/format.h>
 
-#include "beyond/geometry/aabb3.hpp"
-#include "beyond/math/serial.hpp"
+module beyond.core;
 
 namespace beyond {
 

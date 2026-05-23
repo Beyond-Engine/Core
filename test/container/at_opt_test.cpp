@@ -1,10 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include <beyond/container/at_opt.hpp>
-
 #include <array>
-#include <beyond/container/static_vector.hpp>
 #include <vector>
+
+import beyond.core;
 
 TEST_CASE("at_opt", "[beyond.core.container.at_opt]")
 {

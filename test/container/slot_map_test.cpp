@@ -1,8 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "beyond/container/slot_map.hpp"
-
 #include <string>
+
+import beyond.core;
 
 using namespace beyond;
 

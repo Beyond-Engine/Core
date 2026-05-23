@@ -1,7 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "beyond/math/serial.hpp"
-#include "beyond/math/transform.hpp"
+import beyond.core;
 
 #include "matrix_test_util.hpp"
 

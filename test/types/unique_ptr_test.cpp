@@ -1,7 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "../raii_counter.hpp"
-#include <beyond/types/unique_ptr.hpp>
+
+import beyond.core;
 
 namespace {
 
@@ -15,10 +16,7 @@ struct Derived : Base {
   int v;
   constexpr explicit Derived(int v_) : v{v_} {}
 
-  constexpr auto value() -> int override
-  {
-    return 42;
-  }
+  constexpr auto value() -> int override { return 42; }
 };
 
 } // namespace

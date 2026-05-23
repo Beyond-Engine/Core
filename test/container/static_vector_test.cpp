@@ -1,8 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <array>
-#include <beyond/container/static_vector.hpp>
 #include <string>
+
+import beyond.core;
 
 #include "../raii_counter.hpp"
 

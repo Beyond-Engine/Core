@@ -1,13 +1,12 @@
 #include <catch2/catch_test_macros.hpp>
 #include <type_traits>
 
-#include "beyond/utils/noexcept_cast.hpp"
+import beyond.core;
 
 namespace {
+
 auto foo() -> int
-{
-  return 42;
-}
+{ return 42; }
 
 } // anonymous namespace
 

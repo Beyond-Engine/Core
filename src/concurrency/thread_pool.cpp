@@ -1,4 +1,6 @@
-#include "../../include/beyond/concurrency/thread_pool.hpp"
+module;
+
+#include "beyond/utils/utils.hpp"
 
 #include <atomic>
 #include <condition_variable>
@@ -6,11 +8,15 @@
 #include <mutex>
 #include <thread>
 
+module beyond.core;
+
+import :unique_function;
+
 namespace {
 
 class TaskQueue {
-  std::deque<beyond::Task> queue_; // Protected by the mutex
-  bool done_{false};               // Protected by the mutex
+  std::deque<beyond::Task> queue_{}; // Protected by the mutex
+  bool done_{false};                 // Protected by the mutex
   mutable std::mutex mutex_;
   std::condition_variable ready_;
 
@@ -98,9 +104,7 @@ public:
 namespace beyond {
 
 auto hardware_concurrency() -> std::size_t
-{
-  return std::thread::hardware_concurrency();
-}
+{ return std::thread::hardware_concurrency(); }
 
 class ThreadPoolImpl {
   std::size_t thread_count_ = std::thread::hardware_concurrency();
@@ -134,9 +138,7 @@ public:
 
   /// @brief Number of worker threads
   [[nodiscard]] auto thread_count() const noexcept -> std::size_t
-  {
-    return threads_.size();
-  }
+  { return threads_.size(); }
 
   void async(Task task)
   {
@@ -175,13 +177,9 @@ ThreadPool::ThreadPool(const beyond::ThreadPoolInfo& info)
 ThreadPool::~ThreadPool() = default;
 
 [[nodiscard]] auto ThreadPool::thread_count() const noexcept -> std::size_t
-{
-  return impl_->thread_count();
-}
+{ return impl_->thread_count(); }
 
 void ThreadPool::async(Task task)
-{
-  impl_->async(BEYOND_MOV(task));
-}
+{ impl_->async(BEYOND_MOV(task)); }
 
 } // namespace beyond

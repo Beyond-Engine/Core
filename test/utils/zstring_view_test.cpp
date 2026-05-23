@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include <beyond/utils/zstring_view.hpp>
+import beyond.core;
 
 TEST_CASE("default constructor for ZStringView",
           "[beyond.core.util.zstring_view]")

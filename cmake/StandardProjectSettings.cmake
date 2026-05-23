@@ -1,15 +1,9 @@
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 
 link_directories(${CMAKE_CURRENT_BINARY_DIR}/lib)
-
-# Organize unrelated targets to clean IDE hierarchy.
-set(DEPENDENCY_FOLDER "third-party")
-
-# This will also clean up the CMake ALL_BUILD, INSTALL, RUN_TESTS and ZERO_CHECK projects.
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER ${DEPENDENCY_FOLDER})
 
 # Output binary to predictable location.
 set(BINARY_OUT_DIR ${CMAKE_BINARY_DIR}/bin)

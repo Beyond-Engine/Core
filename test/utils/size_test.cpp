@@ -1,10 +1,11 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include <beyond/container/static_vector.hpp>
-#include <beyond/utils/utils.hpp>
-
 #include <span>
 #include <vector>
+
+#include <beyond/utils/utils.hpp>
+
+import beyond.core;
 
 TEST_CASE("beyond::size of raw array", "[beyond.core.util.size]")
 {

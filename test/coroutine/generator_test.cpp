@@ -1,11 +1,11 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "beyond/coroutine/generator.hpp"
-
 #include <algorithm>
+#include <coroutine>
 #include <iostream>
-#include <memory>
 #include <ranges>
+
+import beyond.core;
 
 static auto range(int low, int high) -> beyond::Generator<int>
 {
@@ -45,9 +45,7 @@ TEST_CASE("Generator with ranges", "[beyond.core.coroutine.generator]")
 }
 
 TEST_CASE("Generator range algorithm test", "[beyond.core.coroutine.generator]")
-{
-  REQUIRE(std::ranges::equal(range(0, 3), iota(0) | std::views::take(3)));
-}
+{ REQUIRE(std::ranges::equal(range(0, 3), iota(0) | std::views::take(3))); }
 
 static auto range_exp(int low, int high) -> beyond::Generator<int>
 {

@@ -1,8 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "beyond/utils/ref.hpp"
 #include <algorithm>
 #include <vector>
+
+import beyond.core;
 
 constexpr auto f() -> int
 {

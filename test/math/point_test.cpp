@@ -1,16 +1,16 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+import beyond.core;
+
 #include "../serial_test_util.hpp"
-#include "beyond/math/point.hpp"
-#include "beyond/math/serial.hpp"
 using Catch::Approx;
 
 template <typename T1, typename T2>
 concept Addable = requires(T1 x, T2 y) { x + y; };
 
 template <typename T1, typename T2>
-concept Multiplicable = requires(T1 x, T2 y) { x* y; };
+concept Multiplicable = requires(T1 x, T2 y) { x * y; };
 
 template <typename T1, typename T2>
 concept CanDotProduct = requires(T1 x, T2 y) { beyond::dot(x, y); };
@@ -88,7 +88,7 @@ TEST_CASE("Points", "[beyond.core.math.vec]")
     const auto dist = distance(p1, p2);
 
     REQUIRE(dist2 == Approx(dot(dx, dx)));
-    REQUIRE(dist == Approx(sqrt(dist2)));
+    REQUIRE(dist == Approx(beyond::sqrt(dist2)));
   }
 
   SECTION("Deleted point operations")

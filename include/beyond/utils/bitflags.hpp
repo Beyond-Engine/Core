@@ -1,6 +1,8 @@
 #ifndef BEYOND_CORE_UTILS_BITFLAG_HPP
 #define BEYOND_CORE_UTILS_BITFLAG_HPP
 
+#include <utility>
+
 #include "utils.hpp"
 
 /**
@@ -23,9 +25,7 @@
   }                                                                            \
                                                                                \
   BEYOND_FORCE_INLINE constexpr auto operator~(BitFlag lhs)->BitFlag           \
-  {                                                                            \
-    return static_cast<BitFlag>(~std::to_underlying(lhs));                     \
-  }
+  { return static_cast<BitFlag>(~std::to_underlying(lhs)); }
 // NOLINTEND
 
 #endif // BEYOND_CORE_UTILS_BITFLAG_HPP

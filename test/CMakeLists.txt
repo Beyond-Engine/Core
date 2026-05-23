@@ -21,7 +21,6 @@ add_executable(${TEST_TARGET_NAME}
         utils/functional_test.cpp
         utils/function_ref_test.cpp
         utils/handle_test.cpp
-        utils/make_array_test.cpp
         utils/noexcept_cast_test.cpp
         utils/size_test.cpp
         utils/bitflags_test.cpp
@@ -34,19 +33,15 @@ add_executable(${TEST_TARGET_NAME}
         geometry/ray_test.cpp
         geometry/aabb_test.cpp
 
-        random/xorshift32_test.cpp
         container/at_opt_test.cpp
         container/array_test.cpp
-        coroutine/generator_test.cpp
 
         utils/ref_test.cpp
         utils/defer_test.cpp
-        container/slot_map_test.cpp utils/zstring_view_test.cpp ../include/beyond/types/optional_conversion.hpp
-        math/bivector_test.cpp
+        container/slot_map_test.cpp utils/zstring_view_test.cpp
         math/bivector_test.cpp
         constexpr_test_util.hpp
         math/rotor3_test.cpp
-        ../include/beyond/math/rotor.hpp
         utils/hash_test.cpp)
 
 find_package(Catch2 CONFIG REQUIRED)

@@ -2,8 +2,7 @@
 #include <sstream>
 #include <string>
 
-#include <beyond/math/quat.hpp>
-#include <beyond/math/serial.hpp>
+import beyond.core;
 
 #include "../serial_test_util.hpp"
 #include "matrix_test_util.hpp"

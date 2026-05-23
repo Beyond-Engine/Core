@@ -2,7 +2,8 @@
 #ifndef BEYOND_CORE_MATRIX_TEST_UTIL_HPP
 #define BEYOND_CORE_MATRIX_TEST_UTIL_HPP
 
-#include <beyond/math/serial.hpp>
+import beyond.core;
+
 #include <catch2/catch_approx.hpp>
 
 #include <fmt/format.h>

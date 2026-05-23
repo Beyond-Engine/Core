@@ -3,9 +3,9 @@
 
 #include <sstream>
 
+import beyond.core;
+
 #include "../serial_test_util.hpp"
-#include "beyond/math/serial.hpp"
-#include "beyond/math/vector.hpp"
 
 using Catch::Approx;
 

@@ -3,9 +3,7 @@
 
 #include <sstream>
 
-#include "beyond/math/angle.hpp"
-#include "beyond/math/constants.hpp"
-#include "beyond/math/serial.hpp"
+import beyond.core;
 
 #include "../serial_test_util.hpp"
 

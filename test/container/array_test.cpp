@@ -1,8 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include <beyond/container/array.hpp>
-
 #include <algorithm>
+
+import beyond.core;
 
 TEST_CASE("Array default initialization", "[beyond.core.container.array]")
 {

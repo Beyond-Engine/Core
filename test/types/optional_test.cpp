@@ -6,8 +6,7 @@
 #include <utility>
 #include <vector>
 
-#include "beyond/types/optional.hpp"
-#include "beyond/types/optional_conversion.hpp"
+import beyond.core;
 
 TEST_CASE("optional Assignment value", "[beyond.core.types.optional]")
 {
@@ -105,7 +104,7 @@ TEST_CASE("optional Triviality", "[beyond.core.types.optional]")
   {
     struct T {
       T(const T&) {}
-      T(T&&){};
+      T(T&&) {};
       T& operator=(const T&) { return *this; }
       T& operator=(T&&) { return *this; };
       ~T() {}
@@ -224,7 +223,7 @@ namespace {
 struct foo {
   foo() = default;
   foo(foo&) = delete;
-  foo(foo&&){};
+  foo(foo&&) {};
 };
 
 } // anonymous namespace
@@ -296,13 +295,9 @@ TEST_CASE("optional Emplace", "[beyond.core.types.optional]")
 
 namespace {
 constexpr int get_int(int)
-{
-  return 42;
-}
+{ return 42; }
 constexpr beyond::optional<int> get_opt_int(int)
-{
-  return 42;
-}
+{ return 42; }
 
 } // anonymous namespace
 
@@ -621,9 +616,7 @@ TEST_CASE("optional Monadic operations", "[beyond.core.types.optional]")
 
     struct rval_call_and_then {
       beyond::optional<double> operator()(int) &&
-      {
-        return beyond::optional<double>(42.0);
-      };
+      { return beyond::optional<double>(42.0); };
     };
 
     // ensure that function object is forwarded
@@ -887,9 +880,7 @@ TEST_CASE("optional Self assignment", "[beyond.core.types.optional]")
     int value;
     fail_on_copy_self(int v) : value(v) {}
     fail_on_copy_self(const fail_on_copy_self& other) : value(other.value)
-    {
-      REQUIRE(&other != this);
-    }
+    { REQUIRE(&other != this); }
   };
 
   beyond::optional<fail_on_copy_self> o = fail_on_copy_self(42);
@@ -972,9 +963,7 @@ TEST_CASE("optional Noexcept", "[beyond.core.types.optional]")
 
     struct nothrow_swappable {
       nothrow_swappable& swap(const nothrow_swappable&) noexcept
-      {
-        return *this;
-      }
+      { return *this; }
     };
 
     beyond::optional<nothrow_swappable> ont;
@@ -1018,9 +1007,7 @@ TEST_CASE("optional Noexcept", "[beyond.core.types.optional]")
   }
 
   SECTION("modifiers")
-  {
-    REQUIRE(noexcept(o1.reset()));
-  }
+  { REQUIRE(noexcept(o1.reset())); }
 }
 
 TEST_CASE("optional nullopt_t", "[beyond.core.types.optional]")

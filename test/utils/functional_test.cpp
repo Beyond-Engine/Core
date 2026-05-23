@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "beyond/utils/functional.hpp"
+import beyond.core;
 
 TEST_CASE("Assign function object", "[beyond.core.util.funtional]")
 {
