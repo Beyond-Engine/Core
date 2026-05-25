@@ -1,7 +1,6 @@
-#ifndef BEYOND_CORE_UTILS_DEFER_HPP
-#define BEYOND_CORE_UTILS_DEFER_HPP
+#pragma once
 
-#include "utils.hpp"
+#include "prelude.hpp"
 
 namespace beyond {
 
@@ -10,10 +9,7 @@ template <typename Func> class Defer {
 
 public:
   explicit Defer(Func func) : func_{BEYOND_MOV(func)} {}
-  ~Defer()
-  {
-    func_();
-  }
+  ~Defer() { func_(); }
   Defer(const Defer&) = delete;
   auto operator=(const Defer&) -> Defer& = delete;
 };
@@ -45,5 +41,3 @@ public:
   {                                                                            \
     [&]() { expr; }                                                            \
   }
-
-#endif // BEYOND_CORE_UTILS_DEFER_HPP

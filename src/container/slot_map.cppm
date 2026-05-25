@@ -4,11 +4,11 @@ module;
 #include <span>
 #include <vector>
 
-#include "beyond/utils/assert.hpp"
-#include "beyond/utils/utils.hpp"
+#include <beyond/assert.hpp>
 
 export module beyond.core:container.slot_map;
 
+import :panic;
 import :optional;
 import :handle;
 

@@ -48,11 +48,13 @@ export import :zstring_view;
 
 // Utils
 export import :arrow_proxy;
+export import :unreachable;
 export import :crtp;
 export import :functional;
 export import :filesystem_utils;
+export import :hash;
 export import :narrowing;
 export import :noexcept_cast;
-export import :hash;
+export import :panic;
 export import :type_traits;
 export import :utils;

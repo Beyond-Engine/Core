@@ -1,11 +1,12 @@
 module;
 
-#include <beyond/utils/panic.hpp>
-#include <beyond/utils/utils.hpp>
+#include <beyond/prelude.hpp>
 
 #include <type_traits>
 
 export module beyond.core:narrowing;
+
+import :panic;
 
 namespace beyond {
 

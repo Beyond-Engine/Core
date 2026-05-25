@@ -7,7 +7,9 @@
 #include <utility>
 #include <vector>
 
-#include <beyond/types/expected.hpp>
+import beyond.core;
+
+#include <beyond/expected_extra.hpp>
 
 TEST_CASE("expected Triviality", "[beyond.core.types.expected]")
 {

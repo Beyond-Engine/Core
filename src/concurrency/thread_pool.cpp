@@ -1,6 +1,6 @@
 module;
 
-#include "beyond/utils/utils.hpp"
+#include <beyond/prelude.hpp>
 
 #include <atomic>
 #include <condition_variable>

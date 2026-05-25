@@ -1,6 +1,9 @@
+module;
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <cstdlib>
+#include <source_location>
 
 #include <fmt/core.h>
 
@@ -24,7 +27,7 @@
 // #include <debugapi.h>
 // #endif
 
-#include "beyond/utils/panic.hpp"
+module beyond.core;
 
 namespace beyond {
 
@@ -66,6 +69,18 @@ namespace beyond {
 
   std::fflush(stderr);
   std::abort();
+}
+
+[[noreturn]] void assert_failed(std::string_view cond_string,
+                                std::string_view msg,
+                                std::source_location source_location)
+{
+  const auto panic_message =
+      msg.empty() ? fmt::format("Condition `{}` failed", cond_string)
+                  : fmt::format("Condition `{}` failed with message: {}",
+                                cond_string, msg);
+
+  panic(panic_message, source_location);
 }
 
 } // namespace beyond

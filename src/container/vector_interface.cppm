@@ -1,10 +1,13 @@
 module;
 
-#include "beyond/utils/assert.hpp"
-#include "beyond/utils/panic.hpp"
-#include "beyond/utils/utils.hpp"
+#include <iterator>
+
+#include <beyond/assert.hpp>
+#include <beyond/prelude.hpp>
 
 export module beyond.core:container.vector_interface;
+
+import :panic;
 
 namespace beyond {
 

@@ -39,7 +39,6 @@ make breaking changes frequently.
 - `BEYOND_CORE_BUILD_TESTS` (`OFF` by default) build tests
 - `BEYOND_CORE_BUILD_TESTS_COVERAGE` (`OFF` by default) test coverage with `gcov` and `lcov`
 - `BEYOND_CORE_BUILD_DOCUMENTATION` (`OFF` by default) build doxygen documentation
-- `BEYOND_CORE_ENABLE_PCH`  (`ON` by default) precompiled header
 
 #### Other useful options for developing purpose
 

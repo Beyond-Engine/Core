@@ -6,12 +6,13 @@ module;
 #include <utility>
 #include <vector>
 
-#include "beyond/utils/assert.hpp"
+#include <beyond/assert.hpp>
 
 export module beyond.core:ecs.sparse_set;
 
 import :crtp;
 import :handle;
+import :panic;
 
 /**
  * @file sparse_set.cppm

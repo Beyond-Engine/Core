@@ -1,5 +1,10 @@
-#ifndef BEYOND_CORE_UTILS_HPP
-#define BEYOND_CORE_UTILS_HPP
+#pragma once
+
+/**
+ * @file prelude.hpp
+ * @brief Some of the commonly used macros
+ * @ingroup util
+ */
 
 #include <type_traits>
 
@@ -14,5 +19,3 @@
 #define BEYOND_MOV(...)                                                        \
   static_cast<std::remove_reference_t<decltype(__VA_ARGS__)>&&>(__VA_ARGS__)
 #define BEYOND_FWD(...) static_cast<decltype(__VA_ARGS__)>(__VA_ARGS__)
-
-#endif // BEYOND_CORE_UTILS_HPP

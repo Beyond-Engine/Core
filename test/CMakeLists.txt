@@ -63,11 +63,6 @@ if (${BEYOND_CORE_BUILD_TESTS_COVERAGE})
     )
 endif ()
 
-if (BEYOND_CORE_ENABLE_PCH)
-    target_precompile_headers(${TEST_TARGET_NAME} PRIVATE
-            <catch2/catch_test_macros.hpp>
-    )
-endif ()
 
 add_test(NAME beyond_core_unit_test
         COMMAND "${CMAKE_BINARY_DIR}/bin/${TEST_TARGET_NAME}")

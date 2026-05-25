@@ -1,5 +1,10 @@
 module;
 
+#include <functional>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+
 /*
  expected.hpp
  An implementation of std::expected with extensions
@@ -7,16 +12,11 @@ module;
  Forked and modified in 2020 by Lesley Lai
 */
 
-#include <functional>
-#include <type_traits>
-#include <utility>
-
-#include <beyond/utils/panic.hpp>
-
 export module beyond.core:expected;
 
 import :in_place;
 import :monostate;
+import :panic;
 
 export namespace beyond {
 

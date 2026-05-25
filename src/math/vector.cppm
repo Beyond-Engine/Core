@@ -1,13 +1,15 @@
 module;
 
 #include <cmath>
+#include <functional>
 #include <type_traits>
 #include <utility>
 
-#include "beyond/utils/assert.hpp"
+#include <beyond/assert.hpp>
 
 export module beyond.core:math.vector;
 
+import :panic;
 import :hash;
 import :math.functions;
 import :math.swizzle;

@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "beyond/utils/bitflags.hpp"
+#include <beyond/bitflags.hpp>
 
 enum class BitFlag { a = 0b1, b = 0b10 };
 BEYOND_MAKE_BITFLAG(BitFlag);

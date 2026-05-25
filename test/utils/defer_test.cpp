@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "beyond/utils/defer.hpp"
+#include <beyond/defer.hpp>
 
 TEST_CASE("Defer")
 {

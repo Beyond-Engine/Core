@@ -1,7 +1,11 @@
-#ifndef BEYOND_CORE_TYPES_EXPECTED_HPP
-#define BEYOND_CORE_TYPES_EXPECTED_HPP
+#pragma once
 
-import beyond.core;
+/**
+ * @file expected_extra.hpp
+ * @brief Macros for working with beyond::expected.
+ * @warning This header is not self-contained. You must `import beyond.core;`
+ *          before including it
+ */
 
 /**
  * @brief A helper macro to make a common use case of expected more convenient
@@ -17,5 +21,3 @@ import beyond.core;
     return beyond::make_unexpected(name##_ret.error());                        \
   }                                                                            \
   type name = std::forward<decltype(name##_ret)>(name##_ret).value()
-
-#endif // BEYOND_CORE_TYPES_EXPECTED_HPP

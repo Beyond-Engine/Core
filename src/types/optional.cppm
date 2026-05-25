@@ -10,16 +10,17 @@ module;
 #include <exception>
 #include <functional>
 #include <new>
+#include <string_view>
 #include <type_traits>
 #include <utility>
 
-#include <beyond/utils/panic.hpp>
-#include <beyond/utils/utils.hpp>
+#include <beyond/prelude.hpp>
 
 export module beyond.core:optional;
 
 import :in_place;
 import :monostate;
+import :panic;
 
 export namespace beyond {
 

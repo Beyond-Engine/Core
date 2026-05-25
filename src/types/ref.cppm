@@ -1,6 +1,6 @@
 module;
 
-#include <beyond/utils/utils.hpp>
+#include <beyond/prelude.hpp>
 #include <memory>
 
 export module beyond.core:ref;

@@ -3,12 +3,13 @@ module;
 #include <iterator>
 #include <vector>
 
-#include "beyond/utils/assert.hpp"
+#include <beyond/assert.hpp>
 
 export module beyond.core:ecs.sparse_map;
 
 import :arrow_proxy;
 import :ecs.sparse_set;
+import :panic;
 
 /**
  * @file sparse_map.cppm

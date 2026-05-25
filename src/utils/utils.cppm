@@ -8,7 +8,7 @@ module;
 #include <cstdint>
 #include <ranges>
 
-#include <beyond/utils/utils.hpp>
+#include <beyond/prelude.hpp>
 
 export module beyond.core:utils;
 

@@ -1,11 +1,14 @@
 module;
 
 #include <cstdint>
+#include <functional>
 #include <type_traits>
 
-#include <beyond/utils/assert.hpp>
+#include <beyond/assert.hpp>
 
 export module beyond.core:handle;
+
+import :panic;
 
 /**
  * @file handle.cppm

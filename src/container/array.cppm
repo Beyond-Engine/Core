@@ -3,14 +3,17 @@ module;
 #include <iterator>
 #include <type_traits>
 
-#include "beyond/utils/assert.hpp"
-#include "beyond/utils/utils.hpp"
+#include <beyond/assert.hpp>
+#include <beyond/prelude.hpp>
 
 export module beyond.core:container.array;
 
+import :typedefs;
+import :panic;
+
 export namespace beyond {
 
-template <typename T, std::uint32_t N> struct Array {
+template <typename T, u32 N> struct Array {
   static_assert(N > 0, "Cannot create an array with zero elements");
 
   T elems_[N];
@@ -50,91 +53,63 @@ template <typename T, std::uint32_t N> struct Array {
 
   /// @brief Returns a reference to the first element in the array.
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto front() noexcept -> reference
-  {
-    return elems_[0];
-  }
+  { return elems_[0]; }
 
   /// @overload
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto front() const noexcept
       -> const_reference
-  {
-    return elems_[0];
-  }
+  { return elems_[0]; }
 
   /// @brief Returns a reference to the last element in the array.
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto back() noexcept -> reference
-  {
-    return elems_[N - 1];
-  }
+  { return elems_[N - 1]; }
 
   /// @overload
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto back() const noexcept
       -> const_reference
-  {
-    return elems_[N - 1];
-  }
+  { return elems_[N - 1]; }
 
   /// @brief direct access to the underlying array
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto data() noexcept -> pointer
-  {
-    return elems_;
-  }
+  { return elems_; }
 
   /// @overload
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto data() const noexcept
       -> const_pointer
-  {
-    return elems_;
-  }
+  { return elems_; }
 
   // =====================================================
   // Iterators
   // =====================================================
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto begin() noexcept -> iterator
-  {
-    return elems_;
-  }
+  { return elems_; }
 
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto begin() const noexcept
       -> const_iterator
-  {
-    return elems_;
-  }
+  { return elems_; }
 
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto end() noexcept -> iterator
-  {
-    return elems_ + N;
-  }
+  { return elems_ + N; }
 
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto end() const noexcept
       -> const_iterator
-  {
-    return elems_ + N;
-  }
+  { return elems_ + N; }
 
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto rbegin() noexcept
       -> reverse_iterator
-  {
-    return reverse_iterator{end()};
-  }
+  { return reverse_iterator{end()}; }
 
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto rbegin() const noexcept
       -> const_reverse_iterator
-  {
-    return const_reverse_iterator{end()};
-  }
+  { return const_reverse_iterator{end()}; }
 
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto rend() noexcept
       -> reverse_iterator
-  {
-    return reverse_iterator{begin()};
-  }
+  { return reverse_iterator{begin()}; }
 
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto rend() const noexcept
       -> const_reverse_iterator
-  {
-    return const_reverse_iterator{begin()};
-  }
+  { return const_reverse_iterator{begin()}; }
 
   // =====================================================
   // Capacity
@@ -142,23 +117,17 @@ template <typename T, std::uint32_t N> struct Array {
   /// @brief Checks if the array is empty. Always false.
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto empty() const noexcept
       -> bool
-  {
-    return false;
-  }
+  { return false; }
 
   /// @brief Returns the size of the array.
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto size() const noexcept
       -> size_type
-  {
-    return N;
-  }
+  { return N; }
 
   /// @brief Returns the capacity of the array. Always equals to size()
   [[nodiscard]] BEYOND_FORCE_INLINE constexpr auto max_size() const noexcept
       -> size_type
-  {
-    return N;
-  }
+  { return N; }
 
   // =====================================================
   // Operations
@@ -198,28 +167,28 @@ template <typename T, std::uint32_t N> struct Array {
 /**
  * @brief Extracts the Ith element element from the array.
  */
-template <std::uint32_t I, class T, std::uint32_t N>
+template <u32 I, class T, u32 N>
 [[nodiscard]] constexpr auto get(Array<T, N>& a) noexcept -> T&
 {
   static_assert(I < N);
   return a.elems_[I];
 }
 
-template <std::uint32_t I, class T, std::uint32_t N>
+template <u32 I, class T, u32 N>
 [[nodiscard]] constexpr auto get(const Array<T, N>& a) noexcept -> const T&
 {
   static_assert(I < N);
   return a.elems_[I];
 }
 
-template <std::uint32_t I, class T, std::uint32_t N>
+template <u32 I, class T, u32 N>
 [[nodiscard]] constexpr auto get(Array<T, N>&& a) noexcept -> T&&
 {
   static_assert(I < N);
   return std::move(a.elems_[I]);
 }
 
-template <std::uint32_t I, class T, std::uint32_t N>
+template <u32 I, class T, u32 N>
 [[nodiscard]] constexpr auto get(const Array<T, N>&& a) noexcept -> const T&&
 {
   static_assert(I < N);
@@ -229,11 +198,11 @@ template <std::uint32_t I, class T, std::uint32_t N>
 } // namespace beyond
 
 export namespace std {
-template <typename T, std::uint32_t N> struct tuple_size<beyond::Array<T, N>> {
+template <typename T, beyond::u32 N> struct tuple_size<beyond::Array<T, N>> {
   static constexpr size_t value = N;
 };
 
-template <std::size_t I, class T, std::uint32_t N>
+template <std::size_t I, class T, beyond::u32 N>
 struct tuple_element<I, beyond::Array<T, N>> {
   using type = T;
 };

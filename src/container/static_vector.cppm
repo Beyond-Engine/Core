@@ -6,11 +6,12 @@ module;
 #include <type_traits>
 #include <utility>
 
-#include "beyond/utils/assert.hpp"
-#include "beyond/utils/utils.hpp"
+#include <beyond/assert.hpp>
+#include <beyond/prelude.hpp>
 
 export module beyond.core:container.static_vector;
 
+import :panic;
 import :container.vector_interface;
 
 /**

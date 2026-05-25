@@ -3,11 +3,12 @@ module;
 #include <cstdlib>
 #include <span>
 
-#include "beyond/utils/assert.hpp"
+#include <beyond/assert.hpp>
 
 export module beyond.core:math.matrix;
 
 import :math.vector;
+import :panic;
 
 export namespace beyond {
 /**

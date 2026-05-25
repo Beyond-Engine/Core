@@ -1,16 +1,14 @@
 add_library(core
-        ../include/beyond/utils/assert.hpp
-        ../include/beyond/utils/panic.hpp
+        ../include/beyond/assert.hpp
+        ../include/beyond/expected_extra.hpp
+        ../include/beyond/prelude.hpp
+        ../include/beyond/copy_move.hpp
+        ../include/beyond/defer.hpp
+        ../include/beyond/bitflags.hpp
+
         utils/panic.cpp
-
         geometry/aabb3.cpp
-
-        ../include/beyond/types/expected.hpp
-        ../include/beyond/utils/utils.hpp
-        ../include/beyond/utils/copy_move.hpp
-        ../include/beyond/utils/defer.hpp
         concurrency/thread_pool.cpp
-        ../include/beyond/utils/bitflags.hpp
 )
 
 target_sources(core
@@ -55,33 +53,29 @@ target_sources(core
         types/typedefs.cppm
         types/zstring_view.cppm
         utils/arrow_proxy.cppm
+        utils/unreachable.cppm
         utils/crtp.cppm
         utils/filesystem_utils.cppm
         utils/functional.cppm
         utils/hash.cppm
         utils/narrowing.cppm
         utils/noexcept_cast.cppm
+        utils/panic.cppm
         utils/type_traits.cppm
         utils/utils.cppm
 )
 
-if (BEYOND_CORE_ENABLE_PCH)
-    target_precompile_headers(core INTERFACE
-            ../include/beyond/types/expected.hpp
-    )
-endif ()
-
 set(BEYOND_CORE_ASSERT_POLICY AUTO CACHE STRING "The policy of enabling
-    assertion or not in beyond game engine core.
+    assertion or not in beyond core.
     AUTO means follow the debug or release build setting.")
 set_property(CACHE BEYOND_CORE_ASSERT_POLICY PROPERTY STRINGS AUTO ON OFF)
 
 if (BEYOND_CORE_ASSERT_POLICY STREQUAL "AUTO")
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        target_compile_definitions(core PUBLIC BEYOND_GAME_ENGINE_CORE_ENABLE_ASSERT)
+        target_compile_definitions(core PUBLIC BEYOND_CORE_ENABLE_ASSERT)
     endif ()
 elseif (BEYOND_CORE_ASSERT_POLICY STREQUAL "ON")
-    target_compile_definitions(core PUBLIC BEYOND_GAME_ENGINE_CORE_ENABLE_ASSERT)
+    target_compile_definitions(core PUBLIC BEYOND_CORE_ENABLE_ASSERT)
 endif ()
 
 target_include_directories(core

@@ -3,7 +3,7 @@
 #include <span>
 #include <vector>
 
-#include <beyond/utils/utils.hpp>
+#include <beyond/prelude.hpp>
 
 import beyond.core;
 
