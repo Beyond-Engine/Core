@@ -1,9 +1,9 @@
 # Beyond Core
 
-[![GCC-10 Linux](https://github.com/Beyond-Engine/Core/actions/workflows/gcc10-linux.yml/badge.svg)](https://github.com/Beyond-Engine/Core/actions/workflows/gcc10-linux.yml)
+`beyond::core` is a library with a bunch of utilities that are associated with graphics and game programming.
 
-`beyond::core` is a library with a bunch of utilities that are associated with graphics and game programming. It forms
-the core utilities of the [Beyond Game Engine](https://github.com/Beyond-Engine/Beyond-Game-Engine).
+It is initially intended to be the core component of "Beyond Game Engine," which unfortunately never becomes a thing.
+However, I use this library a lot in various other personal projects.
 
 ## Codemap
 
@@ -21,7 +21,7 @@ the core utilities of the [Beyond Game Engine](https://github.com/Beyond-Engine/
   <br /> contains an implementation of an entity component system.
 * [`math`](src/math/)
   <br /> contains a mathematics library with a graphics focus.
-* [`types`](include/beyond/types/)
+* [`types`](src/types/)
   <br /> contains non-container utility types, like the
   `optional` and `expected` types with monadic extensions.
 * [`utils`](src/utils/)
@@ -33,6 +33,9 @@ This library is not in a usable state to the public yet. The features are incomp
 make breaking changes frequently.
 
 ## Build
+
+> [!IMPORTANT]
+> This project uses C++20 modules. You need a module-ready compiler and build system toolchain
 
 ### CMake Options
 
