@@ -1,5 +1,8 @@
 # Beyond Core
 
+> [!IMPORTANT]
+> This project is migrated to [https://git.lesleylai.info](https://git.lesleylai.info/lesley/beyond-core). Further development will not happen here
+
 `beyond::core` is a library with a bunch of utilities that are associated with graphics and game programming.
 
 It is initially intended to be the core component of "Beyond Game Engine," which unfortunately never becomes a thing.
